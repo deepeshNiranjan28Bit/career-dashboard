@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Career &amp; Study Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<!--
+  Career & Study Dashboard — pure static SPA.
+  No build step, no external requests. Open index.html directly or serve via GitHub Pages.
+-->
+</head>
+<body>
+
+<!-- Mobile-only menu button (outside the sidebar so it stays reachable when the nav is closed) -->
+<button id="hamburger" class="icon-btn only-mobile" aria-label="Toggle menu" title="Menu">&#9776;</button>
+
+<div id="app">
+  <!-- ===== Sidebar ===== -->
+  <aside id="sidebar" aria-label="Primary navigation">
+    <div class="side-head">
+      <div class="brand">
+        <span class="brand-mark">DE</span>
+        <span class="brand-text">Career &amp; Study</span>
+      </div>
+    </div>
+
+    <div class="side-search">
+      <input id="globalSearch" type="search" placeholder="Search (press /)" autocomplete="off" aria-label="Global search">
+      <div id="globalSearchResults" class="search-results" hidden></div>
+    </div>
+
+    <nav id="nav" aria-label="Sections">
+      <a class="nav-item" href="#/" data-route="/"><span class="ni">&#8962;</span> Home</a>
+      <a class="nav-item" href="#/journal" data-route="/journal"><span class="ni">&#9998;</span> Journal</a>
+      <a class="nav-item" href="#/timer" data-route="/timer"><span class="ni">&#9201;</span> Study Timer</a>
+      <a class="nav-item" href="#/jobs" data-route="/jobs"><span class="ni">&#128188;</span> Jobs</a>
+      <a class="nav-item" href="#/gmail" data-route="/gmail"><span class="ni">&#9993;</span> Gmail Tracker</a>
+      <a class="nav-item" href="#/reminders" data-route="/reminders"><span class="ni">&#9200;</span> Reminders</a>
+      <a class="nav-item" href="#/learnings" data-route="/learnings"><span class="ni">&#128161;</span> Learnings</a>
+      <a class="nav-item" href="#/practice" data-route="/practice"><span class="ni">&#127919;</span> Practice</a>
+      <a class="nav-item" href="#/library" data-route="/library"><span class="ni">&#128218;</span> Library</a>
+      <a class="nav-item" href="#/settings" data-route="/settings"><span class="ni">&#9881;</span> Data &amp; Settings</a>
+    </nav>
+
+    <div class="side-foot">
+      <button id="themeToggle" class="ghost-btn" title="Toggle theme">&#9680; Theme</button>
+    </div>
+  </aside>
+
+  <div id="scrim" hidden></div>
+
+  <!-- ===== Main view mount ===== -->
+  <main id="view" tabindex="-1"></main>
+
+  <!-- ===== Quick-add FAB ===== -->
+  <button id="fab" title="Quick add" aria-label="Quick add">+</button>
+</div>
+
+<!-- ===== Modal host ===== -->
+<div id="modalHost" hidden></div>
+
+<!-- ===== Toast host ===== -->
+<div id="toastHost" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

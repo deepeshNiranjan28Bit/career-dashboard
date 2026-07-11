@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DE-100 | Deepesh's Data Engineering Mock Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#10151b;
+    --panel:#1a222c;
+    --panel2:#212b37;
+    --line:#2e3a48;
+    --text:#e8edf3;
+    --muted:#8b99a9;
+    --amber:#f5a524;
+    --amber-dim:#3a2e14;
+    --green:#4ade80;
+    --green-dim:#12301e;
+    --red:#f87171;
+    --red-dim:#3a1a1a;
+    --blue:#60a5fa;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    padding:24px 16px 64px;
+  }
+  .wrap{max-width:820px;margin:0 auto}
+  .brand{
+    display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap;
+  }
+  .brand h1{
+    font-family:'Space Grotesk',sans-serif;font-size:26px;letter-spacing:.5px;
+  }
+  .brand .tag{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--amber);
+    border:1px solid var(--amber);border-radius:4px;padding:2px 8px;
+  }
+  .sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+
+  /* pipeline progress */
+  .pipe{display:flex;gap:4px;margin:18px 0 6px}
+  .pipe span{flex:1;height:8px;border-radius:2px;background:var(--panel2);transition:background .2s}
+  .pipe span.ok{background:var(--green)}
+  .pipe span.bad{background:var(--red)}
+  .pipe span.cur{background:var(--amber)}
+  .meter{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:18px}
+  .meter b{color:var(--text)}
+
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:26px;margin-bottom:16px;
+  }
+  .chip{
+    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    color:var(--amber);background:var(--amber-dim);border-radius:4px;
+    padding:3px 9px;margin-bottom:14px;letter-spacing:.4px;
+  }
+  .qnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:12px;float:right}
+  .qtext{font-size:17.5px;font-weight:600;line-height:1.5;margin-bottom:20px}
+  .qtext code, .opt code, .expl code{
+    font-family:'JetBrains Mono',monospace;font-size:.92em;background:var(--panel2);
+    padding:1px 5px;border-radius:4px;color:var(--blue);
+  }
+  .opt{
+    display:block;width:100%;text-align:left;
+    background:var(--panel2);border:1px solid var(--line);border-radius:8px;
+    color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.45;
+    padding:13px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s, background .15s;
+  }
+  .opt:hover:not(:disabled){border-color:var(--amber)}
+  .opt:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .opt:disabled{cursor:default;opacity:.85}
+  .opt .k{font-family:'JetBrains Mono',monospace;color:var(--muted);margin-right:10px;font-size:13px}
+  .opt.correct{background:var(--green-dim);border-color:var(--green);opacity:1}
+  .opt.correct .k{color:var(--green)}
+  .opt.wrong{background:var(--red-dim);border-color:var(--red);opacity:1}
+  .opt.wrong .k{color:var(--red)}
+
+  .expl{
+    border-left:3px solid var(--amber);background:var(--panel2);
+    border-radius:0 8px 8px 0;padding:14px 16px;margin-top:16px;
+    font-size:14.5px;line-height:1.6;color:#cfd8e2;display:none;
+  }
+  .expl b.v{font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.5px;display:block;margin-bottom:6px}
+  .expl.show{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .btn{
+    font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:.3px;
+    background:var(--amber);color:#161006;border:none;border-radius:8px;
+    padding:12px 26px;cursor:pointer;margin-top:18px;
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--amber);border:1px solid var(--amber)}
+  .hidden{display:none}
+
+  /* start screen */
+  .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:18px 0}
+  .catbtn{
+    text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:8px;
+    color:var(--text);padding:12px 14px;cursor:pointer;font-family:'Inter',sans-serif;
+  }
+  .catbtn:hover{border-color:var(--amber)}
+  .catbtn b{display:block;font-size:14.5px;margin-bottom:3px}
+  .catbtn span{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted)}
+
+  /* results */
+  .score-big{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;line-height:1}
+  .score-big small{font-size:20px;color:var(--muted)}
+  .verdict{color:var(--amber);font-size:16px;margin:10px 0 22px}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:8px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+  td.num{font-family:'JetBrains Mono',monospace}
+  .bar{height:6px;border-radius:3px;background:var(--panel2);overflow:hidden;min-width:90px}
+  .bar i{display:block;height:100%;background:var(--green)}
+  .bar i.mid{background:var(--amber)}
+  .bar i.low{background:var(--red)}
+  .review-item{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:10px;background:var(--panel2);font-size:14px;line-height:1.55}
+  .review-item .rq{font-weight:600;margin-bottom:6px}
+  .review-item .ra{color:var(--red)}
+  .review-item .rc{color:var(--green)}
+  .review-item .re{color:var(--muted);margin-top:6px}
+  h2.sec{font-family:'Space Grotesk',sans-serif;font-size:18px;margin:26px 0 12px}
+  @media (max-width:520px){
+    .qtext{font-size:16px}
+    .card{padding:18px}
+    .pipe span{height:6px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .expl.show{animation:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <h1>DE&#8209;100</h1>
+    <span class="tag">DATA ENGINEERING MOCK TEST</span>
+  </div>
+  <p class="sub">Built for Deepesh &mdash; SQL, Python, Spark, Kafka, Airflow, Snowflake, Databricks, Azure, Warehousing &amp; Data Quality. Every answer explains itself, right or wrong.</p>
+
+  <!-- START SCREEN -->
+  <div id="start" class="card">
+    <div class="qtext">Choose your run</div>
+    <p style="color:var(--muted);font-size:14px;line-height:1.6">Take the full 100-question test to simulate an interview screen, or drill a single topic. You get instant feedback and an explanation after every click &mdash; no separate answer key needed.</p>
+    <div class="catgrid" id="catgrid"></div>
+    <button class="btn" id="startFull">Start full test (100 Q)</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz" class="hidden">
+    <div class="pipe" id="pipe"></div>
+    <div class="meter">
+      <span>Q <b id="mq">1</b> / <b id="mt">100</b></span>
+      <span style="color:var(--green)">&#10003; <b id="mok">0</b></span>
+      <span style="color:var(--red)">&#10007; <b id="mbad">0</b></span>
+      <span>Accuracy <b id="macc">&ndash;</b></span>
+    </div>
+    <div class="card">
+      <span class="qnum" id="qnum"></span>
+      <span class="chip" id="qcat"></span>
+      <div class="qtext" id="qtext"></div>
+      <div id="opts"></div>
+      <div class="expl" id="expl"></div>
+      <button class="btn hidden" id="nextBtn">Next question &rarr;</button>
+    </div>
+    <button class="btn ghost" id="quitBtn" style="margin-top:0">End test &amp; see results</button>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="result" class="hidden">
+    <div class="card">
+      <div class="score-big"><span id="finalScore">0</span><small> / <span id="finalTotal">100</span></small></div>
+      <div class="verdict" id="verdict"></div>
+      <h2 class="sec">Topic breakdown</h2>
+      <table id="breakdown"><thead><tr><th>Topic</th><th>Score</th><th>Strength</th></tr></thead><tbody></tbody></table>
+      <h2 class="sec" id="reviewHead">Review your misses</h2>
+      <div id="review"></div>
+      <button class="btn" id="retryBtn">Take it again</button>
+      <button class="btn ghost" id="retryWrong" style="margin-left:10px">Retry only my wrong answers</button>
+    </div>
+  </div>
+</div>
+<script>
+const QUESTIONS = [
+// ---------------- SQL (20) ----------------
+{c:"SQL",q:"What is the key difference between WHERE and HAVING?",o:["WHERE filters rows before grouping; HAVING filters groups after aggregation","HAVING is faster than WHERE","WHERE works only with JOINs","They are interchangeable"],a:0,e:"WHERE filters individual rows before GROUP BY runs, so aggregates like SUM() can't be used there. HAVING filters the grouped result, which is why conditions on COUNT(), SUM(), AVG() go in HAVING."},
+{c:"SQL",q:"Which join returns ALL rows from the left table and only matching rows from the right?",o:["INNER JOIN","LEFT JOIN","RIGHT JOIN","CROSS JOIN"],a:1,e:"LEFT JOIN keeps every left-table row; unmatched right-side columns come back as NULL. A classic interview follow-up: 'find customers with no orders' = LEFT JOIN + WHERE right_id IS NULL."},
+{c:"SQL",q:"Best way to delete duplicate rows while keeping one copy?",o:["DELETE with LIMIT 1","Use ROW_NUMBER() OVER (PARTITION BY dup_cols) and delete rows where rn > 1","TRUNCATE and reload","Use DISTINCT in a DELETE"],a:1,e:"ROW_NUMBER() PARTITION BY the duplicate-defining columns assigns 1 to the row you keep and 2+ to duplicates. Deleting rn > 1 removes only the extras. This exact pattern is asked constantly in DE interviews."},
+{c:"SQL",q:"UNION vs UNION ALL — which statement is true?",o:["UNION ALL removes duplicates","UNION removes duplicates and is slower; UNION ALL keeps everything and is faster","They behave identically","UNION ALL sorts the output"],a:1,e:"UNION performs a de-duplication step (often a sort or hash), which costs time. UNION ALL simply appends rows. In pipelines, prefer UNION ALL unless you genuinely need de-dup."},
+{c:"SQL",q:"How do you find the 2nd highest salary handling ties correctly?",o:["ORDER BY salary DESC LIMIT 2","Use DENSE_RANK() OVER (ORDER BY salary DESC) and pick rank = 2","MAX(salary) - 1","GROUP BY salary LIMIT 1,1"],a:1,e:"DENSE_RANK() gives tied salaries the same rank without gaps, so rank = 2 is genuinely the second-highest distinct salary. LIMIT-based answers break when the top salary is duplicated."},
+{c:"SQL",q:"What is the difference between COUNT(*) and COUNT(column)?",o:["No difference","COUNT(column) ignores NULLs in that column; COUNT(*) counts all rows","COUNT(*) ignores NULLs","COUNT(column) is always faster"],a:1,e:"COUNT(*) counts rows regardless of content. COUNT(col) skips rows where col IS NULL — a frequent source of reconciliation mismatches in validation queries."},
+{c:"SQL",q:"What is the main trade-off of adding an index to a table?",o:["It slows down reads","It speeds up reads but slows down INSERT/UPDATE/DELETE and uses extra storage","It removes duplicates automatically","It locks the table permanently"],a:1,e:"Every write must also maintain the index structure, so heavy-write tables pay a cost for each index. Index the columns you filter/join on most, not everything."},
+{c:"SQL",q:"RANK() vs DENSE_RANK() — after two rows tie at rank 1, the next row gets…",o:["Rank 2 in both","Rank 3 with RANK(), rank 2 with DENSE_RANK()","Rank 2 with RANK(), rank 3 with DENSE_RANK()","Rank 1 in both"],a:1,e:"RANK() leaves gaps after ties (1,1,3); DENSE_RANK() does not (1,1,2). Knowing which to use for 'Nth highest' questions is a standard screen."},
+{c:"SQL",q:"Why does WHERE col = NULL return no rows?",o:["NULL equals 0","NULL comparisons with = evaluate to UNKNOWN, not TRUE; use IS NULL","It is a syntax error","The optimizer skips it"],a:1,e:"In three-valued logic, NULL = NULL is UNKNOWN, and WHERE only keeps TRUE rows. Always use IS NULL / IS NOT NULL. This also explains the NOT IN + NULL trap."},
+{c:"SQL",q:"A query has GROUP BY dept. Which column can appear in SELECT without an aggregate?",o:["Any column","Only dept (the grouped column)","Only numeric columns","Only indexed columns"],a:1,e:"Non-aggregated SELECT columns must appear in GROUP BY, otherwise the engine can't decide which row's value to show per group. MySQL's loose mode historically allowed it, but it's non-deterministic."},
+{c:"SQL",q:"What defines a correlated subquery?",o:["It runs once for the whole query","It references columns from the outer query and logically runs per outer row","It must use GROUP BY","It cannot use EXISTS"],a:1,e:"Because it depends on each outer row, it can be expensive on large tables. Optimizers often rewrite them, but knowing to convert one into a JOIN or window function is a key optimization skill."},
+{c:"SQL",q:"Which window function returns the previous row's value within a partition?",o:["LEAD()","LAG()","FIRST_VALUE()","NTILE()"],a:1,e:"LAG(col, 1) looks one row back in the window order; LEAD() looks forward. Classic use: comparing a record's status with its previous status to detect failed transitions."},
+{c:"SQL",q:"Standard query to FIND duplicate values in a column?",o:["SELECT DISTINCT col","SELECT col, COUNT(*) FROM t GROUP BY col HAVING COUNT(*) > 1","SELECT col WHERE col = col","SELECT TOP 1 col"],a:1,e:"GROUP BY the column and keep groups with COUNT(*) > 1. This is the backbone of duplicate-detection data quality checks."},
+{c:"SQL",q:"DELETE vs TRUNCATE — which is true?",o:["TRUNCATE can use a WHERE clause","DELETE removes rows one by one and is logged per row; TRUNCATE deallocates pages, is faster, and can't filter","DELETE resets identity columns always","TRUNCATE is DML"],a:1,e:"TRUNCATE is a DDL-style operation that empties the whole table quickly with minimal logging. DELETE is row-by-row DML, supports WHERE, and can be rolled back granularly."},
+{c:"SQL",q:"Primary key vs unique key — the correct distinction is:",o:["Both allow NULLs","A table can have many primary keys","Primary key = unique + NOT NULL, one per table; unique keys can be multiple and (usually) allow a NULL","Unique keys must be numeric"],a:2,e:"The PK identifies each row and can't be NULL. Unique constraints enforce uniqueness on other columns and most databases allow NULL(s) in them."},
+{c:"SQL",q:"In ACID, 'Atomicity' means:",o:["Data is always encrypted","A transaction fully completes or fully rolls back — no partial writes","Queries run in parallel","Reads never block writes"],a:1,e:"All-or-nothing. If step 3 of 5 fails, steps 1-2 are rolled back. Consistency, Isolation, and Durability cover valid states, concurrent safety, and surviving crashes."},
+{c:"SQL",q:"Why can NOT IN (subquery) silently return zero rows?",o:["NOT IN is deprecated","If the subquery returns any NULL, every comparison becomes UNKNOWN and no row qualifies — use NOT EXISTS instead","The optimizer blocks it","Subqueries can't return NULL"],a:1,e:"col NOT IN (1, 2, NULL) expands to col<>1 AND col<>2 AND col<>NULL — the last is UNKNOWN, poisoning the whole predicate. NOT EXISTS handles NULLs safely."},
+{c:"SQL",q:"A self join is most naturally used to:",o:["Join a table to itself, e.g., matching employees to their managers in the same table","Speed up queries","Remove NULLs","Create indexes"],a:0,e:"Hierarchies (employee-manager), comparing rows within the same table (e.g., same user, consecutive events) — all classic self-join territory."},
+{c:"SQL",q:"For a composite index on (a, b, c), which WHERE clause can use it efficiently?",o:["WHERE b = 5","WHERE c = 9","WHERE a = 1 AND b = 5","WHERE b = 5 AND c = 9"],a:2,e:"Composite indexes follow the leftmost-prefix rule: the index helps for a, (a,b), (a,b,c) — but skipping the leading column (a) means the index generally can't be seeked."},
+{c:"SQL",q:"What is a CTE (WITH clause) mainly used for?",o:["Permanent storage","Naming a temporary result set to make complex queries readable, reusable in the query, and enabling recursion","Creating indexes","Replacing GROUP BY"],a:1,e:"CTEs break monster queries into readable steps and enable recursive queries (org charts, graph walks). They exist only for the duration of the statement."},
+// ---------------- Python (12) ----------------
+{c:"Python",q:"Main difference between a list and a tuple?",o:["Tuples are mutable","Lists are mutable; tuples are immutable (and hashable if their elements are)","Lists can't store mixed types","Tuples are always faster to search"],a:1,e:"Immutability lets tuples be dict keys and set members. It also signals 'fixed record' intent, e.g., (year, month, day)."},
+{c:"Python",q:"Average time complexity of a dict lookup d[key]?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:2,e:"Python dicts are hash tables, so lookup, insert, and delete are O(1) on average. That's why lookups against a dict beat scanning a list in ETL code."},
+{c:"Python",q:"Why use a generator instead of a list for processing a huge file?",o:["Generators are stored on disk","Generators produce items lazily one at a time, keeping memory flat regardless of file size","Generators sort automatically","Lists can't hold strings"],a:1,e:"yield/​generator expressions stream data instead of materializing it. Reading a 50 GB log file line-by-line with a generator uses megabytes, not gigabytes."},
+{c:"Python",q:"What does the GIL (Global Interpreter Lock) actually limit?",o:["Disk I/O speed","Only one thread executes Python bytecode at a time, so threads don't help CPU-bound work — use multiprocessing instead","Memory allocation","Network calls"],a:1,e:"Threads still shine for I/O-bound tasks (API calls, file reads) because the GIL is released during I/O waits. For CPU-heavy transforms, use multiprocessing or push work to libraries like NumPy/Spark."},
+{c:"Python",q:"What does 'with open(path) as f:' guarantee?",o:["The file is read fully into memory","The file handle is closed automatically, even if an exception occurs inside the block","The file is locked forever","Faster reads"],a:1,e:"The context manager's __exit__ runs on success or failure. Unclosed handles in long-running pipeline processes cause resource leaks — always use with."},
+{c:"Python",q:"What's wrong with def add(item, bucket=[])?",o:["Nothing","Syntax error","The default list is created once at function definition and shared across all calls, accumulating items unexpectedly","Lists can't be defaults"],a:2,e:"Mutable default arguments persist between calls — a classic bug. Use bucket=None and create the list inside the function."},
+{c:"Python",q:"What does [x*x for x in range(5) if x % 2 == 0] produce?",o:["[0, 4, 16]","[1, 9]","[0, 1, 4, 9, 16]","[4, 16]"],a:0,e:"Even values of 0-4 are 0, 2, 4; squared gives [0, 4, 16]. Comprehensions filter first (if), then transform (x*x)."},
+{c:"Python",q:"Shallow copy vs deep copy — the real difference?",o:["Shallow copy is slower","A shallow copy duplicates the outer container but shares nested objects; deep copy recursively duplicates everything","Deep copy shares references","They are identical for lists"],a:1,e:"After copy.copy(), mutating a nested list mutates it in both copies. copy.deepcopy() fully clones nested structures — important when transforming nested JSON records."},
+{c:"Python",q:"In def f(*args, **kwargs), what do args and kwargs receive?",o:["args = dict, kwargs = tuple","args = tuple of extra positional arguments, kwargs = dict of extra keyword arguments","Both are lists","They must be JSON"],a:1,e:"This is how flexible wrappers, decorators, and pass-through APIs are written. f(1, 2, x=3) gives args=(1,2), kwargs={'x':3}."},
+{c:"Python",q:"In try/except/finally, when does finally run?",o:["Only on success","Only on exception","Always — success, handled exception, or unhandled exception (before it propagates)","Never if return is used"],a:2,e:"finally is for guaranteed cleanup: closing connections, releasing locks, committing metrics. It even runs when the try block returns."},
+{c:"Python",q:"In pandas, the difference between dropna() and fillna()?",o:["Both remove rows","dropna() removes rows/columns containing NaN; fillna() replaces NaN with a chosen value or strategy","fillna() deletes columns","dropna() fills with 0"],a:1,e:"Which one you use is a data-quality decision: drop when the record is unusable, fill (0, mean, forward-fill) when a sensible default preserves the row."},
+{c:"Python",q:"Difference between 'is' and '==' ?",o:["No difference","'is' compares object identity (same object in memory); '==' compares values","'==' compares identity","'is' works only on ints"],a:1,e:"Two equal lists a == b can still be a is not b. The one 'is' you should write daily: x is None."},
+// ---------------- PySpark / Spark (15) ----------------
+{c:"PySpark",q:"Transformations vs actions in Spark — which is true?",o:["Transformations execute immediately","Transformations (select, filter, join) are lazy and build a plan; actions (count, collect, write) trigger execution","Actions are lazy","Both are lazy"],a:1,e:"Nothing runs until an action is called. Laziness lets Catalyst optimize the whole plan at once — and explains why an 'error' often only appears at the action step."},
+{c:"PySpark",q:"What distinguishes a wide transformation from a narrow one?",o:["Wide uses more columns","Wide transformations (groupBy, join, distinct) require a shuffle of data across partitions; narrow ones (map, filter) don't","Narrow transformations shuffle","Wide runs on the driver"],a:1,e:"Shuffles move data over the network and write to disk — the most expensive thing in a Spark job. Minimizing/optimizing shuffles is the heart of Spark tuning."},
+{c:"PySpark",q:"repartition(10) vs coalesce(10) when REDUCING partitions?",o:["Identical","coalesce avoids a full shuffle by merging existing partitions, so it's cheaper for reducing; repartition always does a full shuffle","repartition is always cheaper","coalesce increases partitions"],a:1,e:"Use coalesce to shrink partition count (e.g., before writing fewer output files). Use repartition when you need to increase partitions or rebalance skewed data evenly."},
+{c:"PySpark",q:"When should you cache()/persist() a DataFrame?",o:["Always","When the same computed DataFrame is reused across multiple actions, to avoid recomputing its lineage each time","Only for small tables","Before every join"],a:1,e:"Without caching, each action replays the full transformation chain. Cache when a DF feeds 2+ downstream actions — and unpersist when done to free executor memory."},
+{c:"PySpark",q:"What does the Catalyst optimizer do?",o:["Manages cluster nodes","Analyzes and rewrites DataFrame/SQL query plans (predicate pushdown, column pruning, join reordering) into an optimized physical plan","Compresses data","Schedules Airflow tasks"],a:1,e:"Catalyst is why DataFrames outperform hand-written RDD code: it applies rule-based and cost-based optimizations before execution. Check its output with df.explain()."},
+{c:"PySpark",q:"When is a broadcast join the right choice?",o:["When both tables are huge","When one table is small enough to fit in each executor's memory — it's copied to all executors, avoiding a shuffle of the big table","When data is sorted","Never in production"],a:1,e:"broadcast(small_df) removes the shuffle entirely for the large side. Spark auto-broadcasts under spark.sql.autoBroadcastJoinThreshold (default 10 MB), but you can hint it explicitly."},
+{c:"PySpark",q:"Main advantage of DataFrames over raw RDDs?",o:["RDDs are newer","DataFrames carry a schema and run through Catalyst + Tungsten, giving optimized execution; RDD logic is opaque to the optimizer","DataFrames can't be partitioned","RDDs support SQL"],a:1,e:"With RDDs, Spark just runs your lambdas blindly. With DataFrames, it understands the operations and optimizes them. Use RDDs only for truly low-level needs."},
+{c:"PySpark",q:"A join is slow because one key holds 80% of the rows. A standard fix is:",o:["Add more columns","Salting — append a random suffix to the hot key to spread it across partitions, and expand the other side to match","Use collect()","Disable shuffles"],a:1,e:"Data skew makes one task do most of the work while others idle. Salting, AQE skew-join handling (Spark 3+), or broadcasting the small side are the go-to remedies."},
+{c:"PySpark",q:"reduceByKey vs groupByKey on RDDs — why prefer reduceByKey?",o:["It sorts data","It combines values locally on each partition BEFORE shuffling, sending far less data over the network","groupByKey is deprecated","reduceByKey uses no memory"],a:1,e:"groupByKey ships every value across the network then aggregates; reduceByKey pre-aggregates map-side. Same idea as a combiner in MapReduce."},
+{c:"PySpark",q:"Role of the driver vs executors?",o:["Driver stores all data","The driver builds the plan, schedules tasks, and holds results of collect(); executors run tasks on data partitions","Executors schedule jobs","They are the same process"],a:1,e:"This is why collect() on a big DataFrame crashes the driver with OOM — all partitions are pulled into one JVM. Prefer write, show, or take."},
+{c:"PySpark",q:"Which of these is an ACTION?",o:["filter()","withColumn()","count()","select()"],a:2,e:"count() forces execution and returns a number to the driver. filter/select/withColumn just extend the lazy plan."},
+{c:"PySpark",q:"spark.sql.shuffle.partitions defaults to 200. Why does this matter?",o:["It sets executor count","Every shuffle produces that many partitions — too many tiny tasks for small data, too few huge tasks for big data; tune it (or use AQE) for job size","It limits file size","It's the max DataFrame count"],a:1,e:"A 1 GB aggregate with 200 partitions makes ~5 MB tasks (overhead-heavy); a 2 TB job with 200 makes 10 GB tasks (spill-heavy). Spark 3's Adaptive Query Execution can coalesce these automatically."},
+{c:"PySpark",q:"Why is Parquet preferred over CSV for analytics workloads?",o:["Parquet is human-readable","Columnar storage + compression + embedded schema enable column pruning and predicate pushdown, reading only needed data","CSV supports schemas natively","Parquet is row-based"],a:1,e:"Reading 3 columns of a 300-column table touches only those column chunks. Min/max statistics per row-group let engines skip data entirely — huge scan savings."},
+{c:"PySpark",q:"df.collect() on a 500 GB DataFrame most likely causes:",o:["Faster processing","Driver OutOfMemoryError — collect() pulls all rows into the driver process","Automatic sampling","Data loss on disk"],a:1,e:"collect() is for small results only. For large outputs use .write to storage, or .take(n)/.show() to inspect samples."},
+{c:"PySpark",q:"What does checkpointing do in a long lineage job?",o:["Saves the code","Materializes the DataFrame/RDD to reliable storage and truncates the lineage graph, preventing stack-deep recomputation and recovery cost","Speeds up collect()","Encrypts data"],a:1,e:"Iterative jobs (loops, ML) build enormous lineage chains. Checkpointing cuts the chain so failures don't recompute from the very beginning."},
+// ---------------- Kafka (10) ----------------
+{c:"Kafka",q:"Kafka guarantees message ordering…",o:["Across the whole topic","Only within a single partition","Only with one broker","Never"],a:1,e:"Order is per-partition. If per-entity ordering matters (e.g., all events of one device), produce with that entity's ID as the key so they land in the same partition."},
+{c:"Kafka",q:"In one consumer group, how are a topic's partitions assigned?",o:["Every consumer reads every partition","Each partition is consumed by exactly one consumer in the group; consumers can own multiple partitions","Partitions are randomly duplicated","The broker picks one consumer for everything"],a:1,e:"This is how Kafka scales consumption: partitions are split across the group's consumers. Different groups each get the full stream independently."},
+{c:"Kafka",q:"What is an offset?",o:["A message's size","A sequential ID marking a message's position within a partition; consumers commit offsets to track progress","The broker's port","Replication count"],a:1,e:"Committed offsets are how a consumer resumes after restart. Managing when you commit (before vs after processing) determines your delivery semantics."},
+{c:"Kafka",q:"With replication factor 3, writes for a partition go to:",o:["All three replicas simultaneously by the producer","The partition leader; followers replicate from it, and one follower becomes leader if it fails","A random replica","The consumer"],a:1,e:"Producers and consumers talk to the leader replica. acks=all makes the producer wait until in-sync replicas have the message — durability vs latency trade-off."},
+{c:"Kafka",q:"Consumer commits offsets AFTER processing each message. This gives:",o:["Exactly-once","At-least-once — a crash between processing and commit causes reprocessing (duplicates possible)","At-most-once","No delivery"],a:1,e:"Commit-after-process can replay messages, so downstream logic must be idempotent. Commit-before-process gives at-most-once (possible loss). True exactly-once needs Kafka transactions/idempotence."},
+{c:"Kafka",q:"How does Kafka decide the partition for a keyed message?",o:["Round robin always","hash(key) % number_of_partitions — same key always maps to the same partition","Smallest partition wins","Consumer decides"],a:1,e:"Key hashing gives per-key ordering and locality. Beware: adding partitions later changes the mapping for future messages."},
+{c:"Kafka",q:"After a consumer reads a message, Kafka…",o:["Deletes it immediately","Keeps it until the retention policy (time/size) expires — consumption doesn't delete data","Moves it to another topic","Archives it to the consumer"],a:1,e:"Kafka is a log, not a queue. Multiple groups can re-read the same data, and you can rewind offsets to reprocess — invaluable for pipeline replays and backfills."},
+{c:"Kafka",q:"'Consumer lag' means:",o:["Network latency","The gap between the latest offset in a partition and the consumer's committed offset — how far behind the consumer is","Broker downtime","Producer retries"],a:1,e:"Growing lag = consumers can't keep up (slow processing, too few consumers, skewed partitions). It's the number-one Kafka health metric to monitor."},
+{c:"Kafka",q:"What does the idempotent producer (enable.idempotence=true) prevent?",o:["Consumer crashes","Duplicate messages written by producer retries — the broker de-duplicates using producer ID + sequence numbers","Slow consumers","Topic deletion"],a:1,e:"Without it, a retry after an ack timeout can double-write a message. Idempotence makes retries safe within a partition and is the base for exactly-once semantics."},
+{c:"Kafka",q:"A topic has 4 partitions and its consumer group has 6 consumers. Result?",o:["All 6 share work equally","4 consumers get one partition each; 2 sit idle","Messages are duplicated to all 6","The topic auto-adds partitions"],a:1,e:"Max useful parallelism in a group = partition count. Extra consumers idle as hot standbys. Plan partition counts around target consumer parallelism."},
+// ---------------- Airflow (8) ----------------
+{c:"Airflow",q:"A DAG in Airflow is:",o:["A database table","A Directed Acyclic Graph of tasks — dependencies flow one way with no cycles","A retry policy","A type of sensor"],a:1,e:"No cycles means a task can't depend (directly or indirectly) on itself. The DAG file defines structure and schedule; operators define the work."},
+{c:"Airflow",q:"Relationship between an operator and a task?",o:["They are unrelated","An operator is a template class (e.g., PythonOperator); a task is an instantiated operator inside a DAG","Tasks contain many operators","Operators run only manually"],a:1,e:"Operator = blueprint, Task = concrete instance with an id and parameters, Task Instance = a specific run of that task for a given schedule interval."},
+{c:"Airflow",q:"XComs are best used for:",o:["Moving gigabytes of data between tasks","Passing small metadata (file paths, row counts, IDs) between tasks","Storing table backups","Replacing databases"],a:1,e:"XComs live in Airflow's metadata DB. Pass pointers (an S3/ADLS path), never datasets — big XComs bloat the DB and slow the scheduler."},
+{c:"Airflow",q:"A daily DAG run with data interval 2026-07-06 actually executes on:",o:["2026-07-05","2026-07-06 at 00:00","2026-07-07, after the interval it covers has ended","Random time"],a:2,e:"Airflow runs a schedule AFTER its data interval closes: the run 'for' July 6 fires once July 6 is complete. Misunderstanding this trips up almost every new Airflow user."},
+{c:"Airflow",q:"retries=3 with retry_delay=timedelta(minutes=5) means:",o:["The DAG restarts 3 times","A failed task is re-attempted up to 3 times, waiting 5 minutes between attempts, before being marked failed","The task runs 3x in parallel","The scheduler restarts"],a:1,e:"Retries absorb transient failures (network blips, brief DB locks). Combine with exponential backoff and alerting on final failure for resilient pipelines."},
+{c:"Airflow",q:"What is a Sensor?",o:["A monitoring dashboard","A special operator that waits for a condition (file lands, partition exists, external task done) before letting downstream tasks run","A retry mechanism","A log parser"],a:1,e:"Sensors gate pipelines on external readiness. Use mode='reschedule' (or deferrable sensors) so they release their worker slot while waiting."},
+{c:"Airflow",q:"'airflow dags backfill -s 2026-01-01 -e 2026-01-31' is used to:",o:["Delete old runs","Run the DAG for past data intervals it missed or needs to reprocess","Pause the DAG","Skip failed tasks"],a:1,e:"Backfilling replays historical intervals — essential after fixing a bug or onboarding history. It's also why tasks must be idempotent and interval-parameterized."},
+{c:"Airflow",q:"Why must pipeline tasks be idempotent?",o:["To run faster","So retries and backfills can safely re-run a task without duplicating or corrupting data","Airflow requires it to parse the DAG","To reduce logging"],a:1,e:"Re-runs are a fact of life (retries, backfills, manual clears). Patterns like DELETE+INSERT for the interval, MERGE/upsert, or overwrite-partition make re-runs safe."},
+// ---------------- Snowflake (8) ----------------
+{c:"Snowflake",q:"Snowflake's core architectural idea is:",o:["Storage and compute on the same nodes","Separation of storage and compute — data lives in cloud storage; independent virtual warehouses provide compute","Single shared server","On-prem only"],a:1,e:"You can scale compute up/down or pause it without touching data, and multiple warehouses can query the same data concurrently without contention."},
+{c:"Snowflake",q:"A virtual warehouse in Snowflake is:",o:["A physical data center","A cluster of compute resources used to run queries — it can be resized, suspended, and resumed independently","A schema","A backup service"],a:1,e:"Warehouses bill per-second while running. Auto-suspend + auto-resume is the standard cost control: pay only while queries execute."},
+{c:"Snowflake",q:"Time Travel lets you:",o:["Schedule future queries","Query, clone, or restore data as it existed at a past point (up to the retention period, default 1 day, up to 90 on Enterprise)","Speed up queries","Encrypt history"],a:1,e:"SELECT ... AT (TIMESTAMP => ...) or UNDROP TABLE are lifesavers after a bad DELETE or accidental drop — no restore-from-backup drama."},
+{c:"Snowflake",q:"Micro-partitions in Snowflake are:",o:["User-defined partitions","Automatic 50-500 MB (uncompressed) columnar storage units with min/max metadata that enables partition pruning","Kafka partitions","Manual indexes"],a:1,e:"Snowflake prunes micro-partitions whose metadata can't match your filter. Clustering keys re-organize data so pruning works better on huge tables."},
+{c:"Snowflake",q:"Zero-copy cloning means:",o:["Copying data twice","Creating an instant clone of a table/schema/database that shares underlying storage — only changed data consumes new space","Free data export","RAM-only tables"],a:1,e:"CLONE gives instant dev/test environments of production data at near-zero cost — the clone diverges via copy-on-write as changes happen."},
+{c:"Snowflake",q:"Standard command to bulk-load files from a stage into a table?",o:["INSERT INTO ... VALUES","COPY INTO table FROM @stage","UPLOAD TABLE","LOAD DATA LOCAL"],a:1,e:"COPY INTO reads staged files (S3/Azure/GCS or internal stages) in parallel with format options and load-history de-duplication. Snowpipe automates it for continuous loading."},
+{c:"Snowflake",q:"To fix SLOW individual queries vs HIGH concurrency queuing, you should respectively:",o:["Scale out for both","Scale UP (bigger warehouse) for slow queries; scale OUT (multi-cluster warehouse) for many concurrent users","Scale up for both","Restart the account"],a:1,e:"A larger size gives one query more horsepower; multi-cluster spins up parallel clusters to absorb concurrent load. Choosing the wrong axis wastes money."},
+{c:"Snowflake",q:"Snowflake's result cache returns instantly when:",o:["Any similar query runs","The exact same query text re-runs within 24h and the underlying data hasn't changed — no warehouse even needed","The warehouse is XL","Time Travel is enabled"],a:1,e:"Result cache is account-wide and free. Warehouse (local disk) cache and metadata cache are the other two layers — knowing all three is a common interview question."},
+// ---------------- Databricks / Delta Lake (7) ----------------
+{c:"Databricks",q:"Delta Lake fundamentally adds what to a data lake?",o:["Cheaper storage","ACID transactions, schema enforcement, and time travel on top of Parquet files","A new file format replacing Parquet","GPU support"],a:1,e:"Plain Parquet lakes suffer partial writes and no isolation. Delta's transaction log makes concurrent reads/writes safe and reliable — the basis of the lakehouse."},
+{c:"Databricks",q:"Where does a Delta table record its transactions?",o:["In MySQL","In the _delta_log directory — ordered JSON commit files (plus checkpoints) describing every add/remove of data files","In the driver's memory","In Kafka"],a:1,e:"Readers reconstruct the current table state from the log, which is what enables snapshot isolation, time travel, and auditability."},
+{c:"Databricks",q:"The standard Delta command for upserts (insert new, update existing) is:",o:["INSERT OVERWRITE","MERGE INTO target USING source ON keys WHEN MATCHED UPDATE WHEN NOT MATCHED INSERT","UNION ALL","COPY INTO"],a:1,e:"MERGE is the workhorse for CDC and SCD pipelines — one atomic statement handles updates, inserts, and even deletes (WHEN MATCHED ... DELETE)."},
+{c:"Databricks",q:"How do you query a Delta table as it was 10 versions ago?",o:["Impossible","SELECT * FROM t VERSION AS OF (current-10) — or TIMESTAMP AS OF a past time","Restore from tape","Re-run the pipeline"],a:1,e:"Time travel supports debugging ('what did the data look like before that bad load?'), audits, and rollbacks via RESTORE. VACUUM eventually removes old files, limiting how far back you can go."},
+{c:"Databricks",q:"OPTIMIZE ... ZORDER BY (col) is used to:",o:["Encrypt the table","Compact small files and co-locate related values of high-cardinality filter columns for better data skipping","Sort query results","Create an index table"],a:1,e:"Streaming/frequent writes create thousands of small files (slow to open). OPTIMIZE compacts them; Z-ORDER clusters data so file-level min/max stats skip more files on selective filters."},
+{c:"Databricks",q:"In the medallion architecture, Bronze / Silver / Gold mean:",o:["Pricing tiers","Raw ingested data / cleaned, validated, conformed data / business-level aggregates ready for consumption","Cluster sizes","User roles"],a:1,e:"Each layer raises data quality and lowers granularity. Keeping raw Bronze means you can always rebuild downstream layers when logic changes."},
+{c:"Databricks",q:"Databricks Auto Loader is designed to:",o:["Auto-scale clusters","Incrementally and efficiently ingest new files landing in cloud storage using cloudFiles, tracking what's already processed","Load ML models","Schedule notebooks"],a:1,e:"Instead of expensive full-directory listings each run, Auto Loader discovers only new files (with schema inference/evolution) — exactly-once file ingestion at scale."},
+// ---------------- Azure (8) ----------------
+{c:"Azure",q:"What distinguishes ADLS Gen2 from plain Azure Blob Storage?",o:["Lower durability","A hierarchical namespace — real directories with atomic renames and POSIX-style ACLs, optimized for analytics engines","It only stores images","It requires VMs"],a:1,e:"Analytics frameworks (Spark, ADF) rely on directory semantics; renaming a folder in Gen2 is one metadata operation instead of copying every blob."},
+{c:"Azure",q:"In Azure Data Factory, the relationship between pipelines and activities is:",o:["Same thing","A pipeline is a logical grouping/orchestration of activities; each activity is a single step (copy, notebook, stored procedure, etc.)","Activities contain pipelines","Pipelines store data"],a:1,e:"Pipelines add control flow — dependencies, branching, loops, parameters — around individual activity steps."},
+{c:"Azure",q:"A linked service in ADF is:",o:["A copy of your data","A connection definition (credentials + endpoint) to an external system, like a connection string object","A trigger type","A monitoring alert"],a:1,e:"Linked services define WHERE/HOW to connect; datasets define WHAT data (table, folder, file) within that connection; activities define WHAT TO DO with it."},
+{c:"Azure",q:"When do you need a self-hosted integration runtime?",o:["For all pipelines","When ADF must reach data in a private network — on-premises databases or VNet-isolated sources the Azure IR can't access","Only for big data","For monitoring"],a:1,e:"The self-hosted IR is an agent installed inside the private network that brokers secure connectivity. Azure IR handles cloud-to-cloud movement."},
+{c:"Azure",q:"The Copy activity in ADF primarily:",o:["Transforms data with Spark","Moves data between a source and sink data store with format conversion, staging, and parallelism options","Trains ML models","Manages users"],a:1,e:"Copy is the EL of ELT: land data into ADLS/Synapse/Snowflake first, transform afterwards (Databricks notebook, data flow, or SQL)."},
+{c:"Azure",q:"Which ADF trigger fires when a file lands in storage?",o:["Schedule trigger","Tumbling window trigger","Storage event trigger (via Event Grid)","Manual trigger"],a:2,e:"Event triggers give near-real-time, arrival-driven pipelines. Schedule = clock-based; tumbling window = contiguous, retryable intervals ideal for backfills and window-based dependencies."},
+{c:"Azure",q:"ADF Mapping Data Flows execute on:",o:["The ADF control plane","Managed Spark clusters spun up by ADF — visual transformations compile to Spark code","Your local machine","Azure Functions"],a:1,e:"That's why data flows have cluster warm-up time and a compute cost profile similar to Databricks — and why heavy custom logic often goes straight to Databricks notebooks instead."},
+{c:"Azure",q:"Parameterizing linked services/datasets/pipelines in ADF lets you:",o:["Encrypt data","Reuse one pipeline for many tables/environments by passing values (table name, path, connection) at runtime — often metadata-driven","Skip validation","Avoid triggers"],a:1,e:"The metadata-driven pattern (a control table listing sources; ForEach + parameterized copy) is how real ADF projects ingest hundreds of tables without hundreds of pipelines."},
+// ---------------- Data Warehousing (8) ----------------
+{c:"Warehousing",q:"A star schema consists of:",o:["Only fact tables","A central fact table joined to denormalized dimension tables","Fully normalized 3NF tables","Nested JSON documents"],a:1,e:"Facts hold measures + foreign keys; dimensions hold descriptive attributes. Fewer joins and simple structure make it the default for BI and analytics."},
+{c:"Warehousing",q:"Fact table vs dimension table:",o:["Facts store descriptions; dimensions store numbers","Facts store measurable events/metrics (sales amount, qty) with FK references; dimensions store descriptive context (customer, product, date)","Both store metrics","Dimensions are always bigger"],a:1,e:"Facts are typically tall and narrow (billions of rows); dimensions are wide and comparatively small. 'What would you measure vs. filter/group by' is the quick test."},
+{c:"Warehousing",q:"SCD Type 2 handles a customer's address change by:",o:["Overwriting the address","Inserting a NEW row with the new address, expiring the old row (effective dates / is_current flag) so history is preserved","Deleting the customer","Ignoring it"],a:1,e:"Type 2 preserves point-in-time truth — facts join to the version that was current when the event happened. Type 1 overwrites (no history); Type 3 keeps one previous value in a column."},
+{c:"Warehousing",q:"Why use surrogate keys instead of natural/business keys in dimensions?",o:["They are shorter to type","System-generated integers are stable when business keys change, enable SCD2 multiple-versions-per-entity, and make joins efficient","Natural keys are illegal","They encrypt data"],a:1,e:"With SCD2, the same customer_id has many rows — only a surrogate key can uniquely identify each version. Surrogates also insulate the warehouse from source-system key changes."},
+{c:"Warehousing",q:"A snowflake schema differs from a star schema by:",o:["Having no fact table","Normalizing dimensions into multiple related tables (product → category → department), reducing redundancy but adding joins","Using only one table","Being for streaming only"],a:1,e:"Snowflaking saves some storage and enforces consistency but complicates queries. Most modern warehouses favor the simpler star since storage is cheap."},
+{c:"Warehousing",q:"The 'grain' of a fact table is:",o:["Its file format","Exactly what one row represents (e.g., one order line per day per store) — declared BEFORE designing measures and dimensions","Its row count","The index type"],a:1,e:"Mixing grains in one fact table is the classic modeling error that makes aggregates double-count. Kimball's rule: declare the grain first."},
+{c:"Warehousing",q:"OLTP vs OLAP — the correct contrast is:",o:["OLTP is for analytics","OLTP handles many small, fast transactional reads/writes (normalized); OLAP handles large analytical scans and aggregations (denormalized/columnar)","OLAP requires MySQL","They are identical"],a:1,e:"You don't run BI dashboards on the orders OLTP database — you replicate into a warehouse designed for scans. Row-store vs column-store follows the same split."},
+{c:"Warehousing",q:"The modern shift from ETL to ELT means:",o:["No transformations happen","Raw data is loaded into the warehouse/lake first, then transformed IN the platform (SQL/dbt/Spark) using its cheap, scalable compute","Extraction is skipped","Transformations run on the source OLTP system"],a:1,e:"Cloud warehouses made in-platform transformation cheap, keeping raw data available for reprocessing and letting transformation logic live in versioned SQL."},
+// ---------------- Data Quality / ETL Concepts (4) ----------------
+{c:"Data Quality",q:"Reconciliation between a source and target after a load means:",o:["Encrypting both sides","Comparing counts, sums/hash totals, and key-level records between source and target to prove the load is complete and correct","Deleting the source","Re-running the job blindly"],a:1,e:"Row counts catch missing/extra data; column checksums catch corruption; key-level diffs pinpoint exactly which records mismatch. Your Jio validation work is exactly this discipline."},
+{c:"Data Quality",q:"An idempotent pipeline run is one that:",o:["Runs only once ever","Produces the same final state whether it runs once or is re-run for the same input/interval — no duplicates or double-counting","Never fails","Requires manual cleanup"],a:1,e:"Achieved via overwrite-by-partition, MERGE on keys, or delete+insert for the interval. It's what makes retries and backfills safe."},
+{c:"Data Quality",q:"Which set of checks belongs in a standard data validation layer?",o:["Only row counts","Schema conformity, null checks on required fields, duplicate detection on keys, referential integrity, value-range/format rules, and freshness","Only encryption checks","Font and color checks"],a:1,e:"Layered checks catch different failure modes: schema drift, incomplete extracts, upstream bugs, stale feeds. Fail fast and quarantine bad records rather than letting them poison downstream tables."},
+{c:"Data Quality",q:"Records that fail validation in a streaming pipeline are best sent to:",o:["Deleted silently","A dead-letter queue/quarantine table with the error reason, so the main flow continues and bad records can be inspected and replayed","The same topic again instantly","Production dashboards"],a:1,e:"DLQs prevent one poison message from blocking the pipeline while preserving evidence for root-cause analysis — and enable reprocessing after a fix."}
+];
+
+// ---------------- App logic ----------------
+let pool = [];        // current question set
+let idx = 0;
+let answered = [];    // {pick, correct}
+let okCount = 0, badCount = 0;
+
+const $ = id => document.getElementById(id);
+
+function categories(){
+  const m = {};
+  QUESTIONS.forEach(q => m[q.c] = (m[q.c]||0)+1);
+  return m;
+}
+
+function buildStart(){
+  const grid = $("catgrid");
+  grid.innerHTML = "";
+  const cats = categories();
+  Object.keys(cats).forEach(c => {
+    const b = document.createElement("button");
+    b.className = "catbtn";
+    b.innerHTML = "<b>"+c+"</b><span>"+cats[c]+" questions &middot; practice this topic</span>";
+    b.onclick = () => startQuiz(QUESTIONS.filter(q => q.c === c));
+    grid.appendChild(b);
+  });
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length-1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(qs){
+  pool = qs.slice();
+  idx = 0; okCount = 0; badCount = 0;
+  answered = new Array(pool.length).fill(null);
+  $("start").classList.add("hidden");
+  $("result").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  buildPipe();
+  render();
+  window.scrollTo({top:0});
+}
+
+function buildPipe(){
+  const pipe = $("pipe");
+  pipe.innerHTML = "";
+  pool.forEach(() => pipe.appendChild(document.createElement("span")));
+}
+
+function updatePipe(){
+  const spans = $("pipe").children;
+  for(let i = 0; i < pool.length; i++){
+    spans[i].className = "";
+    if(answered[i]) spans[i].className = answered[i].correct ? "ok" : "bad";
+    else if(i === idx) spans[i].className = "cur";
+  }
+}
+
+function updateMeter(){
+  $("mq").textContent = idx+1;
+  $("mt").textContent = pool.length;
+  $("mok").textContent = okCount;
+  $("mbad").textContent = badCount;
+  const done = okCount + badCount;
+  $("macc").textContent = done ? Math.round(okCount/done*100)+"%" : "\u2013";
+}
+
+function render(){
+  const q = pool[idx];
+  $("qcat").textContent = q.c.toUpperCase();
+  $("qnum").textContent = "Q" + String(idx+1).padStart(2,"0");
+  $("qtext").textContent = q.q;
+  const opts = $("opts");
+  opts.innerHTML = "";
+  const letters = ["A","B","C","D"];
+  q.o.forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = "<span class='k'>"+letters[i]+"</span>" + opt;
+    b.onclick = () => pick(i, b);
+    opts.appendChild(b);
+  });
+  $("expl").className = "expl";
+  $("expl").innerHTML = "";
+  $("nextBtn").classList.add("hidden");
+  updatePipe();
+  updateMeter();
+}
+
+function pick(i, btn){
+  if(answered[idx]) return;
+  const q = pool[idx];
+  const correct = (i === q.a);
+  answered[idx] = {pick:i, correct:correct};
+  correct ? okCount++ : badCount++;
+
+  const buttons = $("opts").children;
+  for(let j = 0; j < buttons.length; j++){
+    buttons[j].disabled = true;
+    if(j === q.a) buttons[j].classList.add("correct");
+  }
+  if(!correct) btn.classList.add("wrong");
+
+  const ex = $("expl");
+  ex.innerHTML = "<b class='v' style='color:" + (correct ? "var(--green)'>&#10003; CORRECT" : "var(--red)'>&#10007; NOT QUITE") + "</b>" + q.e;
+  ex.classList.add("show");
+
+  $("nextBtn").textContent = (idx === pool.length-1) ? "See my results \u2192" : "Next question \u2192";
+  $("nextBtn").classList.remove("hidden");
+  updatePipe();
+  updateMeter();
+}
+
+$("nextBtn").onclick = () => {
+  if(idx === pool.length-1){ finish(); return; }
+  idx++;
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+};
+
+$("quitBtn").onclick = finish;
+$("startFull").onclick = () => startQuiz(shuffle(QUESTIONS));
+$("retryBtn").onclick = () => { $("result").classList.add("hidden"); $("start").classList.remove("hidden"); buildStart(); };
+
+function verdictFor(pct){
+  if(pct >= 90) return "Interview-ready. This is top-1% territory \u2014 go apply to those dream companies.";
+  if(pct >= 75) return "Strong. Patch the topics below and you are ready for Data Engineer screens.";
+  if(pct >= 60) return "Solid base. Focus your week on the weakest two topics before interviews.";
+  if(pct >= 40) return "Getting there. Re-take the weak topics as individual drills until they hit 80%+.";
+  return "Good start \u2014 every explanation you just read is a mini-lesson. Drill topic by topic and re-test.";
+}
+
+function finish(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
+
+  const attempted = answered.filter(a => a).length;
+  $("finalScore").textContent = okCount;
+  $("finalTotal").textContent = attempted || pool.length;
+  const pct = attempted ? Math.round(okCount/attempted*100) : 0;
+  $("verdict").textContent = pct + "% accuracy \u2014 " + verdictFor(pct);
+
+  // breakdown
+  const stats = {};
+  pool.forEach((q, i) => {
+    if(!answered[i]) return;
+    stats[q.c] = stats[q.c] || {ok:0, total:0};
+    stats[q.c].total++;
+    if(answered[i].correct) stats[q.c].ok++;
+  });
+  const tbody = $("breakdown").querySelector("tbody");
+  tbody.innerHTML = "";
+  Object.keys(stats).sort((a,b) => (stats[a].ok/stats[a].total) - (stats[b].ok/stats[b].total)).forEach(c => {
+    const s = stats[c];
+    const p = Math.round(s.ok/s.total*100);
+    const cls = p >= 75 ? "" : (p >= 50 ? "mid" : "low");
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td>"+c+"</td><td class='num'>"+s.ok+"/"+s.total+"</td><td><div class='bar'><i class='"+cls+"' style='width:"+p+"%'></i></div></td>";
+    tbody.appendChild(tr);
+  });
+
+  // review misses
+  const rev = $("review");
+  rev.innerHTML = "";
+  let missed = [];
+  pool.forEach((q, i) => {
+    if(answered[i] && !answered[i].correct){
+      missed.push(q);
+      const d = document.createElement("div");
+      d.className = "review-item";
+      d.innerHTML = "<div class='rq'>["+q.c+"] "+q.q+"</div>"
+        + "<div class='ra'>Your answer: "+q.o[answered[i].pick]+"</div>"
+        + "<div class='rc'>Correct: "+q.o[q.a]+"</div>"
+        + "<div class='re'>"+q.e+"</div>";
+      rev.appendChild(d);
+    }
+  });
+  if(!missed.length){
+    $("reviewHead").textContent = "No misses \u2014 perfect run \uD83C\uDFAF";
+    $("retryWrong").classList.add("hidden");
+  } else {
+    $("reviewHead").textContent = "Review your misses ("+missed.length+")";
+    $("retryWrong").classList.remove("hidden");
+    $("retryWrong").onclick = () => startQuiz(missed);
+  }
+  window.scrollTo({top:0});
+}
+
+buildStart();
+</script>
+</body>
+</html>
