@@ -17,4 +17,5 @@
    public in your repo, so a weak/common passcode could be
    guessed offline.
    ============================================================ */
-window.PRESET_LOCK_HASH = "";
+window.PRESET_LOCK_HASH = "18e6065f7c955b50f78eb2e3193615b9e707acdbb65857e50ba237c273ba7ff5";
+
