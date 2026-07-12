@@ -113,14 +113,25 @@ locally.
 
 ## Passcode lock (optional)
 
-**Data & Settings → Passcode lock** adds a passcode screen shown whenever the site is opened, and
-re-asks each new session. Set it per device; it's stored only as a one-way hash on that device
-(never the passcode itself, never in the code) and is deliberately left out of the JSON backup.
+A passcode screen shown when the site opens, re-asked each new session. Two modes:
+
+**Site-wide (one passcode for every device):**
+1. Open `set-passcode.html` — via your live site URL (`…/set-passcode.html`) or a local server, **not**
+   a plain `file://` open (it needs a secure context to hash).
+2. Type your passcode → **Generate hash** → copy the printed `window.PRESET_LOCK_HASH = "…";` line.
+3. Paste it into `lock-config.js` (replacing the last line), then `git commit` + `git push`.
+4. Now every device is asked for that passcode on first open. To change it, repeat; to remove it, set
+   the hash back to `""`. Your actual passcode is never stored — only the one-way hash.
+
+**Per-device (this browser only):** if no site-wide hash is set, **Data & Settings → Passcode lock**
+lets you set a passcode that locks just this browser (stored only as a hash here, and kept out of the
+JSON backup).
 
 It is a **light privacy curtain, not strong security**: because this is a public static site, the
-code is visible and your data remains readable in browser devtools by anyone holding an unlocked
-device. It keeps casual visitors and over-the-shoulder snoopers out — nothing more. For genuine
-protection you'd put the site behind an edge login gate (e.g. Cloudflare Access, free).
+code is visible and your data stays readable in browser devtools by anyone holding an unlocked device.
+It keeps casual visitors and over-the-shoulder snoopers out — nothing more. Pick a strong, non-obvious
+passcode (the hash is public in the repo, so a weak one could be guessed offline). For genuine
+protection, put the site behind an edge login gate (e.g. Cloudflare Access, free).
 
 ## Privacy & safety
 

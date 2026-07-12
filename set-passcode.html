@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set site-wide passcode — Career Dashboard</title>
+<style>
+  :root{--bg:#0e131a;--surface:#161d27;--surface2:#1c2530;--border:#2a3542;--text:#e4eaf1;--dim:#9aa7b6;--accent:#e0a437;--accent2:#f4c15b;--ink:#1a1204;--red:#e5484d;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;padding:28px 16px 80px;}
+  main{max-width:620px;margin:0 auto;}
+  h1{font-size:22px;margin:0 0 6px;}
+  p{color:var(--dim);font-size:14px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:18px 0;}
+  label{display:block;font-size:12px;color:var(--dim);margin-bottom:6px;}
+  input{width:100%;font-size:15px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-family:var(--sans);}
+  button{cursor:pointer;border:none;border-radius:9px;padding:10px 16px;font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--ink);margin-top:12px;}
+  pre{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:13px;color:var(--accent2);white-space:pre-wrap;word-break:break-all;min-height:20px;margin:14px 0 0;}
+  .warn{color:var(--red);font-size:13px;}
+  .steps{font-size:14px;color:var(--dim);}
+  .steps code{font-family:var(--mono);background:var(--surface2);padding:1px 5px;border-radius:4px;color:var(--text);}
+  a{color:var(--accent);}
+</style>
+</head>
+<body>
+<main>
+  <h1>🔒 Set the site-wide passcode</h1>
+  <p>Generate the one-way hash for your dashboard's passcode. Your passcode itself is never saved, sent, or shown anywhere — only the hash is produced, here in your own browser.</p>
+
+  <div class="card">
+    <label for="pw">Choose a passcode (min 4 characters)</label>
+    <input id="pw" type="password" placeholder="e.g. a phrase only you know" autocomplete="new-password">
+    <button id="go">Generate hash</button>
+    <pre id="out">The line to paste will appear here.</pre>
+    <p class="warn" id="warn" style="display:none">Pick something strong and non-obvious — the hash is public in your repo, so a weak or common passcode could be guessed offline.</p>
+  </div>
+
+  <div class="card steps">
+    <b>Then:</b>
+    <ol>
+      <li>Copy the whole <code>window.PRESET_LOCK_HASH = "…";</code> line above.</li>
+      <li>Open <code>lock-config.js</code> and replace its last line with it.</li>
+      <li><code>git add lock-config.js &amp;&amp; git commit -m "set passcode" &amp;&amp; git push</code></li>
+    </ol>
+    Now every device is asked for this passcode when it opens the site. To change it later, repeat; to remove it, set the hash back to <code>""</code>.
+    <p style="margin-top:12px"><a href="index.html">← Back to dashboard</a></p>
+  </div>
+</main>
+<script>
+  // Must match app.js exactly so the generated hash verifies.
+  var LOCK_SALT = 'ccdash:v1:';
+  async function sha256Hex(str){
+    if (window.crypto && crypto.subtle) {
+      var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.prototype.map.call(new Uint8Array(buf), function(b){return b.toString(16).padStart(2,'0');}).join('');
+    }
+    var h = 5381;
+    for (var i=0;i<str.length;i++){ h = ((h<<5)+h)+str.charCodeAt(i); h|=0; }
+    return 'f' + (h>>>0).toString(16);
+  }
+  document.getElementById('go').addEventListener('click', async function(){
+    var pw = document.getElementById('pw').value;
+    var out = document.getElementById('out');
+    if (pw.length < 4) { out.textContent = 'Use at least 4 characters.'; return; }
+    var h = await sha256Hex(LOCK_SALT + pw);
+    out.textContent = 'window.PRESET_LOCK_HASH = "' + h + '";';
+    document.getElementById('warn').style.display = 'block';
+  });
+</script>
+</body>
+</html>

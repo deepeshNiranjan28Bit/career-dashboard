@@ -302,11 +302,14 @@ function toggleTheme() {
 }
 
 /* ============================ Passcode lock ============================= */
-/* A light privacy curtain for a PUBLIC static site. It stores only a one-way
-   hash of the passcode on this device (never the passcode, never in the repo)
-   and re-asks each new browser session. It is NOT strong security: the code is
-   public and local data remains readable via devtools. It just keeps casual
-   eyes out. Real protection would need an edge login gate (Cloudflare Access). */
+/* A light privacy curtain for a PUBLIC static site. Two modes:
+   1. SITE-WIDE (baked in): if lock-config.js sets window.PRESET_LOCK_HASH, EVERY
+      device is prompted for that one passcode on each new session. Only a one-way
+      hash lives in the code — never the passcode itself.
+   2. PER-DEVICE (optional): if no preset, a passcode set in Data & Settings locks
+      only this browser.
+   It is NOT strong security: the code is public and local data stays readable in
+   devtools. Real protection needs an edge login gate (e.g. Cloudflare Access). */
 
 const LOCK_KEY = 'dashboard_lock';            // { enabled, hash } — device-local, NOT exported
 const UNLOCK_SESSION_KEY = 'dashboard_unlocked';
@@ -322,10 +325,19 @@ async function sha256Hex(str) {
   for (let i = 0; i < str.length; i++) { h = ((h << 5) + h) + str.charCodeAt(i); h |= 0; }
   return 'f' + (h >>> 0).toString(16);
 }
+// Site-wide preset hash from lock-config.js (empty string when not configured).
+function presetHash() {
+  return (typeof window !== 'undefined' && window.PRESET_LOCK_HASH) ? String(window.PRESET_LOCK_HASH).trim() : '';
+}
+// Helper for set-passcode.html / console: fingerprint a passcode the same way we verify it.
+window.makeLockHash = function (pw) { return sha256Hex(LOCK_SALT + pw); };
+
 function getLock() { return Store.get(LOCK_KEY, { enabled: false, hash: '' }); }
 function isLocked() {
+  if (sessionStorage.getItem(UNLOCK_SESSION_KEY) === '1') return false;
+  if (presetHash()) return true;                     // site-wide lock wins
   const l = getLock();
-  return !!(l.enabled && l.hash) && sessionStorage.getItem(UNLOCK_SESSION_KEY) !== '1';
+  return !!(l.enabled && l.hash);                    // per-device lock
 }
 async function setLockPasscode(pw) {
   const hash = await sha256Hex(LOCK_SALT + pw);
@@ -336,8 +348,11 @@ function removeLock() {
   sessionStorage.removeItem(UNLOCK_SESSION_KEY);
 }
 async function verifyPasscode(pw) {
+  const h = await sha256Hex(LOCK_SALT + pw);
+  const preset = presetHash();
+  if (preset) return h === preset;                   // site-wide passcode
   const l = getLock();
-  return !!l.hash && (await sha256Hex(LOCK_SALT + pw)) === l.hash;
+  return !!l.hash && h === l.hash;                    // per-device passcode
 }
 function showLockScreen(onUnlock) {
   const ov = document.createElement('div');
@@ -1797,14 +1812,22 @@ function viewSettings() {
 
   // Passcode lock
   const lock = getLock();
-  html += '<div class="card"><h2>&#128274; Passcode lock</h2>' +
-    '<div class="faint" style="margin-bottom:10px">Shows a passcode screen when the site opens, and re-asks each time it’s reopened. This is a light privacy curtain on a public site — it keeps casual visitors out, but is not strong security, and your data stays readable in browser devtools. The passcode is stored only as a one-way hash on this device.</div>' +
-    (lock.enabled
-      ? '<div class="row"><span class="chip green">Lock is ON</span></div>' +
-        '<div class="row" style="margin-top:10px"><input id="lock-new" type="password" placeholder="New passcode (min 4 chars)" style="flex:1"><button class="btn" id="lock-change">Change</button></div>' +
-        '<div class="row" style="margin-top:10px"><button class="btn" id="lock-now">Lock now</button><button class="btn danger" id="lock-remove">Remove lock</button></div>'
-      : '<div class="row"><input id="lock-pw" type="password" placeholder="Set a passcode (min 4)" style="flex:1"><input id="lock-pw2" type="password" placeholder="Confirm" style="flex:1"><button class="btn primary" id="lock-set">Enable lock</button></div>'
-    ) + '</div>';
+  const preset = presetHash();
+  html += '<div class="card"><h2>&#128274; Passcode lock</h2>';
+  if (preset) {
+    html += '<div class="faint" style="margin-bottom:10px">A <b>site-wide passcode</b> is enforced from <span class="mono">lock-config.js</span> — every device is asked for it when the site opens. Only a one-way hash is in the code, never your passcode. This is a privacy curtain, not strong security (the code is public and data stays readable in devtools).</div>' +
+      '<div class="row"><span class="chip green">Site-wide lock is ON</span></div>' +
+      '<div class="faint" style="margin:10px 0">To change or remove it: open <span class="mono">set-passcode.html</span>, generate a new hash (or blank), paste it into <span class="mono">lock-config.js</span>, then commit &amp; push.</div>' +
+      '<div class="row"><button class="btn" id="lock-now">Lock now</button></div>';
+  } else {
+    html += '<div class="faint" style="margin-bottom:10px">Shows a passcode screen when the site opens, and re-asks each time it’s reopened. This is a light privacy curtain on a public site — it keeps casual visitors out, but is not strong security, and your data stays readable in browser devtools. The passcode is stored only as a one-way hash on this device.<br><br>Want it enforced on <b>every</b> device instead? Use <span class="mono">set-passcode.html</span> → <span class="mono">lock-config.js</span> (site-wide mode).</div>' +
+      (lock.enabled
+        ? '<div class="row"><span class="chip green">Lock is ON (this device)</span></div>' +
+          '<div class="row" style="margin-top:10px"><input id="lock-new" type="password" placeholder="New passcode (min 4 chars)" style="flex:1"><button class="btn" id="lock-change">Change</button></div>' +
+          '<div class="row" style="margin-top:10px"><button class="btn" id="lock-now">Lock now</button><button class="btn danger" id="lock-remove">Remove lock</button></div>'
+        : '<div class="row"><input id="lock-pw" type="password" placeholder="Set a passcode (min 4)" style="flex:1"><input id="lock-pw2" type="password" placeholder="Confirm" style="flex:1"><button class="btn primary" id="lock-set">Enable lock</button></div>');
+  }
+  html += '</div>';
 
   // Backup
   html += '<div class="card"><h2>Backup</h2>' +
@@ -1837,16 +1860,19 @@ function viewSettings() {
     Store.saveSettings({ followUpDays: +$('#set-followup').value || 7, practiceThreshold: +$('#set-threshold').value || 70 });
     toast('Preferences saved');
   });
-  if (lock.enabled) {
+  const lockNowBtn = $('#lock-now');
+  if (lockNowBtn) lockNowBtn.addEventListener('click', function () {
+    sessionStorage.removeItem(UNLOCK_SESSION_KEY); location.reload();
+  });
+  if (preset) {
+    // Site-wide lock: managed in lock-config.js; only "Lock now" is wired above.
+  } else if (lock.enabled) {
     $('#lock-change').addEventListener('click', async function () {
       const v = $('#lock-new').value;
       if (v.length < 4) return toast('Use at least 4 characters');
       await setLockPasscode(v);
       sessionStorage.setItem(UNLOCK_SESSION_KEY, '1');
       toast('Passcode changed'); router();
-    });
-    $('#lock-now').addEventListener('click', function () {
-      sessionStorage.removeItem(UNLOCK_SESSION_KEY); location.reload();
     });
     $('#lock-remove').addEventListener('click', function () {
       if (!confirm('Remove the passcode lock?')) return;
