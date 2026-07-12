@@ -587,7 +587,7 @@ function viewHome() {
 
   let html = '';
   html += '<div class="view-head"><h1>' + esc(greet) + ', Deepesh</h1>' +
-    '<div class="sub">' + esc(fmtDateHuman(today)) + ' · Data Engineer @ Jio — job-switch prep</div></div>';
+    '<div class="sub">' + esc(fmtDateHuman(today)) + ' · Career & study dashboard</div></div>';
 
   html += '<div class="grid cols-2">';
 
