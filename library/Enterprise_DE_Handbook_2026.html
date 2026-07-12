@@ -1,0 +1,1978 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enterprise Data Engineering Handbook 2026 — Deepesh</title>
+<style>
+/* ============ Theme tokens ============ */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --surface-2:#eef2f7; --border:#d7dee8;
+  --text:#1c2430; --text-dim:#5a6675; --accent:#0f6d8c; --accent-2:#12a3a3;
+  --accent-ink:#ffffff; --code-bg:#1b2430; --code-text:#e6edf3;
+  --e:#1f9d55; --m:#c77700; --h:#d0342c;
+  --goal-bg:#eaf4f8; --verify-bg:#eafbf0; --gotcha-bg:#fdf0ee;
+  --shadow:0 1px 3px rgba(20,30,50,.08),0 1px 2px rgba(20,30,50,.06);
+  --sidebar-w:280px;
+}
+html[data-theme="dark"]{
+  --bg:#0e131a; --surface:#161d27; --surface-2:#1c2530; --border:#2a3542;
+  --text:#e4eaf1; --text-dim:#9aa7b6; --accent:#3fb4d6; --accent-2:#2fd0cf;
+  --accent-ink:#04121a; --code-bg:#0a0f16; --code-text:#dce6f0;
+  --e:#3ecf7a; --m:#e0a437; --h:#f0665e;
+  --goal-bg:#132833; --verify-bg:#122b1f; --gotcha-bg:#2c1a18;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.6; scroll-padding-top:12px;
+}
+a{color:var(--accent)}
+
+/* ============ Layout ============ */
+#sidebar{
+  position:fixed; top:0; left:0; width:var(--sidebar-w); height:100vh;
+  background:var(--surface); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; z-index:40; overflow:hidden;
+}
+#sidebar .side-head{padding:14px 16px 8px; border-bottom:1px solid var(--border)}
+#sidebar .brand{font-weight:700; font-size:15px; letter-spacing:.2px}
+#sidebar .side-scroll{overflow-y:auto; flex:1; padding:8px 8px 40px}
+main{margin-left:var(--sidebar-w); padding:28px 32px 120px; max-width:1000px}
+
+/* overall progress */
+.overall{margin:10px 0 4px}
+.overall .lbl{display:flex; justify-content:space-between; font-size:12px; color:var(--text-dim); margin-bottom:4px}
+.bar{height:7px; background:var(--surface-2); border-radius:99px; overflow:hidden}
+.bar>span{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .3s}
+
+/* controls row */
+.side-tools{display:flex; gap:6px; margin-top:10px}
+.side-tools button, .icon-btn{
+  cursor:pointer; border:1px solid var(--border); background:var(--surface-2);
+  color:var(--text); border-radius:8px; padding:6px 8px; font-size:13px;
+}
+.side-tools button:hover{border-color:var(--accent)}
+#search{
+  width:100%; margin-top:10px; padding:8px 10px; border-radius:8px;
+  border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;
+}
+#searchInfo{font-size:11px; color:var(--text-dim); min-height:14px; margin-top:3px}
+
+/* nav */
+.nav-group{margin:10px 4px 4px}
+.nav-group>.grp-title{
+  font-size:11px; text-transform:uppercase; letter-spacing:.7px;
+  color:var(--text-dim); font-weight:700; padding:4px 6px;
+}
+.nav-item{
+  display:block; text-decoration:none; color:var(--text); border-radius:8px;
+  padding:6px 8px; font-size:13.5px; position:relative;
+}
+.nav-item:hover{background:var(--surface-2)}
+.nav-item.active{background:var(--surface-2); color:var(--accent); font-weight:600; box-shadow:inset 3px 0 0 var(--accent)}
+.nav-item .nav-top{display:flex; justify-content:space-between; align-items:center; gap:6px}
+.nav-item .pct{font-size:10px; color:var(--text-dim); flex:none}
+.nav-item .mini{height:4px; background:var(--surface-2); border-radius:99px; margin-top:4px; overflow:hidden}
+.nav-item .mini>span{display:block; height:100%; width:0; background:var(--accent-2); transition:width .3s}
+.nav-item.active .mini{background:var(--bg)}
+
+/* hamburger (mobile) */
+#hamburger{display:none; position:fixed; top:12px; left:12px; z-index:50}
+#scrim{display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:39}
+
+/* ============ Header banner ============ */
+.doc-banner{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--accent-ink); border-radius:16px; padding:26px 28px; margin-bottom:26px;
+  box-shadow:var(--shadow);
+}
+.doc-banner h1{margin:0 0 6px; font-size:30px; line-height:1.15}
+.doc-banner .sub{margin:0; font-size:15px; opacity:.95}
+.doc-banner .howto{
+  margin-top:14px; font-size:13px; background:rgba(255,255,255,.16);
+  border-radius:10px; padding:10px 12px; line-height:1.5;
+}
+
+/* ============ Sections & contract classes ============ */
+section.topic{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:22px 24px; margin:0 0 28px; box-shadow:var(--shadow); scroll-margin-top:16px;
+}
+section.topic>h2{
+  margin:0 0 4px; font-size:23px; padding-bottom:8px;
+  border-bottom:3px solid var(--accent); display:inline-block;
+}
+.tagline{margin:4px 0 18px; color:var(--text-dim); font-style:italic}
+section.topic h3{font-size:16px; margin:0 0 10px}
+
+.block{
+  background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+  padding:16px 18px; margin:14px 0;
+}
+.block>*:last-child{margin-bottom:0}
+
+/* checklist */
+ul.checklist{list-style:none; margin:0; padding:0}
+ul.checklist li{margin:3px 0}
+ul.checklist label{display:flex; gap:9px; align-items:flex-start; cursor:pointer; padding:3px 4px; border-radius:6px}
+ul.checklist label:hover{background:var(--surface)}
+ul.checklist input.prog{margin-top:5px; flex:none; width:16px; height:16px; accent-color:var(--accent)}
+ul.checklist input.prog:checked + *, label:has(input.prog:checked){color:var(--text-dim)}
+
+/* Q&A details */
+details.q{
+  border:1px solid var(--border); border-radius:10px; margin:8px 0;
+  background:var(--surface); overflow:hidden;
+}
+details.q>summary{
+  cursor:pointer; padding:10px 14px; font-weight:600; list-style:none;
+  display:flex; align-items:center; gap:8px;
+}
+details.q>summary::-webkit-details-marker{display:none}
+details.q>summary::before{content:"\25B8"; color:var(--accent); font-size:12px; transition:transform .15s}
+details.q[open]>summary::before{transform:rotate(90deg)}
+details.q[open]>summary{background:var(--surface-2); border-bottom:1px solid var(--border)}
+details.q[open]{box-shadow:inset 3px 0 0 var(--accent)}
+.a{padding:6px 16px 12px 28px}
+.a>*:first-child{margin-top:6px}
+
+/* difficulty badges */
+.lvl{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+  padding:2px 7px; border-radius:99px; color:#fff; margin-left:auto; flex:none}
+.lvl.e{background:var(--e)} .lvl.m{background:var(--m)} .lvl.h{background:var(--h)}
+
+/* qa toolbar */
+.qa-tools{display:flex; gap:8px; margin:0 0 10px}
+.qa-tools button{
+  cursor:pointer; font-size:12px; padding:4px 10px; border-radius:7px;
+  border:1px solid var(--border); background:var(--surface); color:var(--text);
+}
+.qa-tools button:hover{border-color:var(--accent); color:var(--accent)}
+
+/* playbook / phase */
+.block.playbook{border-left:4px solid var(--accent)}
+.block.phase{border-left:4px solid var(--accent-2)}
+.pb-goal,.ph-goal{background:var(--goal-bg); border-radius:8px; padding:8px 12px}
+.pb-verify{background:var(--verify-bg); border-radius:8px; padding:8px 12px}
+.pb-gotcha{background:var(--gotcha-bg); border-radius:8px; padding:8px 12px}
+ol.steps{margin:12px 0; padding-left:22px}
+ol.steps>li{margin:8px 0; padding-left:4px}
+
+/* code */
+pre{background:var(--code-bg); color:var(--code-text); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; margin:12px 0; line-height:1.5}
+pre code{background:none; padding:0; color:inherit; font-size:13.5px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  background:var(--surface); border:1px solid var(--border); border-radius:5px;
+  padding:1px 5px; font-size:.9em}
+
+/* tables */
+table{border-collapse:collapse; width:100%; margin:12px 0; font-size:14px}
+th,td{border:1px solid var(--border); padding:8px 10px; text-align:left}
+thead th{background:var(--surface-2)}
+tbody tr:nth-child(even){background:var(--surface-2)}
+
+/* back to top */
+#toTop{
+  position:fixed; right:22px; bottom:22px; z-index:35; display:none;
+  width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
+  background:var(--accent); color:var(--accent-ink); font-size:20px;
+  box-shadow:var(--shadow);
+}
+#toTop:hover{background:var(--accent-2)}
+
+/* search hidden helpers */
+.s-hidden{display:none !important}
+
+/* ============ Responsive ============ */
+@media (max-width:900px){
+  #sidebar{transform:translateX(-100%); transition:transform .25s; box-shadow:var(--shadow)}
+  body.nav-open #sidebar{transform:translateX(0)}
+  body.nav-open #scrim{display:block}
+  main{margin-left:0; padding:64px 18px 120px}
+  #hamburger{display:block}
+}
+
+/* ============ Print ============ */
+@media print{
+  #sidebar,#hamburger,#toTop,#scrim,.qa-tools{display:none !important}
+  main{margin:0; max-width:none; padding:0}
+  details.q{page-break-inside:avoid}
+  section.topic{page-break-inside:avoid; box-shadow:none; border:1px solid #ccc}
+  .doc-banner{color:#000; background:none; border:1px solid #ccc}
+  a{color:inherit; text-decoration:none}
+}
+
+/* ===== Handbook additions ===== */
+.block.theory{border-left:4px solid var(--accent)}
+.block.qa{border-left:4px solid var(--h)}
+.block.spec{border-left:4px solid var(--accent-2)}
+.crux{background:var(--goal-bg); border-radius:8px; padding:10px 14px; margin:12px 0}
+.crux>strong{color:var(--accent)}
+.key{background:var(--verify-bg); border:1px solid var(--border); border-left:4px solid var(--e);
+  border-radius:8px; padding:10px 14px; margin:12px 0}
+.warn{background:var(--gotcha-bg); border:1px solid var(--border); border-left:4px solid var(--h);
+  border-radius:8px; padding:10px 14px; margin:12px 0}
+.ex{background:var(--surface); border:1px dashed var(--border); border-radius:8px; padding:10px 14px; margin:12px 0}
+.tip{background:var(--goal-bg); border-left:4px solid var(--accent-2); border-radius:8px; padding:10px 14px; margin:12px 0}
+.resume{background:var(--verify-bg); border:1px solid var(--border); border-left:4px solid var(--e);
+  border-radius:8px; padding:12px 16px; margin:12px 0}
+.resume ul{margin:6px 0 0}
+.star{background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin:12px 0}
+.pill{display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:99px;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text-dim); margin:2px 4px 2px 0}
+.tag-ind{display:inline-block; font-size:11px; font-weight:700; padding:2px 9px; border-radius:6px;
+  background:var(--accent); color:var(--accent-ink); margin:0 6px 8px 0; text-transform:uppercase; letter-spacing:.4px}
+section.topic h4{font-size:15px; margin:16px 0 6px; color:var(--accent)}
+section.topic h5{font-size:13.5px; margin:12px 0 4px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-dim)}
+.mini-toc{font-size:13px; color:var(--text-dim); margin:2px 0 10px; background:var(--surface-2);
+  border:1px solid var(--border); border-radius:8px; padding:8px 12px}
+pre.arch{font-size:12.5px; line-height:1.35}
+.speclist{list-style:none; padding:0; margin:8px 0}
+.speclist li{padding:4px 0; border-bottom:1px dashed var(--border)}
+.speclist li:last-child{border-bottom:none}
+.speclist b{color:var(--accent)}
+table.why th:first-child, table.why td:first-child{white-space:nowrap; font-weight:600}
+</style>
+</head>
+<body>
+<button id="hamburger" class="icon-btn" aria-label="Toggle navigation">&#9776;</button>
+<div id="scrim"></div>
+
+<aside id="sidebar">
+  <div class="side-head">
+    <div class="brand">DE Enterprise Handbook</div>
+    <div class="overall">
+      <div class="lbl"><span>Overall progress</span><span id="overallPct">0%</span></div>
+      <div class="bar"><span id="overallBar"></span></div>
+    </div>
+    <input id="search" type="search" placeholder="Search projects, tech, issues…" autocomplete="off">
+    <div id="searchInfo"></div>
+    <div class="side-tools">
+      <button id="themeBtn" type="button">🌙 Dark</button>
+      <button id="expandNav" type="button">Reset filter</button>
+    </div>
+  </div>
+  <nav class="side-scroll" id="nav" aria-label="Sections"></nav>
+</aside>
+
+<main id="main">
+  <header class="doc-banner">
+    <h1>Enterprise Data Engineering Handbook 2026</h1>
+    <p class="sub">How real client DE projects are actually designed, built, shipped, run &amp; discussed — written like internal project documentation.</p>
+    <div class="howto">
+      <strong>How to use:</strong> This is the "how it all fits together" book. Start with <em>How Projects Run</em>,
+      then study the <em>Flagship Projects</em> end-to-end (every one follows the same section template so the pattern sticks).
+      Use the <em>Technology Deep-Dives</em> to answer "why this tech, not that one," the <em>Production Playbook</em>
+      for incident scenarios, and <em>Interview &amp; Resume</em> to turn each project into STAR stories. Search anything; progress auto-saves.
+    </div>
+  </header>
+  <section class="topic" id="delivery-model" data-title="The Delivery Model" data-cat="How Projects Run">
+  <h2>How Enterprise DE Projects Actually Run</h2>
+  <p class="tagline">Before any architecture, understand the machine you operate inside: who pays, who decides, who you sit with, and the phases every project moves through. Interviewers can tell in 30 seconds whether you've lived this.</p>
+
+  <div class="block theory">
+    <h3>Two worlds: consulting delivery vs product engineering</h3>
+    <p>In a <strong>services/consulting firm</strong> (TCS, Infosys, Accenture, Deloitte, EPAM, Thoughtworks, and the boutiques), you are billed to a <em>client</em>. There is a Statement of Work (SOW), a contract, milestones, and someone tracking your utilization. Delivery is organized as a <strong>pod</strong>/squad: a delivery manager, a solution/data architect, a lead engineer, 3–6 data engineers, a QA/test engineer, sometimes a BA (business analyst) and a scrum master. Work is usually split <strong>onshore/offshore</strong> — onshore engineers/BAs sit with the client for requirements and demos; offshore (often India) does the bulk of the build across a time-zone handoff.</p>
+    <p>In a <strong>product company</strong> (a bank's own data platform team, a SaaS firm, a fintech), you build for internal stakeholders — analysts, data scientists, product managers, finance, compliance. No SOW, but there are OKRs, roadmaps, on-call rotations, and platform SLAs. The engineering rigor is often higher and longer-lived; you own what you build for years.</p>
+    <p>The lifecycle below is nearly identical in both; the vocabulary differs (SOW/milestone vs epic/OKR).</p>
+  </div>
+
+  <div class="block theory">
+    <h3>The project lifecycle — the phases you must be able to narrate</h3>
+    <pre class="arch">DISCOVERY → REQUIREMENTS → DESIGN (HLD→LLD) → BUILD → TEST → UAT → GO-LIVE → HYPERCARE → BAU/RUN
+   (2-4wk)      (2-6wk)        (2-6wk)        (8-20wk)  (parallel) (2-4wk)  (cutover) (2-4wk)  (ongoing)</pre>
+    <p class="mini-toc">Every project in this book is documented against this spine. Learn it once; reuse it forever.</p>
+    <p><strong>Discovery / Assessment.</strong> Understand the client's business, current state, pain, data sources, volumes, and success criteria. Output: a current-state assessment and a target-state proposal. This is where "reports take 10 hours" gets quantified into money.</p>
+    <p><strong>Requirements.</strong> Functional (what the system must do) and non-functional (how well — latency, volume, availability, security, cost). Captured by BAs/architects with source-system SMEs. Output: a signed requirements/BRD + source-to-target mappings (STM).</p>
+    <p><strong>Design.</strong> <em>HLD</em> (High-Level Design) is the architecture: components, data flow, technology choices, security zones, environments — the picture an architect signs off. <em>LLD</em> (Low-Level Design) is the buildable detail: table schemas, exact transformations, SCD strategy, partitioning, job dependencies, error handling, naming. Output: HLD + LLD documents reviewed in an Architecture Review Board (ARB).</p>
+    <p><strong>Build.</strong> Engineers implement in sprints (2 weeks), demoing increments. Code goes through PRs, CI, and dev/QA environments. This is 50–70% of the timeline.</p>
+    <p><strong>Test.</strong> Unit (dev), integration (pipeline end-to-end), system, performance/volume, and <em>data reconciliation</em> testing (does the new platform match the legacy numbers to the penny?). Reconciliation is the make-or-break test in migrations.</p>
+    <p><strong>UAT.</strong> Business users validate against real scenarios in a UAT environment. Sign-off here is the gate to production.</p>
+    <p><strong>Go-live / Cutover.</strong> The controlled switch to production — often a parallel run (old + new in production simultaneously) until the new platform is trusted, then decommission the old. Cutover runbooks, rollback plans, and a "war room" are standard.</p>
+    <p><strong>Hypercare.</strong> 2–4 weeks of heightened support right after go-live: the build team stays on to fix issues fast before handing to run/BAU.</p>
+    <p><strong>BAU / Run.</strong> Steady-state operation: on-call, monitoring, incident management, enhancements, cost reviews. This is where <em>your Jio production-support experience lives</em> — and it's the phase most candidates can't speak to.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Who you actually work with (RACI in plain English)</h3>
+    <ul class="speclist">
+      <li><b>Delivery / Engagement Manager</b> — owns the client relationship, timeline, budget, staffing. You escalate blockers here.</li>
+      <li><b>Solution / Data Architect</b> — owns HLD, technology decisions, and the ARB. You bring LLD and trade-offs to them.</li>
+      <li><b>Tech Lead / Lead DE</b> — owns the LLD, code standards, PR reviews, and unblocks the team. Often your day-to-day manager.</li>
+      <li><b>Data Engineers (you)</b> — build pipelines, tests, IaC, and fix incidents.</li>
+      <li><b>Business Analyst</b> — translates business needs into requirements and source-to-target mappings.</li>
+      <li><b>QA / Test Engineer</b> — writes test cases, runs reconciliation, signs off quality.</li>
+      <li><b>Source-system SMEs / DBAs</b> — own the source (Oracle, mainframe, Salesforce); you need them for schemas, extracts, and CDC.</li>
+      <li><b>Product Owner / Business stakeholder</b> — prioritizes the backlog, accepts demos, signs UAT.</li>
+      <li><b>Data Governance / Security / Compliance</b> — approve PII handling, masking, access, and (in banking/health) regulatory controls.</li>
+      <li><b>Platform / Cloud / DevOps team</b> — own the landing zone, networking, Terraform baselines, and shared services.</li>
+      <li><b>Data Stewards / Analysts / Data Scientists</b> — your downstream consumers; their trust is the real success metric.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>Agile in data projects (the honest version)</h3>
+    <p>Most teams run <strong>Scrum</strong> (2-week sprints, standups, backlog refinement, sprint review/demo, retro) or <strong>Kanban</strong> for run/BAU. Work is tracked in <strong>Jira/Azure Boards</strong> as epics → stories → tasks. Data work is lumpier than app work — a single "ingest 40 source tables" story hides discovery, schema surprises, and reconciliation, so estimates slip. Mature teams break work by <em>source system</em> and <em>medallion layer</em>, and treat a table as "done" only when it's ingested, transformed, tested, reconciled, and documented — not just when the code runs.</p>
+    <div class="key"><strong>Say-it-cold:</strong> "We ran 2-week sprints; I picked up stories from the backlog in Jira, built the ingestion/transform in a feature branch, raised a PR that ran CI (lint, unit tests, GE data checks), promoted through dev→QA, and the story was done only after reconciliation passed and the runbook was updated. Every fortnight we demoed increments to the product owner."</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Environments &amp; promotion</h3>
+    <pre class="arch">DEV ──► QA/SIT ──► UAT ──► PRE-PROD ──► PROD
+ (build) (integration (business (perf/DR   (live)
+         + system     sign-off) rehearsal)
+         testing)</pre>
+    <p>Each environment is a full, isolated copy of the stack (separate resource groups/workspaces/warehouses, separate storage containers, separate service principals). Code is <em>identical</em> across environments; only <strong>config</strong> (connection strings, secrets, scaling, data volumes) differs, injected via Key Vault/secret scopes and per-env variable files. You never hand-edit prod — everything is promoted through CI/CD.</p>
+  </div>
+  </section>
+
+  <section class="topic" id="ref-arch" data-title="Reference Architecture &amp; Conventions" data-cat="How Projects Run">
+  <h2>The Reference Architecture &amp; Conventions</h2>
+  <p class="tagline">Nearly every modern enterprise DE project is a variation on one reference architecture and one set of conventions. Learn the template; each project just swaps components.</p>
+
+  <div class="block theory">
+    <h3>The canonical modern data platform (Azure/Databricks flavour)</h3>
+    <pre class="arch">SOURCES                 INGEST              LAKEHOUSE (ADLS Gen2 + Delta)         SERVE            CONSUME
+┌──────────┐         ┌───────────┐        ┌─────────┬─────────┬─────────┐     ┌──────────┐    ┌──────────┐
+│ OLTP DBs │──CDC───►│ ADF /     │        │ BRONZE  │ SILVER  │  GOLD   │     │ Snowflake│    │ Power BI │
+│ SaaS API │──REST──►│ Event Hub │──────► │ raw     │ cleaned │ marts / │────►│ / Synapse│───►│ Tableau  │
+│ Files/   │──SFTP──►│ / Kafka   │  Auto- │ immut-  │ conform │ agg /   │     │ SQL WH   │    │ ML / APIs│
+│  SFTP    │         │ Autoloader│  loader │ able    │ +DQ     │ features│     └──────────┘    └──────────┘
+│ Streams  │──stream►│           │        └─────────┴─────────┴─────────┘
+└──────────┘         └───────────┘             ▲  Databricks (Spark) transforms  ▲
+                                               │                                 │
+        ORCHESTRATION: Airflow / ADF / Databricks Workflows  ── triggers, dependencies, retries, SLAs
+        GOVERNANCE:    Unity Catalog / Purview  ── catalog, lineage, access, PII classification
+        QUALITY:       Great Expectations / DLT expectations / Monte Carlo  ── checks + anomaly detection
+        SECRETS/IAM:   Key Vault + Managed Identity + RBAC  ·  OBSERVABILITY: Azure Monitor + Grafana
+        IaC/CICD:      Terraform + Azure DevOps/GitHub Actions  ── everything reproducible</pre>
+    <p>Swap the boxes for the AWS flavour (S3 + Glue/EMR + Redshift), the GCP flavour (GCS + Dataproc/Dataflow + BigQuery), or the Snowflake-centric flavour (Snowpipe + Streams/Tasks + dbt) and the <em>shape</em> is the same: land raw, refine in layers, serve to BI/ML, orchestrate + govern + secure + observe around it.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>Medallion, everywhere</h3>
+    <p><strong>Bronze</strong> = raw landing, schema-on-read, immutable, append-only, partitioned by ingest date — your replay source of truth. <strong>Silver</strong> = cleaned, deduplicated, conformed, typed, with data-quality checks and business keys resolved — the "single version of truth" tables. <strong>Gold</strong> = business-ready marts/aggregates/features, dimensional models, serving BI and ML. Each layer is a Delta table; each is independently reprocessable; failures are contained to a layer. In interviews, always frame your pipeline in these three layers — it signals you've built real platforms.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Conventions used across all projects in this book</h3>
+    <h5>Naming conventions</h5>
+    <ul class="speclist">
+      <li><b>Layers/catalogs:</b> <code>bronze</code>, <code>silver</code>, <code>gold</code> catalogs (Unity Catalog) or <code>raw</code>/<code>curated</code>/<code>consumption</code> containers.</li>
+      <li><b>Tables:</b> <code>&lt;domain&gt;_&lt;entity&gt;[_&lt;grain&gt;]</code> e.g. <code>sales_order_line</code>, <code>fin_gl_balance_daily</code>. Facts <code>fct_*</code>, dims <code>dim_*</code> in gold.</li>
+      <li><b>Columns:</b> snake_case, <code>*_id</code> keys, <code>*_ts</code> timestamps (UTC), <code>*_dt</code> dates, <code>is_*</code> booleans, audit cols <code>_ingested_at</code>, <code>_source_file</code>, <code>_batch_id</code>.</li>
+      <li><b>Jobs/DAGs:</b> <code>&lt;domain&gt;_&lt;layer&gt;_&lt;entity&gt;_&lt;freq&gt;</code> e.g. <code>fraud_silver_txn_stream</code>, <code>reg_gold_report_daily</code>.</li>
+      <li><b>Resources:</b> <code>&lt;org&gt;-&lt;project&gt;-&lt;env&gt;-&lt;service&gt;-&lt;region&gt;</code> e.g. <code>acme-fraud-prod-adls-eastus</code>.</li>
+    </ul>
+    <h5>Folder / repo structure (mono-repo per project)</h5>
+    <pre class="arch">repo-root/
+├── README.md
+├── infra/                 # Terraform: storage, databricks, key vault, networking
+│   ├── modules/
+│   └── env/{dev,qa,uat,prod}.tfvars
+├── pipelines/
+│   ├── ingest/            # source→bronze (Autoloader/ADF/Kafka consumers)
+│   ├── transform/         # bronze→silver→gold (PySpark / dbt / DLT)
+│   └── common/            # shared libs: io, schema, dq, logging, config
+├── orchestration/         # Airflow DAGs / Databricks Workflows / ADF json
+├── tests/                 # unit (pytest) + integration + GE expectation suites
+├── configs/               # per-env yaml (paths, scaling, feature flags)
+├── notebooks/             # exploratory only (not prod logic)
+├── .github/workflows/     # or azure-pipelines.yml — CI/CD
+└── docs/                  # HLD, LLD, STM, runbooks, data dictionary</pre>
+    <h5>Repository strategy</h5>
+    <p>One repo per project/domain is the common default; large platforms use a mono-repo with per-domain folders. Branching: trunk-based or GitFlow-lite — <code>main</code> (prod), short-lived <code>feature/*</code> branches, PR + review + CI to merge, tags for releases. Notebooks live in Databricks Repos synced to Git; <em>prod logic is packaged code (wheels), not notebooks.</em></p>
+  </div>
+
+  <div class="block spec">
+    <h3>The security baseline (assume this on every project)</h3>
+    <ul class="speclist">
+      <li><b>Identity:</b> Managed Identity / Service Principals for job auth; users via SSO (Azure AD/Okta) + SCIM; no shared creds.</li>
+      <li><b>Secrets:</b> Key Vault / Databricks secret scopes / HashiCorp Vault — never in code or config files.</li>
+      <li><b>Access:</b> RBAC + least privilege; Unity Catalog grants at catalog/schema/table/row/column level; ABAC/row filters for multi-tenant.</li>
+      <li><b>Network:</b> Private Endpoints / VNet injection, no public storage, firewall rules, NSGs; data never traverses the public internet.</li>
+      <li><b>Data protection:</b> encryption at rest (platform-managed or CMK) + in transit (TLS); PII masking/tokenization; column-level encryption for sensitive fields.</li>
+      <li><b>Governance:</b> catalog + lineage (Unity Catalog/Purview), PII classification, retention policies, audit logging.</li>
+      <li><b>Compliance overlays:</b> banking (RBI, PCI-DSS, SOX), health (HIPAA/HITECH), EU (GDPR), each adding masking, residency, audit, and retention rules.</li>
+    </ul>
+  </div>
+  </section>
+
+  <section class="topic" id="how-to-read" data-title="How to Read a Project" data-cat="How Projects Run">
+  <h2>How to Read Each Project in This Book</h2>
+  <p class="tagline">Every flagship project uses the exact same section template. Internalize the template and you can walk into any interview and reconstruct a project on demand.</p>
+
+  <div class="block theory">
+    <h3>The project template (what each heading means and why it matters)</h3>
+    <ul class="speclist">
+      <li><b>Business Background &amp; Industry</b> — the domain, the money at stake, and why the client called. Interviews start here: "what did the business actually need?"</li>
+      <li><b>Existing Problems / Current Architecture</b> — the "before" picture and its failure modes. This justifies everything you built.</li>
+      <li><b>Functional Requirements (FR)</b> — what the system must do (ingest X, produce report Y by time Z).</li>
+      <li><b>Non-Functional Requirements (NFR)</b> — volume, latency, availability, RTO/RPO, security, cost. The NFRs drive the architecture more than the FRs.</li>
+      <li><b>HLD</b> — the target architecture &amp; component choices.</li>
+      <li><b>LLD</b> — schemas, transformations, SCD, partitioning, job graph, error handling.</li>
+      <li><b>Data Flow</b> — source → landing → layers → serve, with cadence (batch/micro-batch/stream/CDC), formats, and volumes at each hop.</li>
+      <li><b>Technology &amp; Why</b> — each choice with the alternative it beat and the reason.</li>
+      <li><b>Security · CI/CD · Infra · Monitoring · Deployment · Prod Support · Cost</b> — the operational reality.</li>
+      <li><b>Common Issues</b> — the incidents this kind of pipeline actually hits.</li>
+      <li><b>Interview Q&amp;A + Resume/STAR</b> — how to talk about it convincingly.</li>
+    </ul>
+    <div class="tip"><strong>Study method:</strong> read one flagship project fully, then cover the page and narrate it out loud in the template order — business → problem → architecture → data flow → why these techs → how you'd run and fix it → your resume bullet. If you can do that for 4–5 projects, you interview like someone with years of delivery behind them.</div>
+  </div>
+  </section>
+
+  <section class="topic" id="proj-fraud" data-title="1 · Real-Time Fraud Detection" data-cat="Flagship Projects">
+  <h2>Project 1 — Real-Time Fraud Detection Pipeline</h2>
+  <span class="tag-ind">Banking</span><span class="tag-ind">Streaming</span>
+  <p class="tagline">A tier-1 retail bank losing money to card-not-present fraud needs to score every transaction in under a second and block bad ones before authorization completes.</p>
+
+  <div class="block theory">
+    <h3>Business Background &amp; Industry</h3>
+    <p>Client: a large retail bank (25M cards, ~3,000 transactions/second at peak). Card fraud — especially card-not-present (online) — was costing an estimated ₹180 crore/year in write-offs and chargebacks, plus regulatory scrutiny and customer churn after fraud events. Their existing fraud system was a nightly batch that flagged fraud <em>after</em> money had already moved, so recovery was rare.</p>
+    <p><strong>Why they approached us:</strong> the batch model gave zero real-time protection, false-positive rates were high (blocking genuine customers, driving call-center cost), and the rules engine was a black box only two people understood. They wanted sub-second scoring at authorization time, a feature store the data-science team could evolve, and full auditability for the regulator.</p>
+    <div class="crux"><strong>The money framing (say this in interviews):</strong> "Every 100ms of added authorization latency measurably drops approval rates, and every fraudulent transaction that slips through is a direct loss plus a chargeback fee. So the NFRs — p99 &lt; 300ms end-to-end and 99.99% availability — literally were the business case."</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Existing Problems / Current Architecture</h3>
+    <pre class="arch">Card switch ──► Core banking (mainframe) ──► nightly extract ──► Oracle ──► SAS batch rules ──► fraud analyst queue (next day)</pre>
+    <p>Failure modes: detection lagged the fraud by 12–24 hours; the SAS rules were static and couldn't use behavioural features; no replay or lineage; scaling meant buying more mainframe MIPS. Analysts drowned in false positives with no feedback loop to improve rules.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Functional Requirements</h3>
+    <ul class="speclist">
+      <li>Score <b>every</b> authorization request in real time and return allow/deny/step-up.</li>
+      <li>Compute behavioural features: velocity (txns per card per minute/hour), spend deviation vs customer baseline, geo-impossible travel, merchant risk, device/IP reputation.</li>
+      <li>Support both a rules engine and an ML model, with champion/challenger.</li>
+      <li>Feed flagged cases to an analyst case-management UI with full context.</li>
+      <li>Capture analyst dispositions as labels to retrain models (feedback loop).</li>
+      <li>Provide auditable lineage: for any decision, reproduce the exact features and model version used.</li>
+    </ul>
+    <h3>Non-Functional Requirements</h3>
+    <ul class="speclist">
+      <li><b>Latency:</b> p99 scoring &lt; 300ms; end-to-end auth budget ~500ms.</li>
+      <li><b>Throughput:</b> 3k TPS sustained, 8k peak; horizontally scalable.</li>
+      <li><b>Availability:</b> 99.99% (fail-open vs fail-closed policy defined with risk).</li>
+      <li><b>Consistency/Exactly-once:</b> no double-scoring, no lost transactions.</li>
+      <li><b>Security:</b> PCI-DSS scope, PAN tokenized, network isolation, full audit.</li>
+      <li><b>Retention:</b> 7-year audit; 90-day hot features.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>High-Level Design (HLD)</h3>
+    <pre class="arch">Card switch/auth ─► Kafka (txn topic) ─► Stream processor (Structured Streaming on Databricks)
+                                              │  1. enrich w/ feature store (Redis online + Delta offline)
+                                              │  2. compute real-time velocity features (stateful, watermarked)
+                                              │  3. score: rules + ML model (MLflow-served, low-latency)
+                                              ▼
+                              decision topic ─► auth response (allow/deny/step-up)
+                                              │
+   Kafka ─► Autoloader ─► BRONZE (raw txn Delta) ─► SILVER (cleaned/enriched) ─► GOLD (features, case marts)
+                                              │                                        │
+                              analyst case UI ◄── flagged cases                Snowflake/Power BI (fraud KPIs, model perf)
+   Feedback: analyst dispositions ─► labels ─► retrain (Databricks + MLflow) ─► deploy new model version</pre>
+    <p>Two coupled paths: a <strong>hot path</strong> (Kafka → streaming scorer → decision, all in-memory, sub-300ms) and a <strong>cold path</strong> (everything also lands in the lakehouse for features, analytics, retraining, and audit). This <em>lambda-ish</em> split is classic in fraud: you cannot put a lakehouse in the 300ms budget, so the online store (Redis) serves features the batch layer precomputes.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>Low-Level Design (LLD)</h3>
+    <h5>Streaming scorer</h5>
+    <p>Structured Streaming reads the <code>txn</code> topic with <code>trigger(processingTime="200ms")</code> style micro-batches (or continuous). Stateful aggregations (velocity) keyed by <code>card_id</code> with a watermark of a few minutes to bound state; state stored in RocksDB state store with checkpointing to ADLS for exactly-once recovery. Online features fetched from Redis by card/merchant key; model invoked in-process (model packaged with the job, or a low-latency MLflow endpoint) to avoid network hops.</p>
+    <h5>Feature store</h5>
+    <p>Offline features computed in silver/gold Delta (batch, hourly/daily baselines — 30/90-day spend, typical geos/merchants). A sync job pushes the latest per-key features to <strong>Redis</strong> (online store) so the hot path reads them in &lt;5ms. Databricks Feature Store keeps offline/online in sync and guarantees train/serve parity (same feature definitions).</p>
+    <h5>Delta tables</h5>
+    <ul class="speclist">
+      <li><code>bronze.txn_raw</code> — partitioned by <code>ingest_dt</code>, append-only, audit cols.</li>
+      <li><code>silver.txn_enriched</code> — deduped on <code>txn_id</code> (MERGE), typed, joined to card/customer/merchant dims.</li>
+      <li><code>gold.card_features_daily</code> — behavioural baselines; <code>gold.fraud_case</code> — flagged cases; <code>gold.model_decision</code> — every decision with feature snapshot + model version (audit).</li>
+    </ul>
+    <h5>Error handling</h5>
+    <p>Malformed/late events → dead-letter topic + quarantine Delta table. Redis miss → fall back to conservative default features + flag "degraded scoring". Model timeout → configurable fail-open (approve, log) or fail-closed (step-up) per risk policy.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>Complete Data Flow</h3>
+    <p><strong>Source &amp; cadence:</strong> the card switch emits an ISO-8583-derived JSON/Avro auth message per transaction, continuously, ~3k/s. <strong>Ingest:</strong> Kafka (Avro + Schema Registry) is the front door; the streaming job is a consumer group. <strong>Hot path:</strong> enrich → feature lookup → score → publish decision, all within ~150–250ms. <strong>Cold path:</strong> the same Kafka topic is also consumed by Autoloader into <code>bronze.txn_raw</code> (micro-batch, ~1 min); hourly jobs build silver/gold; daily jobs refresh baselines and push to Redis. <strong>Feedback:</strong> analyst dispositions from the case UI land via API → bronze → labels → weekly retraining in Databricks, registered in MLflow, promoted champion/challenger.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Technology &amp; Why</h3>
+    <table class="why"><tr><th>Choice</th><th>Why (vs the alternative)</th></tr>
+      <tr><td>Kafka</td><td>Durable, replayable, high-throughput log with a consumer-group model and Schema Registry. Vs RabbitMQ (queue, weaker replay/throughput for this scale) and vs direct DB writes (no buffering/replay). Event Hubs is the Azure-native equivalent and was used as the ingress in the managed variant.</td></tr>
+      <tr><td>Structured Streaming on Databricks</td><td>Same DataFrame API as batch, exactly-once via checkpointing, stateful ops with RocksDB, and it shares the lakehouse. Vs Flink (great, but the team's Spark skills + Databricks platform tipped it) and vs a bespoke Java service (slower to build, harder to reuse features).</td></tr>
+      <tr><td>Redis (online feature store)</td><td>Sub-millisecond key lookups for the hot path. A Delta table cannot meet a 5ms feature read; Redis can. Databricks Feature Store manages offline↔online sync + parity.</td></tr>
+      <tr><td>Delta Lake</td><td>ACID + time travel + MERGE for the audit trail and reproducible feature snapshots. Regulators demand "reproduce this exact decision" — time travel delivers it.</td></tr>
+      <tr><td>MLflow</td><td>Model registry, versioning, champion/challenger, and low-latency serving. Vs hand-rolled pickle files (no lineage, no rollback).</td></tr>
+      <tr><td>Snowflake/Power BI</td><td>Fraud KPIs and model-performance dashboards for risk leadership, decoupled from the operational path.</td></tr>
+    </table>
+  </div>
+
+  <div class="block spec">
+    <h3>Security · CI/CD · Infra · Monitoring · Deployment · Support · Cost</h3>
+    <p><strong>Security:</strong> PCI-DSS scope minimized by tokenizing PAN at the edge (only tokens flow downstream); VNet-injected Databricks, Private Endpoints to storage/Redis, no public egress; Unity Catalog column masking on PII; every decision logged immutably for audit; secrets in Key Vault via Managed Identity.</p>
+    <p><strong>CI/CD:</strong> code in Git → PR → SonarQube + unit tests + GE checks → build a Python wheel → Azure DevOps pipeline → Terraform applies infra → deploy job JSON + wheel to dev/QA/UAT/prod; model promotion gated in MLflow with approval.</p>
+    <p><strong>Infra:</strong> Terraform provisions the workspace, job clusters (Photon-enabled, autoscaling 4–40 workers), Redis, Kafka/Event Hub, storage, Key Vault, networking. Job clusters (not all-purpose) for the streaming job with a fixed floor for latency stability.</p>
+    <p><strong>Monitoring:</strong> Kafka consumer lag, streaming batch duration &amp; input rows/sec (Spark UI + Prometheus/Grafana), p50/p99 scoring latency, Redis hit rate, model score distribution drift, decision-topic throughput, DLQ volume. Alerts page on lag, latency SLO breach, or drift.</p>
+    <p><strong>Deployment/Cutover:</strong> shadow mode first (score in parallel, don't act), then canary on a small card segment, then full — with fail-open policy and instant rollback to the previous model version.</p>
+    <p><strong>Prod support:</strong> 24×7 on-call; runbooks for lag spikes, Redis outage (degraded mode), model regression, and checkpoint corruption. RTO 15 min, RPO ~0 (replay from Kafka).</p>
+    <p><strong>Cost optimization:</strong> right-sized streaming cluster with autoscaling floor; batch feature jobs on spot/ephemeral job clusters; Delta OPTIMIZE + Z-ORDER on <code>card_id</code>; VACUUM with 7-day retention; tiered storage for &gt;90-day audit; Redis sized to hot key set only.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Common Production Issues</h3>
+    <details class="q"><summary>Kafka consumer lag spikes at peak <span class="lvl m">medium</span></summary><div class="a"><p>Cause: scorer can't keep up (skewed hot cards, GC pauses, Redis latency). Fix: increase partitions + parallelism, tune micro-batch size, cache Redis reads, scale executors; long-term, isolate hot merchants. Watch lag as the primary SLO signal.</p></div></details>
+    <details class="q"><summary>State store / checkpoint corruption after a bad deploy <span class="lvl h">hard</span></summary><div class="a"><p>Cause: incompatible code change to stateful logic. Fix: never change state schema in place — start a new checkpoint location and reprocess from a safe Kafka offset; keep the old job running until the new one is caught up (blue/green streaming).</p></div></details>
+    <details class="q"><summary>Redis outage → feature misses <span class="lvl m">medium</span></summary><div class="a"><p>Fail into degraded scoring (conservative defaults + step-up), alert immediately, and flag those decisions for review. Never fail-closed globally on a cache outage — it would decline the whole bank.</p></div></details>
+    <details class="q"><summary>Model drift / rising false positives <span class="lvl m">medium</span></summary><div class="a"><p>Monitor score distribution and precision/recall against analyst labels; trigger retraining; use champion/challenger so a new model proves itself in shadow before promotion. Roll back instantly via MLflow if a promotion regresses.</p></div></details>
+  </div>
+
+  <div class="resume">
+    <h3>Resume points &amp; STAR</h3>
+    <ul>
+      <li>Built a real-time card-fraud scoring pipeline on Kafka + Spark Structured Streaming + Databricks, scoring ~3k TPS at p99 &lt;300ms, cutting fraud losses and false positives materially.</li>
+      <li>Designed an online/offline feature store (Redis + Delta Feature Store) guaranteeing train/serve parity and reproducible, auditable decisions via Delta time travel.</li>
+      <li>Implemented exactly-once streaming with RocksDB state + checkpointing, DLQ handling, and blue/green streaming deployments with instant model rollback via MLflow.</li>
+    </ul>
+    <div class="star"><strong>STAR — "tell me about a hard real-time system":</strong> <em>Situation</em> — nightly batch caught fraud a day late, costing ₹180cr/yr. <em>Task</em> — score every auth in &lt;300ms. <em>Action</em> — I built the streaming scorer with watermarked stateful velocity features, wired a Redis online store synced from Delta for &lt;5ms lookups, and made decisions reproducible via time travel + MLflow versioning; deployed in shadow→canary→full. <em>Result</em> — sub-300ms p99, fraud losses down, false positives down, and full auditability for the regulator.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>Why not just run the model on the lakehouse directly? <span class="lvl m">medium</span></summary><div class="a"><p>A lakehouse query can't meet a single-digit-millisecond feature read or a 300ms budget. So batch precomputes features into an online store (Redis) and the hot path only does key lookups + in-process scoring. The lakehouse handles everything not on the critical path: features, analytics, retraining, audit.</p></div></details>
+    <details class="q"><summary>How do you guarantee exactly-once here? <span class="lvl h">hard</span></summary><div class="a"><p>Kafka offsets committed atomically with the checkpoint; idempotent decision publishing keyed by txn_id; MERGE/dedup into Delta on txn_id for the cold path. A crash replays from the last checkpoint without double-acting.</p></div></details>
+    <details class="q"><summary>Fail-open or fail-closed? <span class="lvl h">hard</span></summary><div class="a"><p>A risk decision, not an engineering one — documented with the business. Typically fail-open (approve + flag) for availability on infra failures, but step-up (OTP) for high-risk segments. The point in an interview is to show you know it's a policy trade-off you surface, not silently choose.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="proj-regrep" data-title="2 · Regulatory Reporting Platform" data-cat="Flagship Projects">
+  <h2>Project 2 — Regulatory Reporting Platform</h2>
+  <span class="tag-ind">Banking</span><span class="tag-ind">Batch · Governed</span>
+  <p class="tagline">A bank must submit accurate, fully-auditable regulatory returns (RBI/Basel/AML) on fixed deadlines. Wrong or late numbers mean fines and reputational damage — correctness and lineage beat speed.</p>
+
+  <div class="block theory">
+    <h3>Business Background &amp; Industry</h3>
+    <p>Client: a commercial bank filing dozens of periodic regulatory returns (capital adequacy, liquidity/LCR, AML/CTR/STR, large-exposure). Reports were assembled by finance analysts pulling from a dozen systems into Excel with manual adjustments — error-prone, slow, and impossible to audit ("where did this number come from?"). A single restatement to the regulator triggers investigations and penalties.</p>
+    <p><strong>Why they approached us:</strong> a regulator observation flagged data-lineage and reproducibility gaps. They needed an automated, governed platform where every reported figure traces back to source records, with controls, sign-offs, and versioned submissions.</p>
+    <div class="crux"><strong>Framing:</strong> "Here the NFR that dominates isn't latency — it's <em>correctness, auditability, and controlled change</em>. The architecture is optimized so any number can be drilled back to source, and any run can be reproduced exactly."</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Existing Problems / Current Architecture</h3>
+    <pre class="arch">Core banking + cards + treasury + AML systems ──► ad-hoc extracts ──► Oracle staging ──► Excel + manual adjustments ──► PDF to regulator</pre>
+    <p>Problems: no single source of truth, manual adjustments with no audit, reconciliation done by eye, no reproducibility, key-person dependency, and month-end crunch where analysts worked nights.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Functional Requirements</h3>
+    <ul class="speclist">
+      <li>Ingest from all contributing source systems on a defined schedule (daily/monthly).</li>
+      <li>Apply regulatory business rules/classifications transparently and versioned.</li>
+      <li>Produce each return in the regulator's exact template/format, on deadline.</li>
+      <li>Support controlled manual adjustments with maker-checker approval and full audit.</li>
+      <li>Provide drill-down lineage from any reported cell to source transactions.</li>
+      <li>Version and archive every submission (what was filed, when, by whom, from which data).</li>
+    </ul>
+    <h3>Non-Functional Requirements</h3>
+    <ul class="speclist">
+      <li><b>Correctness:</b> reconciliation to source to the last rupee; no silent drops.</li>
+      <li><b>Auditability:</b> immutable lineage + time travel; 7–10 year retention.</li>
+      <li><b>Availability:</b> must complete before the filing deadline (hard SLA), with backfill/rerun.</li>
+      <li><b>Security &amp; segregation of duties:</b> maker-checker, RBAC, SOX-style controls.</li>
+      <li><b>Change control:</b> rule changes go through review + sign-off + versioning.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>HLD</h3>
+    <pre class="arch">Sources (core, cards, treasury, AML, GL)
+        │  ADF/Databricks scheduled extracts (batch + CDC for slowly-changing masters)
+        ▼
+BRONZE (raw, immutable, partitioned by business_date) ─► SILVER (conformed, typed, reconciled, DQ) ─► GOLD (reg data marts)
+        │                                                                                                    │
+   Great Expectations + reconciliation controls                                       Reg-rule engine (dbt/PySpark, versioned)
+        │                                                                                                    ▼
+   Unity Catalog / Purview: catalog + lineage + PII classification                Report generation (templated) ─► maker-checker ─► submission archive
+        │                                                                                                    ▼
+                                                                              Snowflake + Power BI (control dashboards, variance vs prior period)</pre>
+  </div>
+
+  <div class="block theory">
+    <h3>LLD</h3>
+    <p>Silver builds conformed dimensions (customer, account, GL, product) as <strong>SCD Type 2</strong> so a report reproduces the classification that was valid on the reporting date. Reg rules are implemented as versioned, tested transformations (dbt models or PySpark modules) — each rule has a rule_id, effective dates, and unit tests. Manual adjustments are rows in an <code>adjustments</code> Delta table with maker, checker, reason, and approval status; nothing is edited in place. Every run is tagged with a <code>run_id</code> and the input Delta versions, so time travel reproduces it exactly. Gold marts feed a templating layer that emits the regulator's format (fixed-width/XML/XBRL).</p>
+  </div>
+
+  <div class="block theory">
+    <h3>Data Flow</h3>
+    <p>Batch-first. Daily: incremental extracts (watermark/CDC) land to bronze partitioned by <code>business_date</code>. Silver conforms + reconciles (source vs target counts and control totals; any break halts the run and alerts). Month-end/period-end: gold reg-marts computed, rules applied, adjustments merged with approvals, report generated, reconciled to GL, routed for maker-checker sign-off, archived, and filed. Formats: source CSV/fixed-width/DB extracts → Delta internally → regulator-specified XML/XBRL/fixed-width out.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Technology &amp; Why</h3>
+    <table class="why"><tr><th>Choice</th><th>Why</th></tr>
+      <tr><td>Databricks + Delta</td><td>ACID + time travel are the audit/reproducibility backbone; MERGE for SCD2; one platform for ingest→transform→report. Time travel literally answers the regulator's "reproduce this figure."</td></tr>
+      <tr><td>dbt (or PySpark modules)</td><td>Versioned, tested, documented transformations with built-in lineage and data tests — perfect for transparent, reviewable reg rules. Vs opaque stored procs.</td></tr>
+      <tr><td>Great Expectations</td><td>Declarative, documented data-quality + reconciliation controls that produce evidence artifacts auditors accept.</td></tr>
+      <tr><td>Unity Catalog + Purview</td><td>Central catalog, column-level lineage, PII classification, and access governance across the estate — the control the regulator asked for.</td></tr>
+      <tr><td>Snowflake/Power BI</td><td>Control dashboards: variance vs prior period, reconciliation status, submission tracking.</td></tr>
+      <tr><td>ADF</td><td>Metadata-driven scheduled ingestion from many heterogeneous sources with retries and monitoring.</td></tr>
+    </table>
+  </div>
+
+  <div class="block spec">
+    <h3>Security · CI/CD · Infra · Monitoring · Support · Cost</h3>
+    <p><strong>Security/controls:</strong> segregation of duties (maker-checker), RBAC by role, immutable audit, PII masking, SOX-style change control on rules. <strong>CI/CD:</strong> rule changes are PRs with tests + peer + risk sign-off; promoted dev→QA→UAT→prod; releases tagged and mapped to a change ticket. <strong>Infra:</strong> Terraform-provisioned, environment-isolated; jobs on scheduled job clusters. <strong>Monitoring:</strong> job success/SLA (must finish before deadline), reconciliation pass/fail, DQ results, adjustment approvals outstanding; alerts on any break or SLA risk. <strong>Support:</strong> period-end war room; runbooks for late source data, reconciliation breaks, and rule regressions; RTO within the filing window. <strong>Cost:</strong> batch on ephemeral job clusters; heavy compute only at period-end; long-term audit data on cool/archive storage tiers.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Common Production Issues</h3>
+    <details class="q"><summary>A source system is late on filing day <span class="lvl h">hard</span></summary><div class="a"><p>Sensors detect non-arrival and alert early; runbook escalates to the source team; the pipeline can run with a documented provisional figure and re-run when data lands (idempotent, partition-scoped). Never file silently on incomplete data.</p></div></details>
+    <details class="q"><summary>Reconciliation break — report doesn't tie to GL <span class="lvl h">hard</span></summary><div class="a"><p>Halt the run. Drill via lineage: compare source→bronze→silver→gold counts and control totals to localize where the difference entered (a filter, a join fan-out, a late adjustment). Fix root cause, reprocess the partition, re-reconcile. This is exactly the reconciliation discipline from production support.</p></div></details>
+    <details class="q"><summary>A rule change silently altered a prior-period number <span class="lvl m">medium</span></summary><div class="a"><p>Rules are versioned with effective dates and prior periods pinned to their rule version, so a new rule doesn't retro-change filed numbers. Regression tests + variance-vs-prior dashboards catch unexpected movements before filing.</p></div></details>
+  </div>
+
+  <div class="resume">
+    <h3>Resume points &amp; STAR</h3>
+    <ul>
+      <li>Delivered an automated regulatory reporting platform on Databricks/Delta with end-to-end lineage (Unity Catalog), versioned reg rules (dbt), and maker-checker controls — replacing manual Excel processes and closing a regulator lineage observation.</li>
+      <li>Implemented reconciliation and Great Expectations controls that tie every reported figure to source, with Delta time travel for exact run reproducibility over a 7-year audit horizon.</li>
+    </ul>
+    <div class="star"><strong>STAR — "a project where correctness mattered most":</strong> <em>S</em> — reg reports were manual, un-auditable, and had drawn a regulator observation. <em>T</em> — make every number traceable and reproducible on deadline. <em>A</em> — I built medallion pipelines with SCD2 conformed dimensions, versioned reg rules with unit tests, reconciliation controls that halt on any break, and maker-checker adjustments; time travel reproduced any run. <em>R</em> — automated on-deadline filing, full lineage, and the observation was closed.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>Why is this batch, not streaming? <span class="lvl e">basic</span></summary><div class="a"><p>The requirement is periodic, correct, complete filings — not low latency. Batch with clear cut-offs, reconciliation, and reproducibility fits regulatory reporting; streaming would add complexity and risk without business value.</p></div></details>
+    <details class="q"><summary>How do you reproduce a report from six months ago? <span class="lvl h">hard</span></summary><div class="a"><p>Each run stored its <code>run_id</code>, the Delta table versions of its inputs, the rule versions applied, and the approved adjustments. Re-running against those pinned versions (Delta <code>VERSION AS OF</code>) reproduces the exact figures — that's the auditability the regulator required.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="proj-cdr" data-title="3 · Telecom CDR &amp; Revenue Assurance" data-cat="Flagship Projects">
+  <h2>Project 3 — CDR Processing &amp; Revenue Assurance</h2>
+  <span class="tag-ind">Telecom</span><span class="tag-ind">High-volume batch/micro-batch</span>
+  <p class="tagline">A telco generates billions of Call Detail Records a day. Revenue leaks when usage isn't rated/billed correctly. The platform must process massive volume cheaply and prove no revenue is lost.</p>
+
+  <div class="block theory">
+    <h3>Business Background &amp; Industry</h3>
+    <p>Client: a national mobile operator, ~150M subscribers, generating <strong>3–5 billion CDR/IPDR events per day</strong> from voice, SMS, and data sessions across many network elements (MSC, SGSN/GGSN, probes). "Revenue assurance" (RA) is a dedicated function: reconcile what the network delivered vs what was rated vs what was billed vs what was collected, and recover leakage. Even 1% leakage on huge revenue is enormous.</p>
+    <p><strong>Why they approached us:</strong> the legacy mediation + Teradata RA system couldn't keep up with data-usage growth, RA reconciliations ran days behind, and storage/compute costs were spiralling. They wanted a lakehouse that ingests all network feeds, dedupes and rates at scale, and reconciles daily.</p>
+    <div class="crux"><strong>Framing:</strong> "This is a <em>volume and cost</em> problem. The whole design is about processing billions of small records per day cheaply, with dedup and completeness guarantees, because the KPI is 'zero unexplained revenue leakage.'"</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Existing Problems / Current Architecture</h3>
+    <pre class="arch">Network elements ──► Mediation (proprietary) ──► Teradata (RA + rating) ──► batch reports (T+2/T+3)</pre>
+    <p>Problems: Teradata scaling was cost-prohibitive at data-usage volumes; RA lagged 2–3 days; duplicate/late CDRs from network retries caused double-count and disputes; no cheap long-term retention for audit/regulatory.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Functional &amp; Non-Functional Requirements</h3>
+    <ul class="speclist">
+      <li><b>FR:</b> ingest all network feeds; dedupe CDRs; normalize/decode; rate usage; reconcile network↔rated↔billed; flag leakage; feed RA dashboards + regulatory usage reports.</li>
+      <li><b>FR:</b> handle late/out-of-order CDRs (network retries can arrive hours later).</li>
+      <li><b>NFR volume:</b> 3–5B records/day, TB-scale daily; must finish daily cycle within hours.</li>
+      <li><b>NFR completeness:</b> provable — every file/record accounted for (no gaps, no dupes).</li>
+      <li><b>NFR cost:</b> materially cheaper than Teradata; elastic compute.</li>
+      <li><b>NFR retention:</b> months hot, years cold for audit.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>HLD &amp; Data Flow</h3>
+    <pre class="arch">Network elements ─► Mediation ─► files to landing (SFTP/Blob) + Kafka (near-real-time feeds)
+        │  Autoloader (file notifications) / Kafka consumers — micro-batch
+        ▼
+BRONZE (raw CDR by feed, partitioned by event_dt + hour; append-only, file-audit)
+        │  dedup (MERGE on CDR key), decode/normalize, enrich w/ subscriber & product dims (SCD2)
+        ▼
+SILVER (clean, deduped, typed usage events) ─► rating engine (PySpark rules) ─► GOLD (rated usage, RA recon marts, leakage cases)
+        │                                                                              │
+   completeness controls (file counts, sequence checks, count reconciliation)   Snowflake + Power BI (RA KPIs, leakage, regulatory usage)</pre>
+    <p><strong>Cadence:</strong> files land continuously; Autoloader micro-batches every few minutes into bronze; hourly/daily jobs dedupe, rate, and reconcile. Late CDRs handled with a lookback window (reprocess last N hours idempotently). Formats: ASN.1/CSV/compressed feeds → Delta; Parquet/Delta internally.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>LLD highlights</h3>
+    <p>Dedup key = network element + sequence/charging id + timestamp; MERGE into silver dedupes retries. Partitioning by <code>event_dt</code> + hour keeps files right-sized; heavy <code>OPTIMIZE</code>/Z-ORDER on subscriber and event keys for RA joins. Completeness: each source file recorded in a control table with expected vs loaded record counts; sequence-gap detection per network element. Rating rules externalized and versioned. Skew (a few huge B2B accounts / hot cells) handled with salting and broadcast of small dims.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Technology &amp; Why</h3>
+    <table class="why"><tr><th>Choice</th><th>Why</th></tr>
+      <tr><td>Databricks + Delta (from Teradata)</td><td>Elastic Spark compute + cheap object storage handle billions of records at a fraction of Teradata cost, with ACID dedup via MERGE. Vs scaling Teradata (linear cost) or Hadoop/Hive (no ACID, ops-heavy).</td></tr>
+      <tr><td>Autoloader</td><td>Efficient incremental file ingestion with exactly-once tracking and schema evolution for the constant stream of mediation files. Vs custom file-watchers.</td></tr>
+      <tr><td>Kafka/Event Hub</td><td>Near-real-time feeds for the streams that need faster RA signals; decouples network bursts.</td></tr>
+      <tr><td>Snowflake/Power BI</td><td>Serve RA/finance analysts and regulatory usage reporting decoupled from the crunch.</td></tr>
+      <tr><td>Parquet/Delta + tiered storage</td><td>Columnar compression + hot/cold tiers for TB/day economics and multi-year audit retention.</td></tr>
+    </table>
+  </div>
+
+  <div class="block spec">
+    <h3>Ops (Security · CI/CD · Monitoring · Support · Cost)</h3>
+    <p><strong>Security:</strong> subscriber PII masked/tokenized; RBAC + Unity Catalog; private networking. <strong>CI/CD:</strong> rating-rule + pipeline changes via PR/CI, promoted across envs. <strong>Monitoring:</strong> file completeness (expected vs received), dedup ratios, daily-cycle SLA, leakage KPIs, cost per TB. <strong>Support:</strong> runbooks for missing feeds, dedup blowups, skew stragglers, storage pressure; idempotent lookback reprocessing for late CDRs. <strong>Cost:</strong> spot job clusters, autoscaling, compaction to fight small files, aggressive partition/tier management — the headline win vs Teradata.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Common Issues</h3>
+    <details class="q"><summary>Duplicate CDRs from network retries inflate usage <span class="lvl m">medium</span></summary><div class="a"><p>Dedup via MERGE on the CDR key in silver; monitor dedup ratio for anomalies. This directly protects billing accuracy and prevents customer disputes.</p></div></details>
+    <details class="q"><summary>A network element's feed is missing/partial <span class="lvl h">hard</span></summary><div class="a"><p>Completeness control table flags expected-vs-received gaps and sequence breaks; alert and hold RA reconciliation for that element until the feed is recovered and reprocessed idempotently.</p></div></details>
+    <details class="q"><summary>Skew from a handful of massive accounts <span class="lvl m">medium</span></summary><div class="a"><p>Salt the hot keys and broadcast small dimensions; AQE skew handling on; isolate mega-accounts if needed. Straggler tasks in the Spark UI are the tell.</p></div></details>
+  </div>
+
+  <div class="resume">
+    <h3>Resume &amp; STAR</h3>
+    <ul>
+      <li>Re-platformed telecom CDR/revenue-assurance from Teradata to a Databricks lakehouse processing 3–5B events/day, cutting compute/storage cost dramatically and moving RA from T+3 to daily.</li>
+      <li>Built dedup (Delta MERGE), completeness controls, and late-arrival lookback reprocessing to guarantee no double-count and no gaps across billions of records.</li>
+    </ul>
+    <div class="star"><strong>STAR — "largest-scale system you've built":</strong> <em>S</em> — Teradata RA couldn't keep up with data-usage growth and lagged 3 days. <em>T</em> — process billions of CDRs/day cheaply with provable completeness. <em>A</em> — Autoloader ingestion, MERGE dedup, salted skew handling, file-completeness controls, and idempotent late-CDR reprocessing on Databricks/Delta. <em>R</em> — daily RA, big cost reduction, and defensible leakage numbers.</div>
+  </div>
+  </section>
+
+  <section class="topic" id="proj-order360" data-title="4 · Order Processing + Customer 360" data-cat="Flagship Projects">
+  <h2>Project 4 — Retail Order Processing &amp; Customer 360</h2>
+  <span class="tag-ind">Retail / E-commerce</span><span class="tag-ind">CDC · Micro-batch</span>
+  <p class="tagline">An omni-channel retailer wants a single, near-real-time view of orders and customers across web, app, and stores — to power operations, marketing, and a unified customer profile.</p>
+
+  <div class="block theory">
+    <h3>Business Background &amp; Industry</h3>
+    <p>Client: a large omni-channel retailer (web, mobile, ~800 physical stores). Order data lived in separate systems (e-commerce OMS, in-store POS, marketplace) with no unified customer identity, so marketing couldn't segment, ops couldn't see true inventory/fulfilment, and finance reconciled sales manually. They wanted a <strong>Customer 360</strong> (one profile stitched across channels) and near-real-time order analytics.</p>
+    <p><strong>Why:</strong> fragmented data → missed personalization revenue, poor fulfilment decisions, slow reporting. Business case = incremental revenue from personalization + reduced stockouts/overstock + faster close.</p>
+    <div class="crux"><strong>Framing:</strong> "The hard parts are <em>identity resolution</em> (stitching the same customer across channels) and <em>CDC</em> (capturing order state changes in near-real-time from transactional systems without hammering them)."</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Existing Problems / Current Architecture</h3>
+    <pre class="arch">E-com OMS (Postgres) │ POS (SQL Server) │ Marketplace API │ CRM ──► nightly ETL ──► siloed reports; no unified customer</pre>
+    <p>Problems: duplicate customers across systems, nightly latency, no single order truth, manual sales reconciliation, marketing running on stale segments.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>FR &amp; NFR</h3>
+    <ul class="speclist">
+      <li><b>FR:</b> capture order lifecycle changes (created→paid→picked→shipped→delivered→returned) near-real-time via CDC.</li>
+      <li><b>FR:</b> resolve customer identity across channels into a golden profile with history (SCD2).</li>
+      <li><b>FR:</b> serve Customer 360, order ops dashboards, fulfilment feeds, and marketing segments.</li>
+      <li><b>NFR:</b> freshness minutes not hours; scale to peak (sale events 10×); PII/GDPR compliant; reconciles to finance.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>HLD &amp; Data Flow</h3>
+    <pre class="arch">OMS/POS DBs ─► Debezium CDC ─► Kafka (per-table change topics) ─► Autoloader/Streaming ─► BRONZE (change events)
+Marketplace/CRM ─► REST/API pulls ─┘                                                          │  order-state assembly (MERGE, ordered by op seq)
+                                                                                              ▼
+                                                        SILVER: current orders, identity-resolved customers (SCD2 golden profile)
+                                                                                              │
+                                                      GOLD: cust_360, fct_order, dim_customer, fulfilment feed, marketing segments
+                                                                                              │
+                                              reverse-ETL to CRM/marketing │ Snowflake + Power BI │ operational APIs</pre>
+    <p><strong>Cadence/formats:</strong> log-based CDC (Debezium) streams inserts/updates/deletes to Kafka (Avro + Schema Registry); marketplace/CRM via scheduled REST (JSON). Bronze append-only change log; silver MERGEs to current state ordered by the CDC sequence; gold builds dimensional marts + the 360 profile. Freshness: minutes.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>LLD — identity resolution &amp; CDC</h3>
+    <p><strong>CDC apply:</strong> deduplicate change events per key, order by the DB commit LSN/sequence, then MERGE into the current-state table (handle deletes as tombstones). This gives a correct, idempotent, replayable current view. <strong>Identity resolution:</strong> deterministic matching first (email/phone/loyalty id), then probabilistic/fuzzy (name + address + device) with a survivorship rule to build the golden record; store crosswalk (source ids → master customer id) and keep SCD2 history. Late/again-arriving events reprocessed via lookback.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Technology &amp; Why</h3>
+    <table class="why"><tr><th>Choice</th><th>Why</th></tr>
+      <tr><td>Debezium + Kafka (CDC)</td><td>Log-based CDC captures every order state change with minimal load on source OLTP DBs, ordered and replayable. Vs query-based polling (misses intermediate states, loads the DB) or nightly full extracts (latency).</td></tr>
+      <tr><td>Databricks + Delta (MERGE)</td><td>Idempotent CDC apply and SCD2 golden profiles via MERGE + Change Data Feed; scales for sale-event peaks.</td></tr>
+      <tr><td>Snowflake</td><td>Serves BI + marketing analysts + reverse-ETL to CRM with elastic concurrency, isolated from the pipeline.</td></tr>
+      <tr><td>Great Expectations</td><td>Validates order completeness and reconciliation to finance so the "single truth" is trusted.</td></tr>
+    </table>
+  </div>
+
+  <div class="block spec">
+    <h3>Ops</h3>
+    <p><strong>Security:</strong> GDPR — PII masking, consent flags, right-to-erasure handled via the crosswalk (delete/anonymize master + propagate). <strong>CI/CD/Infra:</strong> Terraform + Azure DevOps; streaming on job clusters, batch on ephemeral. <strong>Monitoring:</strong> CDC lag per table, connector health, identity match rates, order reconciliation vs finance, freshness SLO. <strong>Support:</strong> runbooks for connector failure (resume from offset), schema drift on source tables, and identity-merge errors (with an unmerge path). <strong>Cost:</strong> autoscaling, compaction, Snowflake auto-suspend, right-sized streaming.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Common Issues</h3>
+    <details class="q"><summary>CDC connector falls behind or dies <span class="lvl m">medium</span></summary><div class="a"><p>Monitor connector lag/health; on failure, resume from the last committed offset/LSN (Kafka retains the log). Idempotent MERGE means reprocessing is safe. Watch for source-DB log retention so you don't lose changes during a long outage.</p></div></details>
+    <details class="q"><summary>Source schema change breaks ingestion <span class="lvl m">medium</span></summary><div class="a"><p>Schema Registry compatibility + schema evolution on bronze; a breaking change is quarantined and alerted rather than corrupting downstream. Coordinate change management with the source app team via data contracts.</p></div></details>
+    <details class="q"><summary>Two profiles wrongly merged (false identity match) <span class="lvl h">hard</span></summary><div class="a"><p>Keep the crosswalk + SCD2 history so merges are reversible; tune match thresholds; route low-confidence matches to a stewardship review queue rather than auto-merging. Never destroy source ids.</p></div></details>
+  </div>
+
+  <div class="resume">
+    <h3>Resume &amp; STAR</h3>
+    <ul>
+      <li>Built a near-real-time omni-channel order + Customer 360 platform using Debezium/Kafka CDC → Databricks/Delta (MERGE, SCD2) → Snowflake, delivering minute-level freshness and a unified golden customer profile.</li>
+      <li>Implemented deterministic + probabilistic identity resolution with a reversible crosswalk and GDPR erasure handling, and reconciled orders to finance via Great Expectations.</li>
+    </ul>
+    <div class="star"><strong>STAR — "integrating messy multi-source data":</strong> <em>S</em> — orders/customers fragmented across web, POS, and marketplace with no unified identity. <em>T</em> — one near-real-time order truth + Customer 360. <em>A</em> — log-based CDC into Delta with idempotent MERGE apply, SCD2 golden profiles, and identity resolution with a stewardship path. <em>R</em> — minute-level unified data powering personalization, ops, and faster financial close.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>Why CDC instead of nightly extracts? <span class="lvl m">medium</span></summary><div class="a"><p>CDC captures every intermediate state change in near-real-time with low source load and full replayability; nightly extracts miss lifecycle transitions and add a day of latency. For order ops and personalization, freshness is the value.</p></div></details>
+    <details class="q"><summary>How do you apply CDC correctly and idempotently? <span class="lvl h">hard</span></summary><div class="a"><p>Dedup change events, order by commit LSN/sequence, MERGE into current state (updates, inserts, delete tombstones), and keep the raw change log in bronze for replay. Re-running produces the same current state — no duplicates, correct ordering.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="proj-claims" data-title="5 · Insurance Claims Platform" data-cat="Flagship Projects">
+  <h2>Project 5 — Healthcare Insurance Claims Processing</h2>
+  <span class="tag-ind">Healthcare / Insurance</span><span class="tag-ind">Batch · HIPAA</span>
+  <p class="tagline">A health insurer processes millions of claims from providers in mixed formats. The platform must ingest, validate, adjudicate-support, and analyze claims — under strict PHI/HIPAA controls.</p>
+
+  <div class="block theory">
+    <h3>Business Background &amp; Industry</h3>
+    <p>Client: a health-insurance payer processing millions of claims/month from thousands of providers via EDI (X12 837), portals, and files. Slow, error-prone intake caused claim backlogs, provider dissatisfaction, and compliance risk (PHI mishandling penalties are severe). They wanted a governed data platform to standardize intake, run validation/edits, support adjudication, detect anomalies (fraud/waste/abuse), and report — all HIPAA-compliant.</p>
+    <div class="crux"><strong>Framing:</strong> "The dominant NFR is <em>PHI security &amp; compliance</em>. Everything — masking, access, audit, residency, retention — is designed around HIPAA. The data itself is the sensitive asset."</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Existing Problems / Current Architecture</h3>
+    <pre class="arch">Provider EDI/files ─► on-prem ETL ─► claims DB ─► manual edits/reports; PHI spread across systems w/ weak audit</pre>
+    <p>Problems: heterogeneous formats (X12 837, CSV, PDF), manual data fixes, no unified analytics, weak lineage/audit for PHI, slow FWA (fraud/waste/abuse) detection.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>FR &amp; NFR</h3>
+    <ul class="speclist">
+      <li><b>FR:</b> ingest X12 837 + files; parse/standardize to a canonical claim model; apply validation edits; enrich with member/provider/plan dims; support adjudication + FWA analytics; produce operational + regulatory reports.</li>
+      <li><b>NFR security:</b> HIPAA — PHI encrypted, masked, least-privilege, full audit, BAA-compliant infra, data residency.</li>
+      <li><b>NFR:</b> completeness/accuracy (no lost claims), reprocessing/backfill, retention 7–10 yrs, availability for daily cycles.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>HLD &amp; Data Flow</h3>
+    <pre class="arch">Provider EDI (X12 837) / portal / files ─► secure landing (SFTP/Blob, encrypted) ─► ADF/Databricks parse
+        ▼
+BRONZE (raw claims + segments, immutable, PHI-tagged) ─► SILVER (canonical claim model, validated, enriched, deduped) ─► GOLD (adjudication support, FWA features, reporting marts)
+        │  Great Expectations edits/validation    Unity Catalog: PHI classification, column masking, lineage
+        ▼
+   Snowflake + Power BI (ops KPIs, FWA, provider scorecards)  │  secure export back to claims system</pre>
+    <p><strong>Cadence/formats:</strong> batch — provider files arrive on schedules; ADF/Databricks parse X12 837 into canonical tables; daily silver/gold. Formats in: X12 EDI, CSV, JSON; internal Delta. Late/corrected claims via idempotent reprocessing.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>LLD highlights</h3>
+    <p>X12 837 parsed into hierarchical canonical tables (claim header, service lines, diagnoses, providers). Member/provider/plan as SCD2 dims (eligibility valid at service date). Validation "edits" implemented as versioned GE/PySpark rule sets producing pass/reject/pend with reason codes; rejects quarantined with reasons (never dropped). PHI columns classified and masked in Unity Catalog; only privileged roles see raw PHI; analysts see masked/aggregated. FWA features (billing patterns, outlier providers) in gold.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Technology &amp; Why</h3>
+    <table class="why"><tr><th>Choice</th><th>Why</th></tr>
+      <tr><td>Databricks + Delta</td><td>Scale for millions of claims, ACID for corrections/reprocessing, time travel for audit; Unity Catalog gives the PHI classification/masking/lineage HIPAA needs.</td></tr>
+      <tr><td>Unity Catalog + Purview</td><td>Column-level PHI masking, fine-grained access, and end-to-end lineage — the compliance backbone.</td></tr>
+      <tr><td>Great Expectations</td><td>Documented, versioned validation edits producing audit evidence and reason-coded rejects.</td></tr>
+      <tr><td>ADF</td><td>Scheduled, monitored intake of many provider feeds/formats with retries.</td></tr>
+      <tr><td>Snowflake/Power BI</td><td>Governed analytics for ops, FWA, and provider scorecards with masked/aggregated PHI.</td></tr>
+    </table>
+  </div>
+
+  <div class="block spec">
+    <h3>Ops</h3>
+    <p><strong>Security:</strong> encryption at rest (CMK) + TLS; PHI masking/tokenization; RBAC least-privilege; immutable audit logs; private networking; BAA-compliant regions; retention/erasure policies. <strong>CI/CD/Infra:</strong> Terraform-provisioned isolated envs; rule changes via PR + clinical/compliance review. <strong>Monitoring:</strong> intake completeness, reject rates + reason codes, DQ, cycle SLA, access-audit anomalies. <strong>Support:</strong> runbooks for malformed EDI, provider feed gaps, and correction reprocessing; idempotent backfill. <strong>Cost:</strong> ephemeral job clusters, tiered PHI-retention storage, auto-suspend.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Common Issues</h3>
+    <details class="q"><summary>Malformed / non-compliant X12 file <span class="lvl m">medium</span></summary><div class="a"><p>Validate structure at intake; quarantine the file with a clear reason and notify the provider; never let a bad file corrupt bronze. Reprocess once corrected.</p></div></details>
+    <details class="q"><summary>PHI exposure risk in a new report <span class="lvl h">hard</span></summary><div class="a"><p>Unity Catalog column masking + role-based access mean analysts get masked/aggregated PHI by default; any new dataset goes through a governance review and classification before exposure. Access is audited.</p></div></details>
+    <details class="q"><summary>Corrected/resubmitted claims cause duplicates <span class="lvl m">medium</span></summary><div class="a"><p>MERGE on the claim key with version/sequence keeps the latest corrected version and preserves history; reason-coded supersession rather than blind append.</p></div></details>
+  </div>
+
+  <div class="resume">
+    <h3>Resume &amp; STAR</h3>
+    <ul>
+      <li>Built a HIPAA-compliant claims platform on Databricks/Delta parsing X12 837 into a canonical model, with Unity Catalog PHI masking/lineage, versioned validation edits (Great Expectations), and FWA analytics in Snowflake.</li>
+      <li>Implemented reason-coded quarantine, idempotent correction reprocessing, and full audit/time-travel over a multi-year retention horizon.</li>
+    </ul>
+    <div class="star"><strong>STAR — "a project with strict compliance":</strong> <em>S</em> — claims intake was manual, multi-format, and PHI handling was audit-weak. <em>T</em> — a governed, HIPAA-compliant platform. <em>A</em> — canonical X12 parsing, SCD2 eligibility, GE validation with reason codes, Unity Catalog masking/lineage, and immutable audit. <em>R</em> — faster intake, defensible compliance posture, and FWA analytics that recovered improper payments.</div>
+  </div>
+  </section>
+
+  <section class="topic" id="proj-iot" data-title="6 · IoT Predictive Maintenance" data-cat="Flagship Projects">
+  <h2>Project 6 — IoT Predictive Maintenance</h2>
+  <span class="tag-ind">Manufacturing</span><span class="tag-ind">Streaming · Time-series</span>
+  <p class="tagline">A manufacturer instruments its machines with sensors to predict failures before they happen — turning costly unplanned downtime into scheduled maintenance.</p>
+
+  <div class="block theory">
+    <h3>Business Background &amp; Industry</h3>
+    <p>Client: a heavy-equipment manufacturer with thousands of machines across plants, each emitting high-frequency sensor telemetry (vibration, temperature, pressure, RPM). Unplanned downtime cost millions per incident (lost production + emergency repair). They wanted a platform to ingest telemetry in real time, detect anomalies, and predict failures so maintenance is scheduled proactively.</p>
+    <div class="crux"><strong>Framing:</strong> "This is a <em>high-volume time-series + streaming</em> problem with an ML overlay. The engineering challenge is ingesting millions of sensor readings/sec reliably, handling gaps/late data, and computing windowed features for anomaly/failure models."</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Existing Problems / Current Architecture</h3>
+    <pre class="arch">Machines ─► SCADA/historian (on-prem) ─► periodic exports ─► spreadsheets ─► reactive maintenance (after failure)</pre>
+    <p>Problems: data trapped in historians, no real-time visibility, maintenance was reactive, no cross-plant analytics or ML.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>FR &amp; NFR</h3>
+    <ul class="speclist">
+      <li><b>FR:</b> ingest sensor streams via IoT gateways; store raw time-series; compute rolling-window features; run anomaly detection + remaining-useful-life models; alert maintenance; dashboards per machine/plant.</li>
+      <li><b>NFR:</b> ingest millions readings/sec; handle device dropouts/late data; near-real-time alerting; scalable cheap time-series storage; edge-to-cloud reliability.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>HLD &amp; Data Flow</h3>
+    <pre class="arch">Sensors ─► edge gateway (buffer/aggregate) ─► IoT Hub / Event Hub / Kafka ─► Structured Streaming (Databricks)
+        │  windowed features (vibration RMS, temp trends) w/ watermark; anomaly scoring
+        ▼
+BRONZE (raw telemetry Delta, partitioned by machine_id+date) ─► SILVER (cleaned, gap-filled, feature) ─► GOLD (health scores, RUL predictions, alerts)
+        │                                                                                   │
+   alerts ─► maintenance system / Teams                                        Snowflake/Power BI (fleet health, downtime KPIs)
+   batch: model training (MLflow) on historical failures ─► deploy models</pre>
+    <p><strong>Cadence/formats:</strong> continuous streaming (Avro/JSON/Protobuf compact payloads) from gateways; micro-batch into bronze; streaming feature/anomaly path for alerts; batch training on history. Watermarks bound windowed state; device dropouts handled with gap detection + interpolation flags.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>LLD highlights</h3>
+    <p>Edge gateways buffer during connectivity loss and forward with original timestamps (event-time processing). Streaming computes rolling windows (e.g., 1/5/60-min RMS, deltas, thresholds) keyed by <code>machine_id+sensor</code> with watermarks; anomaly rules + ML score. Time-series stored in Delta partitioned by machine and date, Z-ordered by machine/sensor; heavy compaction due to tiny records. Late data reprocessed within the watermark; very late routed to a correction path. RUL models trained on labeled historical failures, versioned in MLflow.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Technology &amp; Why</h3>
+    <table class="why"><tr><th>Choice</th><th>Why</th></tr>
+      <tr><td>IoT Hub / Event Hub / Kafka</td><td>Reliable, scalable device ingestion with per-device identity, buffering, and back-pressure. Vs direct DB writes (can't absorb bursts/dropouts).</td></tr>
+      <tr><td>Structured Streaming + watermarks</td><td>Event-time windowed features with bounded state and exactly-once — essential for correct time-series aggregation with late/out-of-order sensor data.</td></tr>
+      <tr><td>Delta + Z-order + compaction</td><td>Cheap, queryable time-series storage; compaction fights the small-files explosion from tiny high-frequency records.</td></tr>
+      <tr><td>MLflow</td><td>Versioned anomaly/RUL models with rollback and champion/challenger.</td></tr>
+      <tr><td>Snowflake/Power BI</td><td>Fleet health and downtime analytics for plant managers.</td></tr>
+    </table>
+  </div>
+
+  <div class="block spec">
+    <h3>Ops</h3>
+    <p><strong>Security:</strong> per-device auth/certs, private networking, RBAC. <strong>CI/CD/Infra:</strong> Terraform; streaming job clusters + batch training clusters. <strong>Monitoring:</strong> ingestion rate per device, device dropout/lag, streaming batch duration, small-file counts, model drift, alert precision. <strong>Support:</strong> runbooks for gateway outages, watermark/state issues, compaction backlog; idempotent reprocessing. <strong>Cost:</strong> compaction + tiered retention (hot recent, cold history), autoscaling, spot for training.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Common Issues</h3>
+    <details class="q"><summary>Small-files explosion from high-frequency records <span class="lvl m">medium</span></summary><div class="a"><p>Micro-batch to reasonable file sizes, run Delta OPTIMIZE/auto-compaction, and partition sensibly (machine+date, not per-second). Otherwise reads and metadata die under millions of tiny files.</p></div></details>
+    <details class="q"><summary>Device dropout / late telemetry <span class="lvl m">medium</span></summary><div class="a"><p>Edge buffering preserves event-time; watermarks accept bounded lateness; gap detection flags missing windows. Very late data goes to a correction path so windows aren't silently wrong.</p></div></details>
+    <details class="q"><summary>State store grows unbounded <span class="lvl h">hard</span></summary><div class="a"><p>A missing/too-large watermark keeps window state forever. Set a watermark matched to real device lateness so old state is evicted; monitor state size in the Spark UI.</p></div></details>
+  </div>
+
+  <div class="resume">
+    <h3>Resume &amp; STAR</h3>
+    <ul>
+      <li>Built an IoT predictive-maintenance platform ingesting millions of sensor readings/sec via Event Hub/Kafka → Spark Structured Streaming (event-time windows, watermarks) → Delta, with MLflow anomaly/RUL models cutting unplanned downtime.</li>
+      <li>Solved the high-frequency small-files problem with compaction + partitioning and handled device dropouts via edge buffering + watermark-bounded late-data processing.</li>
+    </ul>
+    <div class="star"><strong>STAR — "a streaming/time-series challenge":</strong> <em>S</em> — machine failures caused costly unplanned downtime; sensor data was trapped in historians. <em>T</em> — real-time telemetry + predictive alerts. <em>A</em> — device ingestion, watermarked windowed features, Delta time-series storage with compaction, and versioned RUL models. <em>R</em> — proactive scheduled maintenance and a measurable drop in unplanned downtime.</div>
+  </div>
+  </section>
+
+  <section class="topic" id="proj-saas" data-title="7 · SaaS Product Event Analytics" data-cat="Flagship Projects">
+  <h2>Project 7 — SaaS Application Event Analytics</h2>
+  <span class="tag-ind">SaaS</span><span class="tag-ind">Clickstream · High-volume</span>
+  <p class="tagline">A SaaS company needs product analytics — how users engage, feature adoption, funnels, retention, and usage-based billing — from billions of application events.</p>
+
+  <div class="block theory">
+    <h3>Business Background &amp; Industry</h3>
+    <p>Client: a fast-growing B2B SaaS product emitting billions of application/telemetry events/day (page views, feature clicks, API calls). Product, growth, and finance teams needed reliable event analytics: feature adoption, funnels, retention cohorts, and <strong>usage-based billing</strong> (bill customers by metered usage). Their homegrown event pipeline dropped events, double-counted, and couldn't support billing-grade accuracy.</p>
+    <div class="crux"><strong>Framing:</strong> "Two sub-problems with different bars: <em>product analytics</em> tolerates approximate/near-real-time, but <em>usage billing</em> needs exactly-once, auditable counts. The design serves both from one event backbone."</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Existing Problems / Current Architecture</h3>
+    <pre class="arch">App SDK ─► homegrown collector ─► Postgres ─► ad-hoc queries; events dropped at scale; billing disputes from bad counts</pre>
+    <p>Problems: lossy collection, no schema governance (event sprawl), no dedup, billing counts untrustworthy, analysts blocked by slow Postgres.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>FR &amp; NFR</h3>
+    <ul class="speclist">
+      <li><b>FR:</b> collect events via SDK → gateway; enforce event schemas (tracking plan); dedupe; build sessions/funnels/retention; compute metered usage for billing; serve product + finance.</li>
+      <li><b>NFR:</b> billions/day, elastic; exactly-once for billing metrics; schema governance; near-real-time for product dashboards; multi-tenant isolation; cost-efficient at scale.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>HLD &amp; Data Flow</h3>
+    <pre class="arch">App/SDK ─► event gateway (validate vs schema registry) ─► Kafka (event topics) ─► Autoloader/Streaming
+        ▼
+BRONZE (raw events, immutable, partitioned by event_dt) ─► SILVER (deduped by event_id, sessionized, typed) ─► GOLD (funnels, retention, feature adoption, metered_usage)
+        │  dedup (exactly-once), bot filtering, identity stitching             billing export (auditable usage) ─► billing system
+        ▼
+   Snowflake + Looker/Power BI (product & growth analytics)   │   reverse-ETL to CRM (product-qualified leads)</pre>
+    <p><strong>Cadence/formats:</strong> events streamed as JSON/Protobuf validated against a tracking plan (schema registry); micro-batch to bronze; streaming path for near-real-time dashboards; billing usage computed in exactly-once batch with dedup on <code>event_id</code>. Late events reprocessed within a lookback window.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>LLD highlights</h3>
+    <p>Tracking plan governs event names/props; the gateway rejects/quarantines off-plan events (prevents event sprawl). Dedup on <code>event_id</code> via MERGE guarantees billing counts aren't inflated by client retries. Sessionization with event-time + inactivity gap; identity stitching (anonymous → known on login). Multi-tenant: tenant_id partition/row-filter isolation. Billing usage aggregated deterministically per tenant per period with a signed, versioned output for dispute resolution.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Technology &amp; Why</h3>
+    <table class="why"><tr><th>Choice</th><th>Why</th></tr>
+      <tr><td>Kafka + Schema Registry</td><td>Durable, replayable event backbone with enforced schemas (the tracking plan) to stop event sprawl. Vs a lossy homegrown collector.</td></tr>
+      <tr><td>Databricks + Delta</td><td>Exactly-once dedup (MERGE) for billing-grade counts, scale for billions/day, time travel for billing audit/disputes.</td></tr>
+      <tr><td>Snowflake + Looker</td><td>Self-serve product/growth analytics with elastic concurrency for many analysts.</td></tr>
+      <tr><td>dbt</td><td>Versioned, tested metric definitions (funnels, retention, MAU/DAU) so "the numbers" are consistent and governed.</td></tr>
+    </table>
+  </div>
+
+  <div class="block spec">
+    <h3>Ops</h3>
+    <p><strong>Security:</strong> multi-tenant isolation (row filters/tenant partitions), PII minimization, RBAC. <strong>CI/CD/Infra:</strong> Terraform; streaming + batch clusters; dbt CI. <strong>Monitoring:</strong> event volume vs baseline (drop detection), schema-rejection rate, dedup ratio, billing-count reconciliation, freshness. <strong>Support:</strong> runbooks for SDK bad-deploy event floods, schema violations, and billing recomputation. <strong>Cost:</strong> compaction, autoscaling, Snowflake auto-suspend, sampling for exploratory (never for billing).</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Common Issues</h3>
+    <details class="q"><summary>A client SDK bug floods duplicate events <span class="lvl m">medium</span></summary><div class="a"><p>Dedup on event_id protects billing; volume-anomaly alerts catch the flood; schema/gateway rate controls limit blast radius. Billing recomputed idempotently after the fix.</p></div></details>
+    <details class="q"><summary>Event sprawl — undocumented events everywhere <span class="lvl m">medium</span></summary><div class="a"><p>Enforce the tracking plan at the gateway; off-plan events quarantined and surfaced to product for a decision. Governance prevents the "10,000 mystery events" problem.</p></div></details>
+    <details class="q"><summary>Billing dispute — customer contests usage <span class="lvl h">hard</span></summary><div class="a"><p>Time travel + the signed, versioned usage output reproduce exactly what was billed and let you trace back to the raw events. Exactly-once + audit is why billing is defensible.</p></div></details>
+  </div>
+
+  <div class="resume">
+    <h3>Resume &amp; STAR</h3>
+    <ul>
+      <li>Built a billions/day product-event platform (Kafka + Schema Registry → Databricks/Delta → Snowflake/dbt) serving product analytics and exactly-once, auditable usage-based billing.</li>
+      <li>Enforced a governed tracking plan, event dedup (MERGE) for billing accuracy, sessionization, and multi-tenant isolation; reconciled billing counts and made them reproducible via time travel.</li>
+    </ul>
+    <div class="star"><strong>STAR — "accuracy at massive scale":</strong> <em>S</em> — homegrown pipeline dropped/double-counted events, causing billing disputes. <em>T</em> — billing-grade counts + product analytics at billions/day. <em>A</em> — schema-enforced Kafka backbone, exactly-once dedup in Delta, deterministic usage aggregation with signed outputs, dbt-governed metrics. <em>R</em> — trustworthy billing, faster analytics, resolved disputes.</div>
+  </div>
+  </section>
+
+  <section class="topic" id="proj-migration" data-title="8 · Teradata/Oracle → Databricks Migration" data-cat="Flagship Projects">
+  <h2>Project 8 — Legacy Warehouse → Lakehouse Migration</h2>
+  <span class="tag-ind">Migration</span><span class="tag-ind">Teradata/Oracle → Databricks</span>
+  <p class="tagline">The most common enterprise DE engagement of the decade: move a costly legacy warehouse (Teradata/Oracle/Netezza) and its hundreds of ETL jobs to a cloud lakehouse — without breaking the business.</p>
+
+  <div class="block theory">
+    <h3>Business Background &amp; Industry</h3>
+    <p>Client: an enterprise running a large on-prem Teradata warehouse (plus Oracle/Informatica ETL) feeding hundreds of reports. Renewal/maintenance costs were escalating, scaling meant expensive hardware, and the platform couldn't support ML or semi-structured data. They wanted to migrate to a <strong>Databricks lakehouse on Azure</strong> — cutting cost, unlocking scale/ML — with <em>zero business disruption</em> and <em>numbers that reconcile exactly</em>.</p>
+    <div class="crux"><strong>Framing:</strong> "Migrations are judged on two things: <em>reconciliation</em> (does the lakehouse produce identical numbers to the legacy system, to the penny?) and <em>risk-managed cutover</em> (parallel run, phased, reversible). Speed is secondary to trust."</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Existing Architecture &amp; Problems</h3>
+    <pre class="arch">Sources ─► Informatica ETL ─► Teradata (EDW, 3NF + marts) ─► BusinessObjects/Cognos reports</pre>
+    <p>Problems: cost, fixed capacity, thousands of undocumented Informatica mappings + BTEQ scripts, tribal knowledge, no ML/semi-structured support, slow to change.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>FR &amp; NFR</h3>
+    <ul class="speclist">
+      <li><b>FR:</b> migrate schemas, data (history + incremental), and ETL logic; reproduce every report identically; re-point BI; decommission legacy.</li>
+      <li><b>NFR:</b> reconciliation to source (row/aggregate parity); no downtime for the business; performance ≥ legacy; lower TCO; governance (Unity Catalog); rollback capability.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>HLD — the migration approach</h3>
+    <pre class="arch">1. ASSESS  ── inventory tables, ETL jobs, reports, dependencies, data volumes, SLAs (automated scanners + interviews)
+2. DESIGN  ── target lakehouse model (bronze/silver/gold), map Teradata objects → Delta, ETL → PySpark/dbt
+3. MIGRATE DATA ── one-time history load (bulk export → ADLS → Delta) + ongoing incremental/CDC until cutover
+4. CONVERT ETL  ── Informatica/BTEQ → PySpark/dbt (automated conversion tools + manual refactor)
+5. RECONCILE    ── row counts, aggregates, column checksums: legacy vs lakehouse, per table, per report
+6. PARALLEL RUN ── run both in production, compare outputs daily until trust threshold met
+7. CUTOVER      ── re-point BI, freeze legacy, keep it warm for rollback, then decommission</pre>
+  </div>
+
+  <div class="block theory">
+    <h3>Data Flow &amp; LLD highlights</h3>
+    <p><strong>History load:</strong> bulk-export Teradata (TPT/Parquet) to ADLS, load to bronze, build silver/gold to match legacy marts. <strong>Incremental:</strong> CDC or watermark extracts keep the lakehouse current during the (often months-long) parallel run. <strong>ETL conversion:</strong> map each Informatica mapping/BTEQ to a tested PySpark/dbt model; recreate SCD logic, surrogate keys, and business rules faithfully. <strong>Reconciliation harness:</strong> automated per-table row counts, aggregate sums per key column, and hash/checksum comparisons; a dashboard tracks parity % and open breaks. <strong>Dialect gotchas:</strong> Teradata vs Spark SQL differences (implicit casts, NULL ordering, date handling, QUALIFY, recursive queries) are a top source of subtle mismatches — catalogued and handled.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Technology &amp; Why</h3>
+    <table class="why"><tr><th>Choice</th><th>Why</th></tr>
+      <tr><td>Databricks + Delta (target)</td><td>Elastic compute + cheap storage slash TCO vs Teradata; ACID, ML, semi-structured support; Photon for BI-grade SQL performance.</td></tr>
+      <tr><td>dbt / PySpark (ETL rewrite)</td><td>Versioned, tested, documented transformations replacing opaque Informatica/BTEQ — and they generate lineage.</td></tr>
+      <tr><td>Automated conversion tools</td><td>Accelerate BTEQ/Informatica → Spark conversion (e.g., LeapLogic/BladeBridge-style), then human refactor. Vs pure manual (too slow/error-prone at hundreds of jobs).</td></tr>
+      <tr><td>Reconciliation framework</td><td>The single most important deliverable — automates parity proof so the business trusts the switch.</td></tr>
+      <tr><td>Unity Catalog</td><td>Governance/lineage the legacy system lacked; a selling point of the migration.</td></tr>
+      <tr><td>ADF / Azure DevOps / Terraform</td><td>Orchestrate extracts, and stand up the whole target environment as code, repeatably across envs.</td></tr>
+    </table>
+  </div>
+
+  <div class="block spec">
+    <h3>Ops &amp; Cutover</h3>
+    <p><strong>Deployment/cutover:</strong> phased by subject area (migrate + parallel-run + cutover finance, then sales, etc.), never big-bang. Legacy kept warm for rollback until each domain is trusted. <strong>Monitoring:</strong> reconciliation parity %, parallel-run diffs, job SLAs, cost tracking vs legacy baseline. <strong>Support:</strong> war-room during cutover; runbook for parity breaks (drill to the transform that diverged). <strong>Cost:</strong> the business case — measure realized TCO reduction; right-size clusters, auto-suspend, spot, compaction post-migration.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Common Issues</h3>
+    <details class="q"><summary>Numbers don't reconcile (legacy ≠ lakehouse) <span class="lvl h">hard</span></summary><div class="a"><p>Almost always a dialect/logic difference: implicit casts, NULL handling, date/timezone, rounding, or a subtly different join/dedup. Drill per-column checksums to the exact table/transform, reproduce the legacy behavior, re-test. This reconciliation discipline is the heart of migration work.</p></div></details>
+    <details class="q"><summary>Undocumented legacy logic / tribal knowledge <span class="lvl m">medium</span></summary><div class="a"><p>Reverse-engineer from BTEQ/mappings + interview SMEs; reconciliation catches anything missed (a mismatch reveals hidden logic). Document as you go — the new platform ends up better documented than the old.</p></div></details>
+    <details class="q"><summary>Parallel-run cost / drift during long migration <span class="lvl m">medium</span></summary><div class="a"><p>Keep incremental loads flowing so the lakehouse stays current; time-box parallel run per domain with a clear trust threshold; automate reconciliation so it's cheap to run daily.</p></div></details>
+  </div>
+
+  <div class="resume">
+    <h3>Resume &amp; STAR</h3>
+    <ul>
+      <li>Migrated a large Teradata/Informatica EDW to a Databricks lakehouse on Azure — converting hundreds of ETL jobs to PySpark/dbt, migrating history + incremental data, and building an automated reconciliation framework proving penny-level parity.</li>
+      <li>Executed a phased, parallel-run cutover by subject area with rollback safety and Unity Catalog governance, cutting warehouse TCO significantly.</li>
+    </ul>
+    <div class="star"><strong>STAR — "a migration you led":</strong> <em>S</em> — escalating Teradata costs, no ML, thousands of opaque ETL jobs. <em>T</em> — migrate to a lakehouse with identical numbers and zero disruption. <em>A</em> — inventory/assess, target medallion model, automated + manual ETL conversion, history+CDC data migration, and a reconciliation harness; phased parallel-run cutover with rollback. <em>R</em> — trusted cutover, major TCO reduction, and a governed, ML-capable platform.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>How do you de-risk a big-bang migration? <span class="lvl h">hard</span></summary><div class="a"><p>Don't big-bang. Migrate by subject area, parallel-run old and new in production, reconcile daily, cut over one domain at a time with the legacy kept warm for rollback, and only decommission after sustained parity. Automated reconciliation is what makes phased cutover affordable.</p></div></details>
+    <details class="q"><summary>What's the hardest part of a warehouse migration? <span class="lvl m">medium</span></summary><div class="a"><p>Not moving data — it's reproducing legacy business logic exactly (dialect and NULL/date/rounding differences) and proving parity. The reconciliation framework and SME reverse-engineering are where migrations are won or lost.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="more-bank-tel" data-title="Banking &amp; Telecom (condensed)" data-cat="More Projects">
+  <h2>More Projects — Banking &amp; Telecom</h2>
+  <p class="tagline">Same template, condensed. Each card: business + problem → architecture → why the tech → key issues → resume bullet. Enough to reconstruct in an interview.</p>
+
+  <div class="block spec">
+    <h3>9 · Transaction Processing Platform <span class="tag-ind">Banking</span></h3>
+    <p><strong>Business/problem:</strong> a bank's daily transaction reporting ran 10+ hours on an overloaded OLTP replica; analysts couldn't get intraday positions. <strong>Money:</strong> delayed reconciliation and treasury decisions.</p>
+    <pre class="arch">Core banking ─CDC─► Kafka ─► Databricks (bronze→silver→gold) ─► Snowflake ─► Power BI; intraday micro-batches</pre>
+    <p><strong>Why:</strong> CDC (offload OLTP) · Kafka (buffer bursts) · Delta MERGE (idempotent posting/dedup) · Snowflake (concurrent BI). <strong>Key issues:</strong> duplicate/reversed transactions (MERGE + reversal handling), intraday vs EOD reconciliation to GL, skew on large corporate accounts. <strong>Resume:</strong> "Cut transaction reporting from 10h to intraday via CDC→Databricks/Delta→Snowflake, with GL reconciliation and idempotent posting."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>10 · Loan Processing Data Platform <span class="tag-ind">Banking</span></h3>
+    <p><strong>Business/problem:</strong> loan origination data fragmented across LOS, bureau, and core; slow underwriting analytics and no unified loan lifecycle view. <strong>Money:</strong> slower approvals, weaker risk decisions.</p>
+    <pre class="arch">LOS + bureau API + core ─► ADF/CDC ─► medallion ─► gold loan-lifecycle marts ─► risk models + reporting</pre>
+    <p><strong>Why:</strong> ADF (heterogeneous ingest) · Delta SCD2 (application state history) · dbt (versioned risk rules). <strong>Key issues:</strong> bureau API rate limits/retries, PII (masking), late status updates (idempotent MERGE). <strong>Resume:</strong> "Unified loan-lifecycle platform integrating LOS/bureau/core with SCD2 state history feeding underwriting analytics and risk models."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>11 · Risk Analytics Platform <span class="tag-ind">Banking</span></h3>
+    <p><strong>Business/problem:</strong> credit/market risk aggregation was slow and siloed; risk couldn't compute exposures across portfolios quickly. <strong>Money:</strong> regulatory capital + risk-limit breaches.</p>
+    <pre class="arch">Positions + market data + ratings ─► Databricks (heavy Spark aggregation) ─► gold risk marts ─► Snowflake/Power BI + risk engine feeds</pre>
+    <p><strong>Why:</strong> Spark (large cross-portfolio aggregation) · Delta (reproducible risk runs, time travel) · Snowflake (analyst concurrency). <strong>Key issues:</strong> market-data completeness/timeliness, reconciliation to front-office, compute cost at portfolio scale (partition/broadcast tuning). <strong>Resume:</strong> "Built a risk-aggregation platform on Databricks computing cross-portfolio exposures with reproducible, time-travelled risk runs."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>12 · Network Performance Analytics <span class="tag-ind">Telecom</span></h3>
+    <p><strong>Business/problem:</strong> network ops lacked near-real-time KPI visibility (drops, latency, cell load) across millions of network counters; outages found late. <strong>Money:</strong> SLA penalties, churn.</p>
+    <pre class="arch">Network counters/probes ─► Kafka/Event Hub ─► Structured Streaming ─► Delta (time-series) ─► Grafana/Power BI + alerts</pre>
+    <p><strong>Why:</strong> streaming (real-time KPIs) · Delta + compaction (high-frequency counters) · Grafana (ops dashboards). <strong>Key issues:</strong> small files, watermarked late counters, cell-level skew. <strong>Resume:</strong> "Delivered near-real-time network KPI analytics over millions of counters via streaming→Delta with time-series compaction and ops alerting."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>13 · Recharge &amp; Customer Usage Analytics <span class="tag-ind">Telecom</span></h3>
+    <p><strong>Business/problem:</strong> prepaid recharge + usage data siloed; marketing couldn't target low-balance/churn-risk users or measure campaign uplift. <strong>Money:</strong> lost recharge revenue, churn.</p>
+    <pre class="arch">Recharge events + usage (CDR-derived) ─► medallion ─► gold usage/segment marts ─► campaign engine + Power BI</pre>
+    <p><strong>Why:</strong> Delta (usage aggregation) · Snowflake (segmentation/BI) · reverse-ETL (campaign activation). <strong>Key issues:</strong> huge event volume, near-real-time balance triggers, segment freshness. <strong>Resume:</strong> "Built recharge/usage analytics powering churn-risk segmentation and near-real-time low-balance campaign triggers."</p>
+  </div>
+  </section>
+
+  <section class="topic" id="more-retail" data-title="Retail &amp; E-commerce (condensed)" data-cat="More Projects">
+  <h2>More Projects — Retail &amp; E-commerce</h2>
+
+  <div class="block spec">
+    <h3>14 · Inventory Pipeline <span class="tag-ind">Retail</span></h3>
+    <p><strong>Business/problem:</strong> inventory positions across 800 stores + DCs + e-com were stale (nightly), causing stockouts and overstock and blocking omni-channel fulfilment. <strong>Money:</strong> lost sales + carrying cost.</p>
+    <pre class="arch">POS + WMS + e-com ─CDC/stream─► Databricks ─► near-real-time inventory position (Delta) ─► fulfilment APIs + Snowflake</pre>
+    <p><strong>Why:</strong> CDC/stream (freshness) · Delta MERGE (current position, idempotent) · APIs (serve fulfilment). <strong>Key issues:</strong> reconciliation of movements vs physical counts, negative inventory from ordering races, late store feeds. <strong>Resume:</strong> "Built near-real-time omni-channel inventory positions via CDC→Delta MERGE, enabling ship-from-store and cutting stockouts."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>15 · Recommendation Data Platform <span class="tag-ind">E-commerce</span></h3>
+    <p><strong>Business/problem:</strong> recommendations ran on stale batch features; data scientists lacked a reliable feature pipeline. <strong>Money:</strong> lower conversion/AOV.</p>
+    <pre class="arch">Clickstream + orders + catalog ─► medallion ─► feature store (offline Delta + online Redis) ─► rec models (MLflow) ─► serving API</pre>
+    <p><strong>Why:</strong> feature store (train/serve parity) · Redis (low-latency online features) · MLflow (model lifecycle). <strong>Key issues:</strong> feature freshness/skew, cold-start, online/offline consistency. <strong>Resume:</strong> "Delivered the data/feature platform behind product recommendations — offline Delta + online Redis feature store with MLflow-managed models."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>16 · Returns Analytics <span class="tag-ind">E-commerce</span></h3>
+    <p><strong>Business/problem:</strong> high return rates eroded margin; no unified view of return reasons, serial returners, or product-quality signals. <strong>Money:</strong> returns are a major margin leak.</p>
+    <pre class="arch">Returns + orders + product + customer ─► medallion ─► gold returns marts ─► Power BI + fraud/abuse flags</pre>
+    <p><strong>Why:</strong> Delta (integrate returns↔orders↔customer) · Snowflake/Power BI (merchandising analytics) · rules (return-abuse detection). <strong>Key issues:</strong> linking returns to original orders, reason-code quality, serial-returner identity. <strong>Resume:</strong> "Built returns analytics linking returns to orders/customers, surfacing product-quality issues and return-abuse patterns."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>17 · Product Search Analytics <span class="tag-ind">E-commerce</span></h3>
+    <p><strong>Business/problem:</strong> poor search relevance and "no-results" searches lost sales; no analytics on query→click→purchase. <strong>Money:</strong> search drives a large share of conversions.</p>
+    <pre class="arch">Search events ─► Kafka ─► medallion ─► gold search funnels + zero-result queries ─► relevance tuning + Looker</pre>
+    <p><strong>Why:</strong> event backbone (query telemetry) · Delta (funnels) · analytics for relevance teams. <strong>Key issues:</strong> event volume, sessionizing search journeys, zero-result attribution. <strong>Resume:</strong> "Built search analytics (query→click→purchase funnels, zero-result mining) that informed relevance improvements."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>18 · Sales Reporting Platform <span class="tag-ind">Retail</span></h3>
+    <p><strong>Business/problem:</strong> finance/merchandising sales reports were manual, inconsistent, and slow to close. <strong>Money:</strong> slow, error-prone decisions and close.</p>
+    <pre class="arch">POS + e-com + returns ─► medallion ─► gold sales star schema (fct_sales, dims) ─► Snowflake ─► Power BI</pre>
+    <p><strong>Why:</strong> dimensional model (consistent metrics) · dbt (governed metric definitions) · Snowflake (self-serve BI). <strong>Key issues:</strong> conformed dimensions across channels, reconciliation to finance, timezone/day-close boundaries. <strong>Resume:</strong> "Delivered a governed sales-reporting star schema (dbt + Snowflake) unifying channels with reconciled, self-serve metrics."</p>
+  </div>
+  </section>
+
+  <section class="topic" id="more-health-fin" data-title="Health · Logistics · Finance · SaaS · Insurance" data-cat="More Projects">
+  <h2>More Projects — Health, Logistics, Finance, SaaS, Insurance</h2>
+
+  <div class="block spec">
+    <h3>19 · Clinical Analytics Platform <span class="tag-ind">Healthcare</span></h3>
+    <p><strong>Business/problem:</strong> clinical data (EHR, labs, vitals) siloed; hospitals couldn't analyze outcomes, readmissions, or capacity. <strong>Money:</strong> readmission penalties, poor capacity planning.</p>
+    <pre class="arch">EHR (HL7/FHIR) + labs ─► secure medallion (PHI-governed) ─► gold clinical marts ─► outcomes/readmission analytics (Power BI)</pre>
+    <p><strong>Why:</strong> Delta + Unity Catalog (PHI masking/lineage) · FHIR parsing · Snowflake (analytics). <strong>Key issues:</strong> HIPAA controls, HL7/FHIR parsing, patient identity across systems, data quality of clinical codes. <strong>Resume:</strong> "Built a HIPAA-governed clinical analytics platform (HL7/FHIR→Delta, Unity Catalog masking) for outcomes and readmission analysis."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>20 · Supply Chain Analytics <span class="tag-ind">Manufacturing / Logistics</span></h3>
+    <p><strong>Business/problem:</strong> no end-to-end visibility across suppliers, production, and distribution; poor demand/supply planning. <strong>Money:</strong> inventory cost + missed SLAs.</p>
+    <pre class="arch">ERP + supplier feeds + logistics ─► medallion ─► gold supply-chain marts (lead times, OTIF, demand) ─► planning + Power BI</pre>
+    <p><strong>Why:</strong> Delta (integrate ERP/supplier/logistics) · dbt (planning metrics) · Snowflake (BI). <strong>Key issues:</strong> messy supplier data/formats, master-data harmonization, forecast inputs. <strong>Resume:</strong> "Delivered end-to-end supply-chain analytics unifying ERP/supplier/logistics data for lead-time, OTIF, and demand planning."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>21 · Shipment Tracking &amp; Fleet Monitoring <span class="tag-ind">Logistics</span></h3>
+    <p><strong>Business/problem:</strong> no real-time shipment/fleet visibility; customers and ops flew blind on ETAs and fleet health. <strong>Money:</strong> SLA penalties, fuel/maintenance waste.</p>
+    <pre class="arch">GPS/telematics ─► Event Hub/Kafka ─► Structured Streaming ─► Delta (geo time-series) ─► ETA models + tracking APIs + Grafana</pre>
+    <p><strong>Why:</strong> streaming (live tracking) · Delta time-series · geo enrichment. <strong>Key issues:</strong> device dropout, geo/late data, small files, ETA accuracy. <strong>Resume:</strong> "Built real-time shipment/fleet tracking from telematics streams (Event Hub→Structured Streaming→Delta) powering live ETAs and fleet health."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>22 · Billing / Invoice / Expense &amp; Revenue Analytics <span class="tag-ind">Finance</span></h3>
+    <p><strong>Business/problem:</strong> billing/invoice/expense data across ERPs was fragmented; slow revenue recognition and expense visibility. <strong>Money:</strong> revenue leakage + slow close.</p>
+    <pre class="arch">ERP/billing/AP ─► medallion ─► gold finance marts (AR/AP, rev-rec, expense) ─► Snowflake ─► Power BI + reconciliation</pre>
+    <p><strong>Why:</strong> Delta (integrate finance sources) · dbt (rev-rec rules, versioned) · reconciliation controls. <strong>Key issues:</strong> multi-currency, rev-rec rules, reconciliation to GL, period-close SLAs. <strong>Resume:</strong> "Built finance analytics unifying billing/AP/expense with versioned rev-rec logic and GL reconciliation, accelerating month-end close."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>23 · Subscription Billing &amp; Product Analytics <span class="tag-ind">SaaS</span></h3>
+    <p><strong>Business/problem:</strong> subscription metrics (MRR, churn, expansion) and usage billing were inconsistent across tools. <strong>Money:</strong> revenue accuracy + growth decisions.</p>
+    <pre class="arch">App events + billing system ─► medallion ─► gold subscription marts (MRR, churn, LTV) + metered usage ─► dbt-governed metrics ─► Looker</pre>
+    <p><strong>Why:</strong> dbt (single source of truth for SaaS metrics) · Delta (exactly-once usage) · Snowflake/Looker (self-serve). <strong>Key issues:</strong> metric definition consistency, proration, usage exactly-once. <strong>Resume:</strong> "Delivered governed SaaS metrics (MRR/churn/LTV) and exactly-once usage billing via dbt + Delta, ending metric disputes across teams."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>24 · Policy Analytics &amp; Claims Fraud <span class="tag-ind">Insurance</span></h3>
+    <p><strong>Business/problem:</strong> insurers lacked unified policy/claims analytics and real-time fraud signals; loss ratios opaque. <strong>Money:</strong> fraud losses + mispriced risk.</p>
+    <pre class="arch">Policy + claims + external data ─► medallion ─► gold policy/claims marts + fraud features ─► models (MLflow) + Power BI</pre>
+    <p><strong>Why:</strong> Delta (integrate policy/claims) · MLflow (fraud models) · Unity Catalog (PII governance). <strong>Key issues:</strong> claim-policy linkage, PII, fraud model drift, loss-ratio reconciliation. <strong>Resume:</strong> "Built policy/claims analytics + fraud-detection features on Databricks/Delta, improving loss-ratio visibility and flagging fraudulent claims."</p>
+  </div>
+  </section>
+
+  <section class="topic" id="migration-catalog" data-title="Migration Catalog" data-cat="Migration &amp; Modernization">
+  <h2>Migration Project Catalog</h2>
+  <p class="tagline">Every migration follows the same spine (assess → design → migrate data → convert logic → reconcile → parallel-run → cutover → decommission). Here's the per-migration flavour, gotchas, and why.</p>
+
+  <div class="block spec">
+    <h3>Oracle → Snowflake</h3>
+    <p><strong>Why:</strong> escape Oracle licensing/hardware, gain elastic separated compute/storage and easy scaling. <strong>Approach:</strong> schema convert (Oracle types→Snowflake), bulk export (Parquet)→stage→COPY INTO, convert PL/SQL to Snowflake SQL/tasks or dbt, reconcile. <strong>Gotchas:</strong> PL/SQL procedural logic (rewrite as SQL/dbt/tasks), sequence/identity differences, date/NUMBER precision, case-sensitivity. <strong>Serving:</strong> re-point BI; use zero-copy clones for test envs. <strong>Resume:</strong> "Migrated Oracle EDW + PL/SQL to Snowflake (COPY/Streams/Tasks + dbt) with full reconciliation and zero-downtime cutover."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Teradata / Netezza → Databricks</h3>
+    <p><strong>Why:</strong> cost, scale, ML, semi-structured support (the flagship Project 8). <strong>Gotchas:</strong> BTEQ/QUALIFY, implicit casts, NULL ordering, primary-index vs partitioning mindset. <strong>Approach:</strong> automated BTEQ→Spark conversion + manual refactor; medallion target; reconciliation harness. <strong>Resume:</strong> see Project 8.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>SQL Server → Azure (ADF/Synapse/Databricks)</h3>
+    <p><strong>Why:</strong> cloud modernization, scale, decouple compute. <strong>Approach:</strong> lift schema, migrate data via ADF/Data Migration tools, convert SSIS→ADF/Databricks, T-SQL→Spark SQL/dbt. <strong>Gotchas:</strong> SSIS package sprawl, T-SQL functions, identity columns, collation. <strong>Resume:</strong> "Migrated SQL Server + SSIS to Azure (ADF + Databricks/Delta), converting packages and T-SQL with reconciliation."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Hadoop / Hive → Databricks (Lakehouse)</h3>
+    <p><strong>Why:</strong> retire costly, ops-heavy on-prem Hadoop; gain ACID (Delta), performance (Photon), managed platform. <strong>Approach:</strong> migrate HDFS→ADLS/S3, Hive tables→Delta (convert/CTAS), Hive/MapReduce/Spark jobs→modern Spark, Oozie→Airflow/Workflows. <strong>Gotchas:</strong> Hive SerDes/partition layouts, small files, HiveQL differences, Kerberos→cloud IAM. <strong>Resume:</strong> "Migrated on-prem Hadoop/Hive to Databricks lakehouse (HDFS→ADLS, Hive→Delta, Oozie→Airflow), cutting ops burden and cost."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Legacy ETL (Informatica/DataStage/SSIS) → dbt</h3>
+    <p><strong>Why:</strong> replace opaque, licensed, GUI ETL with versioned, tested, documented SQL transformations + lineage. <strong>Approach:</strong> catalog mappings, re-express as dbt models (staging→intermediate→marts), add dbt tests, wire CI. <strong>Gotchas:</strong> procedural/row-by-row logic that must become set-based; hidden business rules; performance re-tuning. <strong>Resume:</strong> "Re-platformed Informatica ETL to dbt with tests, lineage, and CI — turning opaque mappings into governed, version-controlled transformations."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>AWS → Azure (cross-cloud)</h3>
+    <p><strong>Why:</strong> enterprise standardization / commercial reasons. <strong>Approach:</strong> map services (S3→ADLS, Glue→ADF/Databricks, Redshift→Synapse/Snowflake, EMR→Databricks, Lambda→Functions), migrate data (AzCopy/Data Factory), re-IaC in Terraform for Azure. <strong>Gotchas:</strong> IAM→Azure AD/RBAC model differences, networking, service-feature parity, egress cost during transfer. <strong>Resume:</strong> "Led AWS→Azure data-platform migration, re-mapping services and re-provisioning via Terraform with parity testing."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Kafka / Storage / ADF Migrations &amp; Cloud Modernization</h3>
+    <p><strong>Kafka migration</strong> (self-managed→Confluent Cloud/MSK/Event Hub): mirror topics (MirrorMaker), migrate consumer groups/offsets, cut over producers, verify no loss/dup. <strong>Storage migration</strong> (Blob→ADLS Gen2, on-prem→cloud): AzCopy/Data Factory, preserve partition layout, re-point pipelines, validate checksums. <strong>ADF migration/upgrade</strong>: consolidate/parameterize pipelines into a metadata-driven framework, move to CI/CD-managed deployment. <strong>Resume:</strong> "Migrated self-managed Kafka to managed streaming with zero message loss, and modernized storage/ADF into metadata-driven, CI/CD-deployed pipelines."</p>
+  </div>
+  </section>
+
+  <section class="topic" id="modernization-catalog" data-title="Modernization Catalog" data-cat="Migration &amp; Modernization">
+  <h2>Cloud Modernization Catalog</h2>
+  <p class="tagline">The "adopt a modern capability" engagements — usually run alongside migrations. Each is a real project you can claim.</p>
+
+  <div class="block spec">
+    <h3>Delta Lake Adoption</h3>
+    <p><strong>Why:</strong> bring ACID, time travel, schema enforcement, and MERGE to a raw Parquet lake ("swamp"). <strong>Approach:</strong> convert Parquet→Delta (<code>CONVERT TO DELTA</code>), add schema enforcement + expectations, introduce OPTIMIZE/Z-ORDER + VACUUM policies, refactor appends to MERGE, add CDF for downstream. <strong>Outcome:</strong> reliable, upsert-capable, auditable tables; small-files fixed. <strong>Resume:</strong> "Led Delta Lake adoption converting a Parquet lake to ACID tables with MERGE, expectations, OPTIMIZE/Z-ORDER, and CDF."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Unity Catalog Implementation</h3>
+    <p><strong>Why:</strong> replace per-workspace hive metastores with centralized governance — one catalog namespace, fine-grained access, column masking/row filters, lineage, audit, and data discovery across workspaces. <strong>Approach:</strong> design catalog/schema structure per domain + env, migrate metastore, define grants + masking policies, enable lineage/audit, onboard teams. <strong>Gotchas:</strong> access-model redesign, external locations/storage credentials, migration sequencing. <strong>Resume:</strong> "Implemented Unity Catalog — centralized governance, column masking, lineage, and RBAC across the Databricks estate."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Databricks Migration / Workflows Modernization</h3>
+    <p><strong>Why:</strong> move ad-hoc notebooks + all-purpose clusters to production-grade packaged code, job clusters, Workflows/DLT, and cluster policies. <strong>Approach:</strong> package prod logic as wheels, replace notebook-in-prod with Workflows, add cluster policies + Photon + autoscaling, IaC the workspace. <strong>Resume:</strong> "Modernized Databricks from notebook-driven jobs to packaged code on Workflows with cluster policies, Photon, and IaC."</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Snowflake Adoption / Migration</h3>
+    <p><strong>Why:</strong> elastic, low-ops serving warehouse for BI. <strong>Approach:</strong> model gold marts, load via COPY/Snowpipe, set warehouse sizing + auto-suspend, RBAC + data sharing, Streams/Tasks for in-warehouse ELT. <strong>Gotchas:</strong> cost governance (idle warehouses), micro-partition/clustering for big tables. <strong>Resume:</strong> "Stood up Snowflake serving layer with Snowpipe ingestion, RBAC, and cost governance (auto-suspend, right-sizing)."</p>
+  </div>
+  </section>
+
+  <section class="topic" id="tech-databricks" data-title="Databricks (deep)" data-cat="Technology Deep-Dives">
+  <h2>Databricks — Deep Dive</h2>
+  <p class="tagline">The platform you'll spend most days in. Know every object, when to use it, and — critically — what a Data Engineer actually does inside it day to day.</p>
+
+  <div class="block theory">
+    <h3>What it is &amp; where it sits</h3>
+    <p>Databricks is a managed <strong>lakehouse platform</strong> built on Spark + Delta, running on your cloud (Azure/AWS/GCP). It sits in the middle of the reference architecture: it's the <em>compute + transformation + ML</em> engine that reads raw data from the lake (ADLS/S3), refines it through bronze→silver→gold Delta tables, and is governed by Unity Catalog. It replaces a pile of separate tools (Spark cluster + notebooks + job scheduler + ML platform + catalog) with one.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>The objects — and when to use each</h3>
+    <ul class="speclist">
+      <li><b>Workspace</b> — the environment (notebooks, repos, jobs, clusters). Usually one per env (dev/qa/prod) or per business unit.</li>
+      <li><b>All-purpose (interactive) cluster</b> — for development, exploration, shared notebooks. Stays up; costs more. <em>Never run production jobs on these.</em></li>
+      <li><b>Job cluster</b> — spun up for a scheduled job, torn down after. Cheaper, isolated, reproducible. <em>This is what prod pipelines use.</em></li>
+      <li><b>Cluster policies</b> — guardrails admins set (allowed node types, autoscaling limits, tags, Photon, auto-termination) so teams can't spin up runaway cost. Every enterprise uses these.</li>
+      <li><b>Photon</b> — the vectorized C++ execution engine; big speedups for SQL/DataFrame workloads. Turn on for BI-heavy and large ETL.</li>
+      <li><b>Autoscaling</b> — cluster grows/shrinks with load; set a sensible floor for streaming latency stability and a ceiling for cost.</li>
+      <li><b>Notebooks</b> — for development, exploration, and orch-called tasks. Prod <em>logic</em> should be packaged code (wheels), with notebooks as thin entrypoints.</li>
+      <li><b>Repos</b> — Git-backed folders; how code is version-controlled and promoted. Notebooks sync to GitHub/Azure DevOps.</li>
+      <li><b>Jobs / Workflows</b> — the native orchestrator: multi-task DAGs with dependencies, retries, alerts, schedules, and parameters. Often used instead of/with Airflow.</li>
+      <li><b>Delta Live Tables (DLT)</b> — declarative pipeline framework: you declare tables + expectations, DLT manages dependencies, incremental processing, data quality, and auto-scaling. Great for medallion pipelines with less boilerplate.</li>
+      <li><b>Unity Catalog</b> — governance: catalog.schema.table namespace, grants, column masking, row filters, lineage, audit. (Own deep-dive section.)</li>
+      <li><b>Volumes</b> — UC-governed storage for non-tabular files (models, images, exports) with the same access control as tables.</li>
+      <li><b>Libraries</b> — packages (wheels/JARs/PyPI) installed on clusters; managed via policies/init scripts for reproducibility.</li>
+      <li><b>Secrets</b> — secret scopes (backed by Key Vault) for credentials — never hardcode.</li>
+      <li><b>DBFS</b> — the (legacy) file system abstraction; in UC-first setups prefer Volumes + external locations over DBFS root.</li>
+      <li><b>Feature Store</b> — offline/online feature tables with train/serve parity (used in the fraud/rec projects).</li>
+      <li><b>MLflow</b> — experiment tracking + model registry + serving.</li>
+    </ul>
+  </div>
+
+  <div class="block spec">
+    <h3>Delta optimization — the levers you must know</h3>
+    <ul class="speclist">
+      <li><b>Partitioning</b> — physical split by a low/medium-cardinality column (usually date) for pruning. Don't over-partition (small files).</li>
+      <li><b>OPTIMIZE</b> — bin-pack small files into larger ones; fixes the small-files problem.</li>
+      <li><b>Z-ORDER</b> — multi-dimensional clustering on filter columns to improve data skipping via min/max stats.</li>
+      <li><b>Liquid Clustering</b> — newer alternative to partitioning + Z-order that adapts automatically; less manual tuning.</li>
+      <li><b>VACUUM</b> — physically delete unreferenced files older than retention (default 7 days). Reclaims storage but limits time travel — never shorten retention casually.</li>
+      <li><b>Auto Optimize / Auto Compaction</b> — write-time compaction so streaming doesn't create file explosions.</li>
+      <li><b>Caching</b> — Delta cache (SSD) for hot reads; Spark cache for reused DataFrames (only if reused).</li>
+      <li><b>Checkpointing</b> — streaming state/offset location for exactly-once recovery; treat as sacred (don't delete/change casually).</li>
+      <li><b>MERGE</b> — the workhorse for upserts, CDC apply, SCD2, and idempotent writes.</li>
+      <li><b>CDF (Change Data Feed)</b> — emit row-level changes for incremental downstream consumption.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>What you ACTUALLY do daily as a DE in Databricks</h3>
+    <p>A realistic day: pull a story from Jira → open your <strong>Repo</strong> branch → develop the transform in a notebook against a small sample on a dev <strong>all-purpose cluster</strong> → refactor logic into the packaged <code>common</code> library (functions, schema, DQ) → write/run <strong>pytest</strong> unit tests locally and Great Expectations checks → wire it into a <strong>Workflow</strong> (or DLT) with the right dependencies, retries, and a <strong>job cluster</strong> spec → raise a PR (CI runs lint/tests) → promote to QA, validate reconciliation → check the <strong>Spark UI</strong> when a job is slow (find the skewed stage, add a broadcast or repartition) → run <code>OPTIMIZE</code>/Z-ORDER on the output → update the runbook/data dictionary. On-call days: triage an alert (lag, failure, DQ break), drill via lineage, fix root cause, backfill the affected partition idempotently. <em>You spend far more time on correctness, tests, tuning, and operations than on writing new Spark code.</em></p>
+    <div class="key"><strong>Interview gold:</strong> "In Databricks I keep prod logic as packaged wheels, not notebooks; run it on job clusters governed by cluster policies with Photon and autoscaling; orchestrate with Workflows/DLT; enforce quality with Great Expectations; and keep Delta healthy with partitioning, OPTIMIZE/Z-ORDER, and VACUUM. I debug via the Spark UI and Unity Catalog lineage."</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>Job cluster vs all-purpose cluster — when and why? <span class="lvl m">medium</span></summary><div class="a"><p>All-purpose for dev/interactive (stays on, shared, costlier); job cluster for scheduled production (ephemeral, isolated, cheaper, reproducible). Running prod on all-purpose clusters wastes money and risks noisy-neighbor interference.</p></div></details>
+    <details class="q"><summary>DLT vs hand-written Workflows? <span class="lvl m">medium</span></summary><div class="a"><p>DLT is declarative — you define tables + expectations and it manages dependencies, incremental processing, quality, and scaling. It reduces boilerplate for medallion pipelines. Hand-written Workflows give more control for complex/custom logic. Many teams mix: DLT for standard flows, Workflows for orchestration and non-DLT tasks.</p></div></details>
+    <details class="q"><summary>How do you fix the small-files problem? <span class="lvl m">medium</span></summary><div class="a"><p>Right-size writes (coalesce/repartition), enable Auto Compaction/Optimize Writes for streaming, run scheduled OPTIMIZE, and partition sensibly (not high-cardinality). Consider Liquid Clustering to avoid manual partition/Z-order tuning.</p></div></details>
+    <details class="q"><summary>Why package code as wheels instead of running notebooks in prod? <span class="lvl h">hard</span></summary><div class="a"><p>Wheels are versioned, unit-testable, reusable across jobs, and CI/CD-friendly; notebooks-in-prod are hard to test, review, and reuse and encourage copy-paste. Notebooks become thin entrypoints that call the library.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="tech-snowflake" data-title="Snowflake (deep)" data-cat="Technology Deep-Dives">
+  <h2>Snowflake — Deep Dive</h2>
+  <p class="tagline">The serving warehouse in most stacks. Know the architecture, every object, and — the thing interviewers push on — cost.</p>
+
+  <div class="block theory">
+    <h3>Architecture recap &amp; where it sits</h3>
+    <p>Three decoupled layers: <strong>cloud services</strong> (metadata, optimizer, security), <strong>compute</strong> (virtual warehouses), and <strong>storage</strong> (central, columnar, compressed micro-partitions). It sits at the <em>serve</em> layer — gold marts land here for BI/analyst self-serve — or, increasingly, as the transform engine too (Streams/Tasks/Snowpipe + dbt). Its superpower is elastic, isolated compute over one copy of data.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>The objects — and what they're for</h3>
+    <ul class="speclist">
+      <li><b>Database / Schema</b> — logical containers (often per domain + env); tables/views live here.</li>
+      <li><b>Virtual Warehouse</b> — a resizable compute cluster (XS→6XL). Size for query complexity; multi-cluster for concurrency. <b>Auto-suspend</b> + <b>auto-resume</b> are the #1 cost control.</li>
+      <li><b>Stages</b> — pointers to files for load/unload: internal (Snowflake-managed) or external (ADLS/S3). Source for COPY/Snowpipe.</li>
+      <li><b>Snowpipe</b> — continuous, event-triggered micro-batch ingestion from a stage (near-real-time file loading).</li>
+      <li><b>Streams</b> — change tracking (CDC) on a table: what rows changed since last consumed. Pairs with Tasks for incremental ELT.</li>
+      <li><b>Tasks</b> — scheduled SQL (or DAGs of tasks); combine with Streams for in-warehouse pipelines (stream→task→MERGE).</li>
+      <li><b>Time Travel</b> — query/restore data up to N days back (1 standard, up to 90 Enterprise) — undo mistakes, audit.</li>
+      <li><b>Fail-safe</b> — extra 7-day Snowflake-managed recovery (DR only, not self-serve).</li>
+      <li><b>Zero-Copy Clone</b> — instant metadata-only copies (dev/test/QA from prod) with copy-on-write; no storage until divergence.</li>
+      <li><b>Data Sharing / Marketplace</b> — share live data with other accounts without copying (secure data sharing).</li>
+      <li><b>RBAC</b> — role hierarchy; grants on databases/schemas/objects; roles assigned to users/services.</li>
+      <li><b>Micro-partitions &amp; Clustering keys</b> — automatic columnar chunks with min/max metadata for pruning; clustering keys help huge tables.</li>
+      <li><b>Result cache &amp; warehouse cache</b> — identical queries free for 24h; local SSD cache speeds repeats.</li>
+      <li><b>VARIANT</b> — semi-structured (JSON/Avro/Parquet) column with path querying + FLATTEN.</li>
+    </ul>
+  </div>
+
+  <div class="block spec">
+    <h3>Cost optimization (the interview magnet)</h3>
+    <ul class="speclist">
+      <li>Auto-suspend idle warehouses (seconds), auto-resume on demand — idle warehouses are the classic bill shock.</li>
+      <li>Right-size warehouses to the workload; scale up for big queries, out (multi-cluster) for concurrency — don't leave everything on XL.</li>
+      <li>Separate warehouses per workload (ELT vs BI vs ad-hoc) to isolate cost and contention.</li>
+      <li>Reduce bytes scanned: pruning via good clustering, avoid SELECT *, prune partitions/filters.</li>
+      <li>Leverage result cache; batch loads via COPY vs many tiny loads; use Snowpipe only where near-real-time is needed.</li>
+      <li>Monitor with ACCOUNT_USAGE / warehouse credit dashboards; set resource monitors + alerts on credit thresholds.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>What you do daily in Snowflake as a DE</h3>
+    <p>Model and build gold marts (often via dbt running on Snowflake), manage COPY/Snowpipe loads from stages, build Stream+Task incremental pipelines, tune warehouse sizing and clustering for cost/perf, set RBAC grants and masking policies, spin zero-copy clones for testing, and watch credit consumption. You optimize queries by reading the query profile (pruning %, spilled to remote, exploding joins) and adjusting clustering/warehouse/SQL.</p>
+    <div class="key"><strong>Interview gold:</strong> "Snowflake gives me elastic isolated compute over one copy of data. I control cost with auto-suspend, right-sizing, and per-workload warehouses; build incremental ELT with Streams+Tasks; test safely with zero-copy clones; and tune via the query profile (pruning, spilling) and clustering keys."</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>How would you cut a runaway Snowflake bill? <span class="lvl m">medium</span></summary><div class="a"><p>Find idle/oversized warehouses (ACCOUNT_USAGE), enable aggressive auto-suspend, right-size and split warehouses by workload, add resource monitors, reduce bytes scanned via clustering/pruning and killing SELECT *, and prefer batch COPY over excessive Snowpipe. Measure credits before/after.</p></div></details>
+    <details class="q"><summary>Streams + Tasks — how do they build a pipeline? <span class="lvl m">medium</span></summary><div class="a"><p>A Stream captures changes on a source table; a scheduled Task reads the Stream and MERGEs changes into a target — an in-warehouse incremental ELT loop without external orchestration. Chain Tasks into a DAG for multi-step flows.</p></div></details>
+    <details class="q"><summary>When Snowflake vs Databricks for transformation? <span class="lvl h">hard</span></summary><div class="a"><p>Snowflake for SQL-centric ELT, BI serving, and semi-structured with minimal ops; Databricks for heavy Spark/ML/streaming and open lakehouse. Many stacks do heavy engineering in Databricks/Delta and serve BI from Snowflake — though both increasingly overlap.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="tech-azure" data-title="Azure (deep)" data-cat="Technology Deep-Dives">
+  <h2>Azure — Enterprise Data Architecture</h2>
+  <p class="tagline">Your primary cloud. Understand how the resources fit into a secure enterprise landing zone — not just the individual services.</p>
+
+  <div class="block spec">
+    <h3>The resource model (top to bottom)</h3>
+    <ul class="speclist">
+      <li><b>Tenant (Azure AD/Entra ID)</b> — the identity boundary; users, groups, service principals, SSO.</li>
+      <li><b>Subscription</b> — billing + policy boundary; often one per environment or business unit.</li>
+      <li><b>Resource Group</b> — a lifecycle container for related resources (one per project+env, e.g. <code>acme-fraud-prod-rg</code>).</li>
+      <li><b>Resources</b> — the actual services (storage, Databricks, ADF, Key Vault…).</li>
+      <li><b>Management Groups + Azure Policy</b> — org-wide guardrails (allowed regions, required tags, no public IPs).</li>
+    </ul>
+  </div>
+
+  <div class="block spec">
+    <h3>The data services &amp; their role</h3>
+    <ul class="speclist">
+      <li><b>ADLS Gen2</b> — the lake: hierarchical-namespace object storage; raw/curated/consumption containers; the storage under Delta.</li>
+      <li><b>Azure Data Factory (ADF)</b> — orchestration + ingestion (copy, metadata-driven, triggers, Databricks activities).</li>
+      <li><b>Azure Databricks</b> — Spark compute/transformation/ML (VNet-injected in enterprises).</li>
+      <li><b>Synapse Analytics</b> — integrated SQL pools + Spark + pipelines (alternative/complement to Databricks+ADF).</li>
+      <li><b>Event Hubs / IoT Hub</b> — managed streaming ingress (Kafka-compatible endpoint available).</li>
+      <li><b>Azure SQL / Cosmos DB</b> — operational/serving stores when needed.</li>
+      <li><b>Power BI</b> — the BI/consumption layer.</li>
+    </ul>
+  </div>
+
+  <div class="block spec">
+    <h3>Security &amp; networking (the enterprise baseline)</h3>
+    <ul class="speclist">
+      <li><b>Managed Identity</b> — passwordless identity for resources to auth to each other (job → storage) via RBAC. No secrets to manage.</li>
+      <li><b>Key Vault</b> — secrets/keys/certs; referenced by Databricks secret scopes and ADF; access via Managed Identity.</li>
+      <li><b>RBAC + Role Assignments</b> — least-privilege access at subscription/RG/resource scope; custom roles as needed.</li>
+      <li><b>Virtual Network (VNet) + Subnets</b> — network isolation; Databricks VNet injection puts clusters in your network.</li>
+      <li><b>Private Endpoints</b> — private IPs for PaaS services (storage, Key Vault) so traffic never hits the public internet.</li>
+      <li><b>NSGs / Firewalls</b> — control traffic; storage firewalls restrict to VNet/private endpoints only.</li>
+      <li><b>Azure Monitor + Log Analytics</b> — metrics, logs, alerts across the estate; diagnostic settings ship logs here.</li>
+      <li><b>Microsoft Purview</b> — enterprise catalog, classification, and lineage across sources.</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>How it all wires together (a real landing zone)</h3>
+    <pre class="arch">Entra ID (SSO, SPs, MI)
+   │ RBAC
+Subscription (prod)
+   └─ Resource Group: acme-project-prod-rg
+        ├─ ADLS Gen2 (raw/curated/consumption)  ◄─ Private Endpoint ─┐
+        ├─ Databricks (VNet-injected)  ── Managed Identity ──────────┤ (no public traffic)
+        ├─ ADF (managed VNet IR)  ── Key Vault linked service ───────┤
+        ├─ Key Vault  ◄─ Private Endpoint ───────────────────────────┘
+        ├─ Event Hub / IoT Hub
+        └─ Log Analytics + Azure Monitor (diagnostics from all above)
+   Terraform provisions ALL of this; Azure DevOps promotes across dev/qa/uat/prod</pre>
+    <div class="key"><strong>Interview gold:</strong> "In our Azure landing zone, everything is private — VNet-injected Databricks, Private Endpoints to storage and Key Vault, Managed Identity for auth (no secrets in code), RBAC least-privilege, and diagnostics into Log Analytics. The whole environment is Terraform-provisioned and identical across dev/qa/uat/prod with only config differing."</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>How does a Databricks job authenticate to storage without secrets? <span class="lvl m">medium</span></summary><div class="a"><p>Managed Identity / a service principal granted RBAC on the storage account (or a UC storage credential + external location). No keys in code; access is identity-based and auditable.</p></div></details>
+    <details class="q"><summary>Why Private Endpoints? <span class="lvl m">medium</span></summary><div class="a"><p>They give PaaS services private IPs inside your VNet so data traffic never traverses the public internet — required by most enterprise/security policies and often by compliance (banking/health).</p></div></details>
+    <details class="q"><summary>ADF vs Synapse vs Databricks — how do they coexist? <span class="lvl m">medium</span></summary><div class="a"><p>Common pattern: ADF orchestrates + ingests, Databricks does heavy Spark transformation, Synapse or Snowflake serves SQL/BI. Synapse can also do all three but many teams prefer best-of-breed (ADF + Databricks + Snowflake).</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="tech-why" data-title="Why This Tech, Not That" data-cat="Technology Deep-Dives">
+  <h2>The Rest of the Stack — Purpose, Why, Alternatives</h2>
+  <p class="tagline">Consolidated reference in the per-technology template: what it's for, why companies pick it, the alternative it beats, best practice, and the interview line.</p>
+
+  <div class="block spec">
+    <h3>Streaming &amp; ingestion</h3>
+    <ul class="speclist">
+      <li><b>Kafka</b> — durable replayable event log; decouple + buffer + fan-out. <i>Beats</i> RabbitMQ (queue, weaker replay/throughput) for streaming/replay. <i>Best practice:</i> partition for parallelism + key-ordering, Schema Registry, idempotent producers. <i>Alt:</i> Event Hubs (Azure), Kinesis (AWS), Pulsar.</li>
+      <li><b>Debezium</b> — log-based CDC from OLTP DBs. <i>Beats</i> query polling (misses states, loads DB). <i>Best practice:</i> monitor connector lag + source log retention.</li>
+      <li><b>Autoloader</b> — incremental cloud-file ingestion (exactly-once, schema evolution). <i>Beats</i> custom file watchers.</li>
+    </ul>
+    <h3>Orchestration</h3>
+    <ul class="speclist">
+      <li><b>Airflow</b> — code-first DAG orchestration, huge ecosystem, cross-system. <i>Beats</i> cron (no deps/retries/visibility). <i>Best practice:</i> idempotent tasks, logical-date params, light DAG top-level code. <i>Alt:</i> Databricks Workflows (native, simpler), ADF (Azure-native), Dagster/Prefect (modern, asset-aware).</li>
+      <li><b>Databricks Workflows / DLT</b> — native orchestration + declarative pipelines; less infra to run than Airflow.</li>
+    </ul>
+    <h3>Transform &amp; table formats</h3>
+    <ul class="speclist">
+      <li><b>dbt</b> — versioned, tested, documented SQL transformations + lineage. <i>Beats</i> opaque stored procs/GUI ETL. <i>Best practice:</i> staging→intermediate→marts, tests, CI. <i>Alt:</i> PySpark modules, SQLMesh.</li>
+      <li><b>Delta Lake</b> — ACID/time-travel/MERGE/schema on Parquet; Databricks-native. <b>Iceberg</b> — engine-neutral (Snowflake/Trino/Flink), hidden partitioning, growing standard. <b>Hudi</b> — streaming upserts/CDC strength. <i>Interview line:</i> "All three add ACID + time travel + upserts to lakes; the concepts transfer — Delta for Databricks, Iceberg for open multi-engine, Hudi for heavy streaming upserts."</li>
+      <li><b>Parquet/ORC/Avro</b> — columnar for analytics (Parquet/ORC), row + schema-evolution for streaming (Avro).</li>
+    </ul>
+    <h3>Query engines &amp; warehouses</h3>
+    <ul class="speclist">
+      <li><b>Trino/Presto</b> — federated SQL across sources/lakes; interactive analytics without moving data. <b>Redshift/BigQuery/Synapse/Snowflake</b> — cloud MPP warehouses; pick by cloud, cost model, and ops appetite (Snowflake = low-ops elastic; BigQuery = serverless; Redshift = AWS-native).</li>
+    </ul>
+    <h3>Governance, quality, observability</h3>
+    <ul class="speclist">
+      <li><b>Unity Catalog</b> — Databricks governance (namespace, grants, masking, lineage, audit). <b>Purview / Apache Atlas</b> — enterprise catalog + lineage across many sources. <b>Ranger</b> — fine-grained access on Hadoop/legacy.</li>
+      <li><b>Great Expectations</b> — declarative, documented DQ checks + evidence. <b>Monte Carlo</b> — automated data-observability (freshness/volume/schema anomalies, incident detection) — "data downtime" monitoring. <i>Beats</i> hand-rolled checks for coverage at scale.</li>
+      <li><b>Prometheus + Grafana</b> — metrics + dashboards/alerts (infra, streaming). <b>ELK / Splunk</b> — centralized logging/search. <b>Azure Monitor/Log Analytics</b> — Azure-native.</li>
+      <li><b>Schema Registry</b> — enforce/evolve Avro/Protobuf schemas (data contracts on the wire).</li>
+    </ul>
+    <h3>Security &amp; access</h3>
+    <ul class="speclist">
+      <li><b>OAuth/JWT/SSO/LDAP</b> — authN; <b>RBAC/ABAC</b> — authZ; <b>Key Vault / HashiCorp Vault</b> — secrets; <b>Managed Identity / Service Principals</b> — machine identity. <i>Rule:</i> no secrets in code, least privilege, identity-based auth everywhere.</li>
+    </ul>
+    <h3>Code quality &amp; DB change</h3>
+    <ul class="speclist">
+      <li><b>SonarQube</b> — static analysis/code-quality gates in CI. <b>Liquibase / Flyway</b> — versioned database schema migrations (schema-as-code). <b>pytest</b> + <b>Great Expectations</b> — code + data testing.</li>
+    </ul>
+  </div>
+  </section>
+
+  <section class="topic" id="devops-cicd" data-title="CI/CD End-to-End" data-cat="DevOps &amp; Delivery">
+  <h2>CI/CD for Data Engineering — End to End</h2>
+  <p class="tagline">How code actually goes from your laptop to production in an enterprise. Being able to narrate this pipeline is a strong senior signal.</p>
+
+  <div class="block theory">
+    <h3>The full flow</h3>
+    <pre class="arch">Developer commits ─► Git (feature branch)
+        │
+   Pull Request ─► Peer Review + automated checks:
+        ├─ Lint / format (ruff, black)
+        ├─ SonarQube (code quality, security, coverage gate)
+        ├─ Unit tests (pytest) — transform logic on fixtures
+        ├─ Data-quality tests (Great Expectations / dbt tests)
+        └─ Build ─► Python wheel / dbt package / Docker image ─► Artifact repository (Azure Artifacts / Nexus / ACR)
+        │
+   Merge to main ─► CD pipeline (Azure DevOps / GitHub Actions):
+        ├─ Terraform plan+apply (provision/update infra per env)
+        ├─ Deploy artifacts (wheel to cluster, DAGs to Airflow, dbt models, job JSON)
+        ├─ Integration tests (end-to-end pipeline on sample data)
+        ▼
+   DEV ─► QA/SIT ─► UAT ─► PROD   (promotion gated by tests + approvals; PROD needs change ticket + sign-off)</pre>
+  </div>
+
+  <div class="block spec">
+    <h3>What each stage actually does</h3>
+    <ul class="speclist">
+      <li><b>Feature branch + PR</b> — isolates change; PR is where review + CI happen. Trunk-based keeps branches short.</li>
+      <li><b>Lint/format</b> — consistency, catch trivial errors before review.</li>
+      <li><b>SonarQube</b> — quality gate: fails the build on bugs, code smells, security hotspots, or low coverage. Enforces standards no one can skip.</li>
+      <li><b>Unit tests</b> — pure transform functions on small fixtures incl. edge cases (nulls, dupes, empty). Fast, run on every push.</li>
+      <li><b>Data tests</b> — GE/dbt assertions (uniqueness, not-null, referential, ranges) so bad data logic is caught in CI.</li>
+      <li><b>Build + artifact</b> — package a versioned wheel/image; store in an artifact repo so the exact build is promoted (not rebuilt) across envs.</li>
+      <li><b>Terraform apply</b> — infra changes go through the same pipeline (plan reviewed, apply gated) — no click-ops.</li>
+      <li><b>Deploy</b> — push the artifact + job/DAG definitions to the target env's compute.</li>
+      <li><b>Integration tests</b> — run the pipeline end-to-end on representative sample data; validate outputs + reconciliation.</li>
+      <li><b>Promotion gates</b> — QA/UAT sign-offs; PROD requires change management (ticket, approval, window) and is fully automated (no manual edits).</li>
+      <li><b>Rollback</b> — redeploy the previous artifact version; Terraform reverts infra; Delta/DB migrations designed to be reversible.</li>
+    </ul>
+    <div class="key"><strong>Interview gold:</strong> "Every change is a PR that runs lint, SonarQube, unit + data tests, and builds a versioned wheel. Merged code triggers CD: Terraform provisions infra, the exact artifact is promoted dev→QA→UAT→prod with tests and approvals at each gate, and prod deploys are tied to a change ticket. Rollback is redeploying the prior artifact version — we never hand-edit prod."</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>How do you test a data pipeline in CI? <span class="lvl m">medium</span></summary><div class="a"><p>Unit-test transform functions on fixtures (edge cases), run GE/dbt data tests on sample outputs, and integration-test the pipeline end-to-end on representative data with reconciliation assertions. Idempotency test: run twice, expect identical output.</p></div></details>
+    <details class="q"><summary>Why promote the same artifact instead of rebuilding per env? <span class="lvl m">medium</span></summary><div class="a"><p>To guarantee prod runs exactly what QA/UAT validated — rebuilding risks dependency drift ("works in QA, breaks in prod"). Build once, promote the versioned artifact, change only config per env.</p></div></details>
+    <details class="q"><summary>How do you handle DB/schema changes safely? <span class="lvl m">medium</span></summary><div class="a"><p>Schema-as-code with Liquibase/Flyway (versioned, reviewable migrations), backward-compatible/additive changes first, applied through the same CD pipeline, with a rollback migration. For Delta, use schema evolution + expectations.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="devops-docker" data-title="Docker for DE" data-cat="DevOps &amp; Delivery">
+  <h2>Docker for Data Engineers</h2>
+  <p class="tagline">Why it exists, how DEs actually use it, and the VM-vs-container answer interviewers want.</p>
+
+  <div class="block theory">
+    <h3>Why Docker exists &amp; Docker vs VM</h3>
+    <p>Docker packages an app + its exact dependencies into an <strong>image</strong> that runs identically anywhere — solving "works on my machine." A <strong>container</strong> is a running instance. Vs a <strong>VM</strong>: a VM virtualizes the whole OS (heavy, minutes to boot, GBs); a container shares the host kernel and isolates only the app (lightweight, seconds, MBs). So containers give reproducibility and density without VM overhead.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>How DEs use Docker</h3>
+    <ul class="speclist">
+      <li><b>Local dev parity</b> — spin up Postgres, Kafka, Airflow, Spark locally via <code>docker-compose</code> to mirror prod.</li>
+      <li><b>Containerized jobs</b> — package a PySpark/Python job + deps as an image, run on Kubernetes/OpenShift or as a container task (reproducible, no cluster dependency drift).</li>
+      <li><b>Airflow</b> — run Airflow itself in containers; the KubernetesPodOperator launches each task as a container (isolated deps).</li>
+      <li><b>dbt</b> — containerize dbt runs for consistent, CI/CD-deployed transformations.</li>
+      <li><b>Kafka/connectors</b> — run brokers/connect workers as containers in dev/test.</li>
+      <li><b>CI</b> — tests run inside containers so the CI environment exactly matches.</li>
+      <li><b>Kubernetes / OpenShift</b> — orchestrate containers at scale (scaling, self-healing, scheduling); OpenShift is enterprise Kubernetes with added security/governance.</li>
+    </ul>
+    <div class="key"><strong>Interview line:</strong> "Docker gives environment reproducibility — the exact Python/Spark/library versions ship with the code, so a job runs the same on my laptop, CI, and prod. Unlike a VM it shares the host kernel, so it's lightweight and fast. We containerize jobs and run them on Kubernetes, and use compose to stand up Kafka/Airflow/Postgres locally."</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>Image vs container? <span class="lvl e">basic</span></summary><div class="a"><p>Image = immutable built template (layers). Container = running instance of an image. Build once, run many.</p></div></details>
+    <details class="q"><summary>When Kubernetes over just running containers? <span class="lvl m">medium</span></summary><div class="a"><p>When you need orchestration at scale: scheduling, autoscaling, self-healing, rolling deploys, service discovery. For a single job a container is enough; for many services/jobs with reliability needs, Kubernetes (or OpenShift in enterprises) manages them.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="devops-terraform" data-title="Terraform / IaC" data-cat="DevOps &amp; Delivery">
+  <h2>Terraform &amp; Infrastructure as Code</h2>
+  <p class="tagline">How an entire secure Azure data environment gets created from code — repeatably, across every environment.</p>
+
+  <div class="block theory">
+    <h3>Why IaC</h3>
+    <p>Manually clicking infrastructure ("click-ops") is unrepeatable, undocumented, drift-prone, and impossible to review. <strong>Terraform</strong> declares infrastructure as versioned code: you write what you want, Terraform figures out the changes (<code>plan</code>) and applies them (<code>apply</code>), tracking real state in a remote <strong>state file</strong>. The same code + per-env variables creates identical dev/qa/uat/prod environments, reviewed via PR like any code.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>What Terraform provisions for a data platform</h3>
+    <pre class="arch">terraform/
+├── modules/
+│   ├── storage/       # ADLS Gen2 + containers + lifecycle + private endpoint
+│   ├── databricks/    # workspace, cluster policies, secret scope, UC resources
+│   ├── networking/    # VNet, subnets, NSGs, private endpoints, DNS
+│   ├── keyvault/      # vault + access policies/RBAC
+│   ├── datafactory/   # ADF + linked services + managed IR
+│   └── monitoring/    # Log Analytics + diagnostic settings + alerts
+└── env/
+    ├── dev.tfvars     # small clusters, sample data scaling
+    ├── qa.tfvars
+    ├── uat.tfvars
+    └── prod.tfvars    # HA, autoscale ceilings, stricter policies</pre>
+    <p>The whole landing zone from the Azure chapter — storage, VNet-injected Databricks, Key Vault, Private Endpoints, RBAC role assignments, ADF, monitoring — is code. Spin up a new environment in minutes; tear down cleanly; every change is reviewed and auditable.</p>
+    <ul class="speclist">
+      <li><b>State</b> — stored remotely (Azure Storage backend) with locking so the team doesn't clobber each other.</li>
+      <li><b>Modules</b> — reusable components (a "storage" module used by every project).</li>
+      <li><b>Variables/tfvars</b> — per-env config; code is identical, only values differ.</li>
+      <li><b>plan/apply in CI</b> — plan is reviewed in the PR; apply is gated and runs in the pipeline (never locally against prod).</li>
+      <li><b>Alternatives</b> — Bicep/ARM (Azure-native), Pulumi (general-purpose languages), CloudFormation (AWS). Terraform wins on multi-cloud + ecosystem.</li>
+    </ul>
+    <div class="key"><strong>Interview gold:</strong> "Our entire Azure environment is Terraform — storage, VNet-injected Databricks, Key Vault, Private Endpoints, RBAC, ADF, monitoring — as reusable modules with per-env tfvars. Remote state with locking, plan reviewed in the PR, apply gated in CI. That's how we get identical, auditable, reproducible dev→prod environments with no click-ops."</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A</h3>
+    <details class="q"><summary>What problem does IaC solve? <span class="lvl e">basic</span></summary><div class="a"><p>Repeatability, reviewability, and drift control. Environments are identical and reproducible, changes are version-controlled and peer-reviewed, and you can rebuild/rollback infra reliably — impossible with manual clicking.</p></div></details>
+    <details class="q"><summary>What is Terraform state and why does it matter? <span class="lvl m">medium</span></summary><div class="a"><p>State maps your code to real resources so Terraform knows what exists and what to change. Store it remotely with locking (shared, safe for teams); losing/corrupting it or editing by hand causes drift and dangerous applies.</p></div></details>
+    <details class="q"><summary>How do you keep dev and prod consistent? <span class="lvl m">medium</span></summary><div class="a"><p>Same Terraform modules across all envs; only per-env tfvars differ (sizing, HA, policy strictness). Same principle as app code: identical logic, config-only differences, promoted through CI.</p></div></details>
+  </div>
+  </section>
+
+  <section class="topic" id="playbook" data-title="Production Issues Playbook" data-cat="Production Playbook">
+  <h2>Production Issues Playbook</h2>
+  <p class="tagline">The cross-project incident runbook. For each: the symptom, the likely cause, and how you diagnose &amp; fix it. This is where your Jio production-support background becomes your biggest interview weapon.</p>
+
+  <div class="block theory">
+    <h3>The incident method (say this before any specific fix)</h3>
+    <p><strong>Detect</strong> (alert/monitor) → <strong>Triage</strong> (severity, blast radius, is data wrong or just late?) → <strong>Localize</strong> (which source/stage/partition — compare source→bronze→silver→gold counts, read logs/Spark UI/lineage) → <strong>Mitigate</strong> (stop the bleeding: pause, fail-open, hold publish) → <strong>Fix root cause</strong> → <strong>Recover</strong> (idempotent, partition-scoped backfill) → <strong>Prevent</strong> (add a check/alert) → <strong>Communicate</strong> (stakeholders, RCA writeup). Interviewers want this structured calm, not a random fix.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>The incidents (symptom → cause → fix)</h3>
+    <details class="q"><summary>Pipeline failure / job crash <span class="lvl m">medium</span></summary><div class="a"><p>Check the error + logs + Spark UI. Transient (network/cluster) → retry (idempotent, so safe). Systemic (bad code/data/schema) → fix and reprocess the affected partition. Prevent with retries, alerting, and better validation. Always confirm no partial/duplicate writes — idempotent design makes reruns clean.</p></div></details>
+    <details class="q"><summary>Late-arriving data <span class="lvl m">medium</span></summary><div class="a"><p>Streaming: watermark accepts bounded lateness; very late → correction path. Batch: reprocess a lookback window (e.g., last 3 days) idempotently so corrections land without duplicates. Sensors detect non-arrival and alert before downstream runs on incomplete data.</p></div></details>
+    <details class="q"><summary>Schema change / drift from source <span class="lvl h">hard</span></summary><div class="a"><p>Enforce a data contract / schema validation at ingest so a breaking change is quarantined + alerted, not silently corrupting downstream. Additive changes handled via schema evolution. Coordinate change management with the source team. Fix, then reprocess quarantined data.</p></div></details>
+    <details class="q"><summary>Duplicate data <span class="lvl m">medium</span></summary><div class="a"><p>Root cause: at-least-once delivery, retries, or a fan-out join. Dedup via MERGE on the true key; monitor dedup ratios. Fix the fan-out (know join cardinality) rather than masking with DISTINCT. Idempotent writes prevent recurrence.</p></div></details>
+    <details class="q"><summary>Corrupted / malformed files <span class="lvl m">medium</span></summary><div class="a"><p>Validate at intake; quarantine the bad file with a reason and alert the provider; never let it corrupt bronze. Reprocess once corrected. Bronze immutability means you can always replay clean.</p></div></details>
+    <details class="q"><summary>Storage full / quota hit <span class="lvl m">medium</span></summary><div class="a"><p>Immediate: clear temp/checkpoint bloat, expand quota. Root cause: missing VACUUM/retention, small-files explosion, or runaway logs. Prevent with lifecycle/tiering policies, compaction, VACUUM schedules, and storage alerts.</p></div></details>
+    <details class="q"><summary>Cluster crash / driver or executor failure <span class="lvl h">hard</span></summary><div class="a"><p>Executor loss → Spark recomputes lost partitions from lineage (fault-tolerant); repeated loss = OOM/skew (fix below). Driver failure → job dies (driver holds the DAG/collects); avoid collect() on big data, size the driver, and for streaming rely on checkpoint recovery. Autoscaling + retries handle transient node loss.</p></div></details>
+    <details class="q"><summary>Kafka consumer lag <span class="lvl m">medium</span></summary><div class="a"><p>Consumers can't keep up. Scale consumers up to partition count, add partitions, speed processing, tune batch size, fix slow sinks. Watch lag as the primary streaming SLO; frequent rebalances (timeouts) also cause it — tune session/poll timeouts and use cooperative rebalancing.</p></div></details>
+    <details class="q"><summary>Slow Spark job <span class="lvl h">hard</span></summary><div class="a"><p>Spark UI → longest stage. Skew (straggler) → salt/AQE/broadcast. Big shuffle → filter earlier, broadcast small side, pre-partition. Spill → more partitions/memory. Tiny tasks → coalesce. Python UDF → replace with native. Reading too much → partition/column pruning. Fix the biggest bottleneck, measure, repeat.</p></div></details>
+    <details class="q"><summary>Partition skew <span class="lvl h">hard</span></summary><div class="a"><p>A few keys hold most rows → one task runs forever. Enable AQE skew handling, salt the hot key (random suffix → join → aggregate), broadcast the small side, or isolate the hot key. The tell is a single long-running task in the UI while others finish.</p></div></details>
+    <details class="q"><summary>Out of memory (OOM) <span class="lvl h">hard</span></summary><div class="a"><p>Causes: too few partitions (huge partitions), skew, collect()/toPandas on big data, wide transforms, caching too much. Fix: increase/rebalance partitions, remove collect, avoid unnecessary caching, raise executor memory sensibly, handle skew. Read spill/GC in the UI.</p></div></details>
+    <details class="q"><summary>Permission / access issues <span class="lvl m">medium</span></summary><div class="a"><p>Usually a missing RBAC grant, expired secret/SP, or a changed Managed Identity. Check the exact denied resource, verify the identity's role assignments and UC grants, and confirm Key Vault access. Fix via IaC (so it's reproducible), not a manual click.</p></div></details>
+    <details class="q"><summary>CI/CD failure <span class="lvl m">medium</span></summary><div class="a"><p>Read the failing stage: test failure (fix code/data), quality-gate fail (SonarQube — address issues), Terraform plan conflict (state drift — reconcile), or deploy failure (env/config). Don't bypass gates; fix forward or revert the PR.</p></div></details>
+    <details class="q"><summary>Bad deploy → rollback &amp; hotfix <span class="lvl h">hard</span></summary><div class="a"><p>Rollback = redeploy the previous versioned artifact (and Terraform revert if infra changed); for streaming, use blue/green with a new checkpoint. Hotfix = minimal fix via the normal pipeline (fast-tracked with approval), never a manual prod edit. Delta time travel can restore a table to a pre-bad-run version.</p></div></details>
+    <details class="q"><summary>Disaster recovery (region/platform outage) <span class="lvl h">hard</span></summary><div class="a"><p>Defined RTO/RPO drive it: geo-redundant storage, cross-region replication of critical data, IaC to rebuild the environment quickly in another region, and Kafka/CDC replay to reconstruct state (RPO≈0 for replayable sources). Test the DR runbook periodically — an untested DR plan is a wish.</p></div></details>
+  </div>
+
+  <div class="tip"><strong>How to use this in interviews:</strong> when asked "tell me about a production issue," pick one of these, wrap it in the incident method, and anchor it to a real Jio incident. The structure (detect→localize→mitigate→fix→recover→prevent) is what makes you sound experienced.</div>
+  </section>
+
+  <section class="topic" id="interview-resume" data-title="Interview &amp; Resume Mapping" data-cat="Interview &amp; Resume">
+  <h2>Turning Projects into Interviews &amp; Resume</h2>
+  <p class="tagline">How to talk about these projects so you sound like you've delivered them. Structure, framing, and ready-made lines.</p>
+
+  <div class="block theory">
+    <h3>How to explain any project to an interviewer (the 90-second arc)</h3>
+    <p><strong>1. Business context + money</strong> ("A bank was losing ₹180cr/yr to fraud caught a day late"). <strong>2. Your goal/role</strong> ("I owned the streaming scoring pipeline"). <strong>3. Architecture in one breath</strong> (source→ingest→layers→serve, name the key techs). <strong>4. The hard part + your decision</strong> ("the challenge was a 300ms budget, so I put features in Redis and kept the lakehouse off the hot path"). <strong>5. Result + what you'd improve</strong> ("sub-300ms p99, fraud down; next I'd add automated skew handling"). Lead with <em>why</em>, not tools; name trade-offs; use numbers.</p>
+  </div>
+
+  <div class="block spec">
+    <h3>Resume bullet library (adapt to your Jio reality — never claim what you didn't do)</h3>
+    <div class="resume"><ul>
+      <li>Built and operated production data pipelines on Azure Databricks + Delta processing [X]M+ records/day through a bronze→silver→gold lakehouse, serving BI (Snowflake/Power BI) and downstream systems.</li>
+      <li>Implemented idempotent, partition-scoped ingestion (Autoloader / CDC / Kafka) with exactly-once semantics, dedup via Delta MERGE, and schema-drift handling.</li>
+      <li>Owned production support: on-call incident triage, root-cause analysis, and idempotent backfills, plus data-validation and reconciliation controls that guaranteed source-to-target integrity.</li>
+      <li>Tuned Spark jobs (skew salting, broadcast joins, partitioning, OPTIMIZE/Z-ORDER), cutting runtime/cost by [X]% and eliminating small-files issues.</li>
+      <li>Built data-quality checks (Great Expectations) and reconciliation that caught upstream breaks before they reached consumers.</li>
+      <li>Automated infra with Terraform and delivery with CI/CD (Azure DevOps/GitHub Actions), promoting versioned artifacts dev→QA→UAT→prod with tests and approvals.</li>
+      <li>Contributed to a legacy→lakehouse migration: ETL conversion to PySpark/dbt and a reconciliation framework proving parity for a risk-managed cutover.</li>
+    </ul></div>
+    <div class="warn"><strong>Integrity note:</strong> use these as a menu that matches what you genuinely did (or can defend in depth) at Jio. Interviewers probe — every bullet must survive a 5-minute deep dive. Better one true, deeply-known project than five you can't defend.</div>
+  </div>
+
+  <div class="block spec">
+    <h3>The questions every project attracts (and how to be ready)</h3>
+    <ul class="speclist">
+      <li><b>"Walk me through the architecture."</b> — source→ingest→layers→serve, cadence, key tech + why.</li>
+      <li><b>"Why did you choose X over Y?"</b> — always have the alternative and the trade-off (see the tech chapters).</li>
+      <li><b>"How did you ensure data quality/correctness?"</b> — DQ dimensions, checks placement, reconciliation.</li>
+      <li><b>"What was the hardest bug/incident?"</b> — incident method + a real story.</li>
+      <li><b>"How does it scale / what breaks at 10×?"</b> — skew, small files, shuffle, serving load, cost.</li>
+      <li><b>"How is it deployed and monitored?"</b> — CI/CD flow, IaC, the monitoring signals.</li>
+      <li><b>"How do you handle failures/reprocessing?"</b> — idempotency, backfills, checkpoints, DR.</li>
+      <li><b>"What would you do differently?"</b> — one honest improvement (shows reflection).</li>
+    </ul>
+  </div>
+
+  <div class="block theory">
+    <h3>STAR bank — reusable across projects</h3>
+    <div class="star"><strong>Reliability:</strong> S — a critical daily pipeline silently dropped ~30% of rows one morning. T — restore correct data and prevent recurrence. A — I compared source→bronze→silver→gold counts to localize the drop to a join fan-out after an upstream schema change, fixed the join, reprocessed the partition idempotently, and added a row-count reconciliation check + schema-drift alert. R — data corrected within the SLA, and the guardrail has caught two similar issues since.</div>
+    <div class="star"><strong>Performance:</strong> S — a nightly Spark job breached its window and delayed reporting. T — bring it back under SLA. A — Spark UI showed a skewed join straggler; I salted the hot key, broadcast the small dimension, right-sized partitions, and added OPTIMIZE/Z-ORDER. R — runtime dropped from [X]h to [Y]m and cost fell ~[Z]%.</div>
+    <div class="star"><strong>Delivery/collaboration:</strong> S — an upstream team kept changing a source schema without notice, breaking us. T — stop the recurring breakage. A — I proposed and implemented a data contract with schema validation at ingest (quarantine + alert) and worked with them on a change-notification process. R — breakages went to near zero and both teams trusted the boundary.</div>
+  </div>
+
+  <div class="tip"><strong>Final advice:</strong> pick 3–4 of the flagship projects, map each onto your genuine Jio experience where it overlaps (you have real production-support, reconciliation, and pipeline experience — that's gold), and rehearse the 90-second arc + likely questions out loud. Depth on a few beats name-dropping many.</div>
+  </section>
+
+
+</main>
+<button id="toTop" aria-label="Back to top">↑</button>
+<script>
+"use strict";
+/* Defensive shell script: tolerates missing/empty fragments. */
+(function(){
+  var LS_PREFIX="dehandbook:", LS_THEME="dehandbook:theme";
+  // Category display order for nav grouping.
+  var CAT_ORDER=["How Projects Run","Flagship Projects","More Projects","Migration & Modernization","Technology Deep-Dives","DevOps & Delivery","Production Playbook","Interview & Resume"];
+
+  var $=function(s,r){return (r||document).querySelector(s);};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+
+  document.addEventListener("DOMContentLoaded", init);
+
+  function init(){
+    var sections=$$("section.topic");
+    initTheme();
+    buildNav(sections);
+    initProgress(sections);
+    initQA();
+    initSearch(sections);
+    initScrollSpy(sections);
+    initChrome();
+  }
+
+  /* ---------- Theme ---------- */
+  function initTheme(){
+    var saved=null;
+    try{saved=localStorage.getItem(LS_THEME);}catch(e){}
+    if(saved==="dark"){document.documentElement.setAttribute("data-theme","dark");}
+    var btn=$("#themeBtn");
+    syncThemeBtn();
+    if(btn) btn.addEventListener("click",function(){
+      var dark=document.documentElement.getAttribute("data-theme")==="dark";
+      if(dark) document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.setAttribute("data-theme","dark");
+      try{localStorage.setItem(LS_THEME, dark?"light":"dark");}catch(e){}
+      syncThemeBtn();
+    });
+  }
+  function syncThemeBtn(){
+    var btn=$("#themeBtn"); if(!btn) return;
+    var dark=document.documentElement.getAttribute("data-theme")==="dark";
+    btn.textContent=dark?"☀️ Light":"🌙 Dark";
+  }
+
+  /* ---------- Navigation (grouped by data-cat) ---------- */
+  function buildNav(sections){
+    var nav=$("#nav"); if(!nav) return;
+    var groups={};
+    sections.forEach(function(sec){
+      var cat=sec.getAttribute("data-cat")||"Extras";
+      (groups[cat]=groups[cat]||[]).push(sec);
+    });
+    // Ordered cats first, then any unexpected cats appended.
+    var cats=CAT_ORDER.filter(function(c){return groups[c];});
+    Object.keys(groups).forEach(function(c){if(cats.indexOf(c)<0)cats.push(c);});
+
+    cats.forEach(function(cat){
+      var g=document.createElement("div"); g.className="nav-group";
+      var t=document.createElement("div"); t.className="grp-title"; t.textContent=cat;
+      g.appendChild(t);
+      groups[cat].forEach(function(sec){
+        if(!sec.id){sec.id="sec-"+Math.random().toString(36).slice(2);}
+        var label=sec.getAttribute("data-title")||
+          (sec.querySelector("h2")?sec.querySelector("h2").textContent:sec.id);
+        var a=document.createElement("a");
+        a.className="nav-item"; a.href="#"+sec.id; a.setAttribute("data-target",sec.id);
+        a.innerHTML='<span class="nav-top"><span class="lbl-txt"></span>'+
+          '<span class="pct"></span></span><span class="mini"><span></span></span>';
+        a.querySelector(".lbl-txt").textContent=label;
+        a.addEventListener("click",function(e){
+          e.preventDefault();
+          var el=document.getElementById(sec.id);
+          if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+          document.body.classList.remove("nav-open");
+        });
+        g.appendChild(a);
+        sec._navItem=a; // link back for progress + spy
+      });
+      nav.appendChild(g);
+    });
+  }
+
+  /* ---------- Progress persistence + per-topic % ---------- */
+  function initProgress(sections){
+    var boxes=$$("input.prog[data-key]");
+    boxes.forEach(function(box){
+      var key=LS_PREFIX+box.getAttribute("data-key");
+      var v=null; try{v=localStorage.getItem(key);}catch(e){}
+      if(v==="1") box.checked=true;
+      box.addEventListener("change",function(){
+        try{localStorage.setItem(key, box.checked?"1":"0");}catch(e){}
+        updateProgress(sections);
+      });
+    });
+    updateProgress(sections);
+  }
+  function updateProgress(sections){
+    var totAll=0, chkAll=0;
+    sections.forEach(function(sec){
+      var b=$$("input.prog",sec), n=b.length,
+          c=b.filter(function(x){return x.checked;}).length;
+      totAll+=n; chkAll+=c;
+      if(sec._navItem){
+        var pct=n?Math.round(c/n*100):0;
+        var pctEl=sec._navItem.querySelector(".pct");
+        var barEl=sec._navItem.querySelector(".mini>span");
+        if(pctEl) pctEl.textContent=n?(pct+"%"):"";
+        if(barEl) barEl.style.width=pct+"%";
+      }
+    });
+    var op=totAll?Math.round(chkAll/totAll*100):0;
+    var opEl=$("#overallPct"), obEl=$("#overallBar");
+    if(opEl) opEl.textContent=op+"% ("+chkAll+"/"+totAll+")";
+    if(obEl) obEl.style.width=op+"%";
+  }
+
+  /* ---------- Q&A expand/collapse controls ---------- */
+  function initQA(){
+    $$(".block.qa").forEach(function(block){
+      var qs=$$("details.q",block); if(!qs.length) return;
+      var bar=document.createElement("div"); bar.className="qa-tools";
+      var eBtn=mkBtn("Expand all",function(){qs.forEach(function(d){d.open=true;});});
+      var cBtn=mkBtn("Collapse all",function(){qs.forEach(function(d){d.open=false;});});
+      bar.appendChild(eBtn); bar.appendChild(cBtn);
+      var h3=block.querySelector("h3");
+      if(h3&&h3.nextSibling) block.insertBefore(bar,h3.nextSibling);
+      else block.insertBefore(bar, qs[0]);
+    });
+  }
+  function mkBtn(txt,fn){
+    var b=document.createElement("button"); b.type="button"; b.textContent=txt;
+    b.addEventListener("click",fn); return b;
+  }
+
+  /* ---------- Live search ---------- */
+  function initSearch(sections){
+    var input=$("#search"), info=$("#searchInfo"), timer=null;
+    if(!input) return;
+    input.addEventListener("input",function(){
+      clearTimeout(timer);
+      timer=setTimeout(function(){runSearch(input.value,sections,info);},150);
+    });
+    var reset=$("#expandNav");
+    if(reset) reset.addEventListener("click",function(){
+      input.value=""; runSearch("",sections,info);
+    });
+  }
+  function runSearch(q,sections,info){
+    q=(q||"").trim().toLowerCase();
+    if(q.length<2){ clearSearch(sections); if(info) info.textContent=""; return; }
+    var matches=0;
+    sections.forEach(function(sec){
+      var hit=0;
+      var title=((sec.getAttribute("data-title")||"")+" "+
+        (sec.querySelector("h2")?sec.querySelector("h2").textContent:"")).toLowerCase();
+      var titleHit=title.indexOf(q)>=0;
+
+      // Q&A details
+      $$("details.q",sec).forEach(function(d){
+        var sum=d.querySelector("summary");
+        var txt=(sum?sum.textContent:"").toLowerCase()+" "+d.textContent.toLowerCase();
+        var m=titleHit||txt.indexOf(q)>=0;
+        d.classList.toggle("s-hidden",!m);
+        if(m){hit++; if(txt.indexOf(q)>=0) d.open=true;}
+      });
+      // checklist items
+      $$("ul.checklist li",sec).forEach(function(li){
+        var m=titleHit||li.textContent.toLowerCase().indexOf(q)>=0;
+        li.classList.toggle("s-hidden",!m);
+        if(m) hit++;
+      });
+      // generic list items (projects) — filter too
+      $$("ul:not(.checklist)>li",sec).forEach(function(li){
+        var m=titleHit||li.textContent.toLowerCase().indexOf(q)>=0;
+        li.classList.toggle("s-hidden",!m);
+        if(m) hit++;
+      });
+
+      var show=titleHit||hit>0;
+      sec.classList.toggle("s-hidden",!show);
+      if(sec._navItem) sec._navItem.classList.toggle("s-hidden",!show);
+      if(show) matches++;
+    });
+    if(info) info.textContent=matches+" section"+(matches===1?"":"s")+" match";
+  }
+  function clearSearch(sections){
+    sections.forEach(function(sec){
+      sec.classList.remove("s-hidden");
+      if(sec._navItem) sec._navItem.classList.remove("s-hidden");
+      $$("details.q",sec).forEach(function(d){d.classList.remove("s-hidden");});
+      $$("li",sec).forEach(function(li){li.classList.remove("s-hidden");});
+    });
+  }
+
+  /* ---------- Scroll spy (active nav highlight) ---------- */
+  function initScrollSpy(sections){
+    if(!("IntersectionObserver" in window)||!sections.length) return;
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          $$(".nav-item.active").forEach(function(a){a.classList.remove("active");});
+          var sec=en.target;
+          if(sec._navItem){
+            sec._navItem.classList.add("active");
+            // keep active item visible in sidebar
+            sec._navItem.scrollIntoView({block:"nearest"});
+          }
+        }
+      });
+    },{rootMargin:"-10% 0px -75% 0px", threshold:0});
+    sections.forEach(function(s){io.observe(s);});
+  }
+
+  /* ---------- Chrome: hamburger, back-to-top ---------- */
+  function initChrome(){
+    var ham=$("#hamburger"), scrim=$("#scrim");
+    if(ham) ham.addEventListener("click",function(){document.body.classList.toggle("nav-open");});
+    if(scrim) scrim.addEventListener("click",function(){document.body.classList.remove("nav-open");});
+
+    var top=$("#toTop");
+    if(top){
+      window.addEventListener("scroll",function(){
+        top.style.display=window.scrollY>400?"block":"none";
+      },{passive:true});
+      top.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
+    }
+  }
+})();
+</script>
+</body>
+</html>

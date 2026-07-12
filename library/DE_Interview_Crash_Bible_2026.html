@@ -1,0 +1,2006 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DE Interview Crash Bible 2026 — Deepesh</title>
+<style>
+/* ============ Theme tokens ============ */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --surface-2:#eef2f7; --border:#d7dee8;
+  --text:#1c2430; --text-dim:#5a6675; --accent:#0f6d8c; --accent-2:#12a3a3;
+  --accent-ink:#ffffff; --code-bg:#1b2430; --code-text:#e6edf3;
+  --e:#1f9d55; --m:#c77700; --h:#d0342c;
+  --goal-bg:#eaf4f8; --verify-bg:#eafbf0; --gotcha-bg:#fdf0ee;
+  --shadow:0 1px 3px rgba(20,30,50,.08),0 1px 2px rgba(20,30,50,.06);
+  --sidebar-w:280px;
+}
+html[data-theme="dark"]{
+  --bg:#0e131a; --surface:#161d27; --surface-2:#1c2530; --border:#2a3542;
+  --text:#e4eaf1; --text-dim:#9aa7b6; --accent:#3fb4d6; --accent-2:#2fd0cf;
+  --accent-ink:#04121a; --code-bg:#0a0f16; --code-text:#dce6f0;
+  --e:#3ecf7a; --m:#e0a437; --h:#f0665e;
+  --goal-bg:#132833; --verify-bg:#122b1f; --gotcha-bg:#2c1a18;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.6; scroll-padding-top:12px;
+}
+a{color:var(--accent)}
+
+/* ============ Layout ============ */
+#sidebar{
+  position:fixed; top:0; left:0; width:var(--sidebar-w); height:100vh;
+  background:var(--surface); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; z-index:40; overflow:hidden;
+}
+#sidebar .side-head{padding:14px 16px 8px; border-bottom:1px solid var(--border)}
+#sidebar .brand{font-weight:700; font-size:15px; letter-spacing:.2px}
+#sidebar .side-scroll{overflow-y:auto; flex:1; padding:8px 8px 40px}
+main{margin-left:var(--sidebar-w); padding:28px 32px 120px; max-width:1000px}
+
+/* overall progress */
+.overall{margin:10px 0 4px}
+.overall .lbl{display:flex; justify-content:space-between; font-size:12px; color:var(--text-dim); margin-bottom:4px}
+.bar{height:7px; background:var(--surface-2); border-radius:99px; overflow:hidden}
+.bar>span{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .3s}
+
+/* controls row */
+.side-tools{display:flex; gap:6px; margin-top:10px}
+.side-tools button, .icon-btn{
+  cursor:pointer; border:1px solid var(--border); background:var(--surface-2);
+  color:var(--text); border-radius:8px; padding:6px 8px; font-size:13px;
+}
+.side-tools button:hover{border-color:var(--accent)}
+#search{
+  width:100%; margin-top:10px; padding:8px 10px; border-radius:8px;
+  border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;
+}
+#searchInfo{font-size:11px; color:var(--text-dim); min-height:14px; margin-top:3px}
+
+/* nav */
+.nav-group{margin:10px 4px 4px}
+.nav-group>.grp-title{
+  font-size:11px; text-transform:uppercase; letter-spacing:.7px;
+  color:var(--text-dim); font-weight:700; padding:4px 6px;
+}
+.nav-item{
+  display:block; text-decoration:none; color:var(--text); border-radius:8px;
+  padding:6px 8px; font-size:13.5px; position:relative;
+}
+.nav-item:hover{background:var(--surface-2)}
+.nav-item.active{background:var(--surface-2); color:var(--accent); font-weight:600; box-shadow:inset 3px 0 0 var(--accent)}
+.nav-item .nav-top{display:flex; justify-content:space-between; align-items:center; gap:6px}
+.nav-item .pct{font-size:10px; color:var(--text-dim); flex:none}
+.nav-item .mini{height:4px; background:var(--surface-2); border-radius:99px; margin-top:4px; overflow:hidden}
+.nav-item .mini>span{display:block; height:100%; width:0; background:var(--accent-2); transition:width .3s}
+.nav-item.active .mini{background:var(--bg)}
+
+/* hamburger (mobile) */
+#hamburger{display:none; position:fixed; top:12px; left:12px; z-index:50}
+#scrim{display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:39}
+
+/* ============ Header banner ============ */
+.doc-banner{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--accent-ink); border-radius:16px; padding:26px 28px; margin-bottom:26px;
+  box-shadow:var(--shadow);
+}
+.doc-banner h1{margin:0 0 6px; font-size:30px; line-height:1.15}
+.doc-banner .sub{margin:0; font-size:15px; opacity:.95}
+.doc-banner .howto{
+  margin-top:14px; font-size:13px; background:rgba(255,255,255,.16);
+  border-radius:10px; padding:10px 12px; line-height:1.5;
+}
+
+/* ============ Sections & contract classes ============ */
+section.topic{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:22px 24px; margin:0 0 28px; box-shadow:var(--shadow); scroll-margin-top:16px;
+}
+section.topic>h2{
+  margin:0 0 4px; font-size:23px; padding-bottom:8px;
+  border-bottom:3px solid var(--accent); display:inline-block;
+}
+.tagline{margin:4px 0 18px; color:var(--text-dim); font-style:italic}
+section.topic h3{font-size:16px; margin:0 0 10px}
+
+.block{
+  background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+  padding:16px 18px; margin:14px 0;
+}
+.block>*:last-child{margin-bottom:0}
+
+/* checklist */
+ul.checklist{list-style:none; margin:0; padding:0}
+ul.checklist li{margin:3px 0}
+ul.checklist label{display:flex; gap:9px; align-items:flex-start; cursor:pointer; padding:3px 4px; border-radius:6px}
+ul.checklist label:hover{background:var(--surface)}
+ul.checklist input.prog{margin-top:5px; flex:none; width:16px; height:16px; accent-color:var(--accent)}
+ul.checklist input.prog:checked + *, label:has(input.prog:checked){color:var(--text-dim)}
+
+/* Q&A details */
+details.q{
+  border:1px solid var(--border); border-radius:10px; margin:8px 0;
+  background:var(--surface); overflow:hidden;
+}
+details.q>summary{
+  cursor:pointer; padding:10px 14px; font-weight:600; list-style:none;
+  display:flex; align-items:center; gap:8px;
+}
+details.q>summary::-webkit-details-marker{display:none}
+details.q>summary::before{content:"\25B8"; color:var(--accent); font-size:12px; transition:transform .15s}
+details.q[open]>summary::before{transform:rotate(90deg)}
+details.q[open]>summary{background:var(--surface-2); border-bottom:1px solid var(--border)}
+details.q[open]{box-shadow:inset 3px 0 0 var(--accent)}
+.a{padding:6px 16px 12px 28px}
+.a>*:first-child{margin-top:6px}
+
+/* difficulty badges */
+.lvl{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+  padding:2px 7px; border-radius:99px; color:#fff; margin-left:auto; flex:none}
+.lvl.e{background:var(--e)} .lvl.m{background:var(--m)} .lvl.h{background:var(--h)}
+
+/* qa toolbar */
+.qa-tools{display:flex; gap:8px; margin:0 0 10px}
+.qa-tools button{
+  cursor:pointer; font-size:12px; padding:4px 10px; border-radius:7px;
+  border:1px solid var(--border); background:var(--surface); color:var(--text);
+}
+.qa-tools button:hover{border-color:var(--accent); color:var(--accent)}
+
+/* playbook / phase */
+.block.playbook{border-left:4px solid var(--accent)}
+.block.phase{border-left:4px solid var(--accent-2)}
+.pb-goal,.ph-goal{background:var(--goal-bg); border-radius:8px; padding:8px 12px}
+.pb-verify{background:var(--verify-bg); border-radius:8px; padding:8px 12px}
+.pb-gotcha{background:var(--gotcha-bg); border-radius:8px; padding:8px 12px}
+ol.steps{margin:12px 0; padding-left:22px}
+ol.steps>li{margin:8px 0; padding-left:4px}
+
+/* code */
+pre{background:var(--code-bg); color:var(--code-text); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; margin:12px 0; line-height:1.5}
+pre code{background:none; padding:0; color:inherit; font-size:13.5px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  background:var(--surface); border:1px solid var(--border); border-radius:5px;
+  padding:1px 5px; font-size:.9em}
+
+/* tables */
+table{border-collapse:collapse; width:100%; margin:12px 0; font-size:14px}
+th,td{border:1px solid var(--border); padding:8px 10px; text-align:left}
+thead th{background:var(--surface-2)}
+tbody tr:nth-child(even){background:var(--surface-2)}
+
+/* back to top */
+#toTop{
+  position:fixed; right:22px; bottom:22px; z-index:35; display:none;
+  width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
+  background:var(--accent); color:var(--accent-ink); font-size:20px;
+  box-shadow:var(--shadow);
+}
+#toTop:hover{background:var(--accent-2)}
+
+/* search hidden helpers */
+.s-hidden{display:none !important}
+
+/* ============ Responsive ============ */
+@media (max-width:900px){
+  #sidebar{transform:translateX(-100%); transition:transform .25s; box-shadow:var(--shadow)}
+  body.nav-open #sidebar{transform:translateX(0)}
+  body.nav-open #scrim{display:block}
+  main{margin-left:0; padding:64px 18px 120px}
+  #hamburger{display:block}
+}
+
+/* ============ Print ============ */
+@media print{
+  #sidebar,#hamburger,#toTop,#scrim,.qa-tools{display:none !important}
+  main{margin:0; max-width:none; padding:0}
+  details.q{page-break-inside:avoid}
+  section.topic{page-break-inside:avoid; box-shadow:none; border:1px solid #ccc}
+  .doc-banner{color:#000; background:none; border:1px solid #ccc}
+  a{color:inherit; text-decoration:none}
+}
+
+/* ===== Crash-Bible additions ===== */
+.block.theory{border-left:4px solid var(--accent)}
+.block.qa{border-left:4px solid var(--h)}
+.crux{background:var(--goal-bg); border-radius:8px; padding:10px 14px; margin:12px 0}
+.crux>strong{color:var(--accent)}
+.key{background:var(--verify-bg); border:1px solid var(--border); border-left:4px solid var(--e);
+  border-radius:8px; padding:10px 14px; margin:12px 0}
+.warn{background:var(--gotcha-bg); border:1px solid var(--border); border-left:4px solid var(--h);
+  border-radius:8px; padding:10px 14px; margin:12px 0}
+.ex{background:var(--surface); border:1px dashed var(--border); border-radius:8px; padding:10px 14px; margin:12px 0}
+.tip{background:var(--goal-bg); border-left:4px solid var(--accent-2); border-radius:8px; padding:10px 14px; margin:12px 0}
+.daygrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin:14px 0}
+.day{background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:12px 14px}
+.day h4{margin:0 0 6px; font-size:14px; color:var(--accent)}
+.day .d{font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-dim); font-weight:700}
+.day ul{margin:6px 0 0; padding-left:18px; font-size:13px}
+.day li{margin:3px 0}
+.pill{display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:99px;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text-dim); margin:2px 4px 2px 0}
+.q-tag{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--text-dim);
+  border:1px solid var(--border); border-radius:99px; padding:1px 6px; margin-left:6px}
+section.topic h4{font-size:15px; margin:16px 0 6px}
+.mini-toc{font-size:13px; color:var(--text-dim); margin:2px 0 8px}
+.mini-toc code{font-size:12px}
+</style>
+</head>
+<body>
+<button id="hamburger" class="icon-btn" aria-label="Toggle navigation">&#9776;</button>
+<div id="scrim"></div>
+
+<aside id="sidebar">
+  <div class="side-head">
+    <div class="brand">DE Crash Bible 2026</div>
+    <div class="overall">
+      <div class="lbl"><span>Overall progress</span><span id="overallPct">0%</span></div>
+      <div class="bar"><span id="overallBar"></span></div>
+    </div>
+    <input id="search" type="search" placeholder="Search topics, questions…" autocomplete="off">
+    <div id="searchInfo"></div>
+    <div class="side-tools">
+      <button id="themeBtn" type="button">🌙 Dark</button>
+      <button id="expandNav" type="button">Reset filter</button>
+    </div>
+  </div>
+  <nav class="side-scroll" id="nav" aria-label="Sections"></nav>
+</aside>
+
+<main id="main">
+  <header class="doc-banner">
+    <h1>DE Interview Crash Bible 2026</h1>
+    <p class="sub">Practical theory + high-signal interview Q&amp;A, fused. Built to crack a Data Engineer role in &lt;15 days.</p>
+    <div class="howto">
+      <strong>How to use:</strong> This is the third book — the mix of your two. Each topic gives you
+      <em>just the practical theory you must be able to say out loud</em>, then the <em>interview questions
+      most likely to be asked</em> with tight model answers. Work the 15-Day Sprint below in order,
+      tick checkboxes as you go (progress auto-saves), and use search to drill any concept fast.
+    </div>
+  </header>
+  <section class="topic" id="sprint" data-title="15-Day Sprint Plan" data-cat="Start Here">
+  <h2>15-Day Interview Sprint</h2>
+  <p class="tagline">You already work as a Data Engineer. This is not learning from zero — it is <em>converting what you do at Jio into interview-ready answers</em> and plugging the exact gaps interviewers probe. Two hours a day minimum; more on weekends.</p>
+
+  <div class="block theory">
+    <h3>The strategy in one paragraph</h3>
+    <p>Interviews for a 2.5-year DE mostly test five things: <strong>SQL you can write live</strong>, <strong>Python you can reason about</strong>, <strong>Spark internals you can explain</strong>, <strong>data modeling decisions you can defend</strong>, and <strong>a project/production story you can tell</strong>. Everything else (Kafka, Airflow, cloud, Snowflake) is asked at a <em>concept</em> level — "what is it, why, when, what breaks." So we go deep on the first five and get you fluent-not-expert on the rest. The single highest-return activity is being able to <em>say the answer out loud</em>, not recognise it. Read each Q, cover the answer, answer aloud, then check.</p>
+  </div>
+
+  <div class="crux"><strong>Daily loop:</strong> 30 min SQL/Python practice (LeetCode/StrataScratch) → 60 min the day's topic here (read theory, then self-test the Q&amp;A out loud) → 30 min turn one Jio task into a STAR story or a one-line resume bullet.</div>
+
+  <div class="daygrid">
+    <div class="day"><div class="d">Day 1–2</div><h4>SQL mastery</h4><ul><li>Joins &amp; cardinality, GROUP BY/HAVING, window functions cold</li><li>Grind 10 medium SQL problems</li><li>Self-test the SQL Q&amp;A here</li></ul></div>
+    <div class="day"><div class="d">Day 3</div><h4>Python for DE</h4><ul><li>Data structures, comprehensions, generators, error handling</li><li>pandas basics + why Spark over pandas</li></ul></div>
+    <div class="day"><div class="d">Day 4</div><h4>Data modeling</h4><ul><li>Star schema, fact vs dim, SCD1/2, normalization</li><li>Model one domain end-to-end on paper</li></ul></div>
+    <div class="day"><div class="d">Day 5</div><h4>DB internals</h4><ul><li>Indexes/B+tree, ACID, isolation levels, EXPLAIN</li><li>OLTP vs OLAP</li></ul></div>
+    <div class="day"><div class="d">Day 6–7</div><h4>Spark / PySpark</h4><ul><li>Architecture, lazy eval, shuffle, joins, skew, AQE</li><li>Read the Spark UI; tune one job</li><li>The big Q&amp;A block — say every answer aloud</li></ul></div>
+    <div class="day"><div class="d">Day 8</div><h4>Kafka</h4><ul><li>Topics/partitions/offsets, consumer groups, delivery semantics</li></ul></div>
+    <div class="day"><div class="d">Day 9</div><h4>Azure (ADF + ADLS)</h4><ul><li>Pipelines, IR, incremental load, Key Vault, triggers</li></ul></div>
+    <div class="day"><div class="d">Day 10</div><h4>Databricks + Delta</h4><ul><li>Medallion, MERGE, time travel, OPTIMIZE/Z-ORDER, VACUUM</li></ul></div>
+    <div class="day"><div class="d">Day 11</div><h4>Snowflake</h4><ul><li>Virtual warehouses, micro-partitions, streams &amp; tasks, cost</li></ul></div>
+    <div class="day"><div class="d">Day 12</div><h4>Airflow + Data Quality</h4><ul><li>DAGs, logical date, idempotency, retries; DQ dimensions &amp; reconciliation</li></ul></div>
+    <div class="day"><div class="d">Day 13</div><h4>System design</h4><ul><li>The framework + 3 worked pipeline designs</li></ul></div>
+    <div class="day"><div class="d">Day 14</div><h4>Behavioral + project story</h4><ul><li>Polish 3 STAR stories from Jio prod support</li><li>"Tell me about a pipeline you built"</li></ul></div>
+    <div class="day"><div class="d">Day 15</div><h4>Mock + weak spots</h4><ul><li>Full mock aloud; re-drill every Q you fumbled</li><li>Skim cheat sheets morning of interview</li></ul></div>
+  </div>
+
+  <div class="block theory">
+    <h3>Progress tracker</h3>
+    <ul class="checklist">
+      <li><label><input type="checkbox" class="prog" data-key="sp-1"> Day 1–2 SQL: can write windows, self-joins, gaps-and-islands unaided</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-2"> Day 3 Python: explain GIL, generators, mutable-default trap</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-3"> Day 4 Modeling: draw a star schema and defend SCD2</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-4"> Day 5 DB: explain index vs full scan and isolation levels</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-5"> Day 6–7 Spark: explain a shuffle, skew fix, broadcast join from memory</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-6"> Day 8 Kafka: explain exactly-once and consumer rebalancing</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-7"> Day 9 Azure: describe an incremental ADF pipeline with watermark</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-8"> Day 10 Delta: explain MERGE, time travel, OPTIMIZE, VACUUM</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-9"> Day 11 Snowflake: warehouses vs storage, micro-partitions, pruning</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-10"> Day 12 Airflow/DQ: explain idempotency and reconciliation</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-11"> Day 13 System design: run the framework on a fresh prompt</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-12"> Day 14 Behavioral: 3 polished STAR stories ready</label></li>
+      <li><label><input type="checkbox" class="prog" data-key="sp-13"> Day 15 Mock complete; weak spots re-drilled</label></li>
+    </ul>
+  </div>
+
+  <div class="tip"><strong>Your unfair advantage:</strong> production support at Jio is <em>exactly</em> what strong companies want to hear about — on-call, RCA, data validation, reconciliation, SLAs. Most candidates have only toy projects. Lead with real incidents you handled; that is senior-signal.</div>
+  </section>
+
+  <section class="topic" id="sql" data-title="SQL" data-cat="Core Foundations">
+  <h2>SQL — The #1 Filter</h2>
+  <p class="tagline">If you can write clean window functions and reason about join cardinality under pressure, you pass most first rounds. This is the highest-ROI topic in the whole doc.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>Logical query execution order</h4>
+    <p>SQL is written <code>SELECT … FROM … WHERE … GROUP BY … HAVING … ORDER BY</code> but <em>runs</em> in a different order. Knowing this explains 90% of "why doesn't this work" bugs:</p>
+    <p><code>FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT (aliases created here) → DISTINCT → ORDER BY → LIMIT</code>.</p>
+    <p>Consequences interviewers love: you <strong>can't use a SELECT alias in WHERE</strong> (alias doesn't exist yet) but you <em>can</em> in ORDER BY. <code>WHERE</code> filters rows <em>before</em> grouping; <code>HAVING</code> filters groups <em>after</em>. Window functions run <em>after</em> GROUP BY/HAVING but <em>before</em> the final SELECT-level DISTINCT/ORDER BY — which is why you often need a subquery/CTE to filter on a window result.</p>
+
+    <h4>Joins &amp; cardinality — the thing that separates real engineers</h4>
+    <p>A join is a Cartesian product followed by a filter. It <em>fans out</em> whenever the join key is not unique on the "many" side. Duplicated keys silently inflate <code>SUM</code>/<code>COUNT</code> — the #1 source of wrong numbers in pipelines. Before trusting an aggregate, know each join's cardinality: 1:1, 1:many, or many:many. <code>INNER</code> keeps only matches; <code>LEFT</code> keeps all left rows (unmatched right = NULL); <code>FULL OUTER</code> keeps both sides (MySQL lacks it — emulate with <code>LEFT UNION RIGHT</code>).</p>
+
+    <h4>NULL &amp; three-valued logic</h4>
+    <p>NULL is "unknown," not a value. Any comparison with NULL is UNKNOWN, and a row is kept only when the predicate is TRUE — so <code>WHERE bonus &lt;&gt; 100</code> silently drops NULL bonuses. Use <code>IS NULL</code>, <code>COALESCE</code>, and beware <code>NOT IN (subquery)</code> that returns any NULL — it yields zero rows. Aggregates skip NULLs: <code>COUNT(col)</code> ignores NULLs, <code>COUNT(*)</code> doesn't.</p>
+
+    <h4>Window functions — aggregate without collapsing</h4>
+    <p>A window function computes across a set of rows <em>related to the current row</em> without collapsing them. Syntax: <code>func() OVER (PARTITION BY … ORDER BY … ROWS/RANGE …)</code>. Know cold: <code>ROW_NUMBER</code> (unique 1,2,3), <code>RANK</code> (gaps on ties), <code>DENSE_RANK</code> (no gaps), <code>LAG/LEAD</code> (previous/next row), and running totals with a frame. This is the single most-tested SQL construct for DE.</p>
+    <pre><code>-- top 3 earners per department
+SELECT * FROM (
+  SELECT emp, dept, salary,
+         DENSE_RANK() OVER (PARTITION BY dept ORDER BY salary DESC) AS rnk
+  FROM employees
+) t
+WHERE rnk &lt;= 3;</code></pre>
+
+    <h4>The frame clause (the detail people miss)</h4>
+    <p>With <code>ORDER BY</code> in a window and no explicit frame, the default is <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> — which, on ties, includes <em>all peer rows</em>, not just up to the current one. For a true running total row-by-row, be explicit: <code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> logical execution order · join fan-out · NULL/3VL · the four ranking functions · LAG/LEAD · running total with explicit ROWS frame · WHERE vs HAVING · UNION vs UNION ALL · correlated vs non-correlated subquery · gaps-and-islands pattern.</div>
+    <div class="warn"><strong>Live-coding trap:</strong> filtering on a window function directly (<code>WHERE ROW_NUMBER() OVER(...) = 1</code>) is illegal — windows are computed after WHERE. Wrap in a subquery/CTE and filter on the alias.</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Patterns worth memorizing</h3>
+    <p><strong>Deduplicate keep-latest:</strong> <code>ROW_NUMBER() OVER(PARTITION BY id ORDER BY updated_at DESC)=1</code>.
+    <strong>Nth highest:</strong> <code>DENSE_RANK()…=N</code>.
+    <strong>Running total / moving avg:</strong> window with explicit ROWS frame.
+    <strong>Gaps-and-islands (consecutive streaks):</strong> subtract <code>ROW_NUMBER()</code> from a date/sequence; equal difference = same island.
+    <strong>Pivot:</strong> <code>SUM(CASE WHEN k='a' THEN v END)</code>.
+    <strong>Month-over-month:</strong> <code>LAG(metric) OVER(ORDER BY month)</code> then compute delta.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (25)</h3>
+
+    <details class="q"><summary>Q1. Explain the logical order of execution of a SELECT. <span class="lvl e">basic</span></summary>
+      <div class="a"><p>FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT (aliases materialize here) → DISTINCT → ORDER BY → LIMIT. This is why a SELECT alias can't be used in WHERE but can in ORDER BY, and why WHERE filters rows while HAVING filters groups.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. WHERE vs HAVING? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>WHERE filters individual rows before grouping; HAVING filters groups after aggregation. You can't use an aggregate in WHERE; you can in HAVING. Push filters into WHERE so fewer rows reach GROUP BY.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. UNION vs UNION ALL? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>UNION removes duplicates (implicit DISTINCT → a sort/hash cost); UNION ALL keeps everything and is much faster. Default to UNION ALL unless you truly need dedup. Both need matching column count and compatible types, aligned by position.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. If A and B each have 100 rows, what row counts can INNER/LEFT/CROSS produce? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>INNER: 0–10,000 depending on key cardinality (1:1 gives ≤100, 1:many multiplies). LEFT: ≥100 (every A row survives), more if A matches multiple B rows. CROSS: exactly 10,000. The point: joins fan out when the join key isn't unique on the many side.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. ROW_NUMBER vs RANK vs DENSE_RANK. <span class="lvl e">basic</span></summary>
+      <div class="a"><p>All assign order within a partition. ROW_NUMBER: always unique (1,2,3,4). RANK: ties share a rank and leave gaps (1,1,3). DENSE_RANK: ties share a rank, no gaps (1,1,2). Use ROW_NUMBER for dedup, DENSE_RANK for "top-N including ties."</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. Find the 2nd highest salary — multiple ways. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Robust: <code>SELECT MAX(salary) FROM emp WHERE salary &lt; (SELECT MAX(salary) FROM emp)</code>. Or window: <code>DENSE_RANK() OVER(ORDER BY salary DESC)=2</code>. Or <code>OFFSET 1 LIMIT 1</code> on distinct salaries. Mention DENSE_RANK handles ties correctly and returns NULL-safe empty if fewer than 2 distinct values.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. Deduplicate a table keeping the latest record per key. <span class="lvl m">medium</span></summary>
+      <div class="a"><pre><code>WITH r AS (
+  SELECT *, ROW_NUMBER() OVER (
+    PARTITION BY id ORDER BY updated_at DESC) rn
+  FROM t)
+SELECT * FROM r WHERE rn = 1;</code></pre><p>ROW_NUMBER (not RANK) so ties still collapse to one row. Choose a deterministic tiebreaker in ORDER BY.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. Running total of daily sales. <span class="lvl m">medium</span></summary>
+      <div class="a"><pre><code>SELECT day, amt,
+  SUM(amt) OVER (ORDER BY day
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running
+FROM sales;</code></pre><p>Give the explicit ROWS frame — the default RANGE frame includes all tied peers, which is wrong for true row-by-row running totals.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Month-over-month growth %. <span class="lvl m">medium</span></summary>
+      <div class="a"><pre><code>SELECT month, rev,
+  LAG(rev) OVER (ORDER BY month) AS prev,
+  ROUND(100.0*(rev - LAG(rev) OVER (ORDER BY month))
+        / LAG(rev) OVER (ORDER BY month), 2) AS mom_pct
+FROM monthly;</code></pre><p>LAG pulls the previous row. Guard divide-by-zero/NULL for the first month with NULLIF/COALESCE.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. Gaps-and-islands: find consecutive-day login streaks. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Trick: for each user, <code>date - ROW_NUMBER() OVER(PARTITION BY user ORDER BY date)</code> is constant within a consecutive run. Group by that constant to get each streak's start, end, and length.</p>
+      <pre><code>SELECT user, MIN(d) start, MAX(d) end, COUNT(*) len FROM (
+  SELECT user, d,
+    d - INTERVAL ROW_NUMBER() OVER(PARTITION BY user ORDER BY d) DAY AS grp
+  FROM logins) x
+GROUP BY user, grp;</code></pre></div>
+    </details>
+
+    <details class="q"><summary>Q11. Why does WHERE col &lt;&gt; 5 drop NULL rows, and how to include them? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>NULL &lt;&gt; 5 evaluates to UNKNOWN, and only TRUE rows are kept, so NULLs vanish. Include them explicitly: <code>WHERE col &lt;&gt; 5 OR col IS NULL</code>. Same reason <code>NOT IN</code> with a NULL in the list returns nothing.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. Correlated vs non-correlated subquery. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Non-correlated runs once, independent of the outer query. Correlated references the outer row and conceptually runs per outer row (optimizers often rewrite it to a join/semi-join). EXISTS is a correlated semi-join and usually beats <code>IN</code> for large/NULL-prone sets.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. EXISTS vs IN vs JOIN for "customers who ordered." <span class="lvl m">medium</span></summary>
+      <div class="a"><p>All can express it. <code>EXISTS</code> short-circuits on first match and is NULL-safe. <code>IN</code> is fine but breaks with NULLs in the subquery for <code>NOT IN</code>. A JOIN can duplicate customers if a customer has many orders (use DISTINCT or a semi-join). Prefer EXISTS/semi-join for existence checks.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. What is a CTE and when is it better than a subquery? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>A CTE (<code>WITH … AS</code>) names a query block for readability and reuse within one statement. Better for multi-step logic and self-documentation; recursive CTEs handle hierarchies/graphs. Note: in some engines a CTE is an optimization fence (not inlined), so for hot paths test vs an inline subquery.</p></div>
+    </details>
+
+    <details class="q"><summary>Q15. Write a recursive CTE to walk an employee→manager hierarchy. <span class="lvl h">hard</span></summary>
+      <div class="a"><pre><code>WITH RECURSIVE org AS (
+  SELECT id, name, manager_id, 1 lvl
+  FROM emp WHERE manager_id IS NULL
+  UNION ALL
+  SELECT e.id, e.name, e.manager_id, o.lvl+1
+  FROM emp e JOIN org o ON e.manager_id = o.id)
+SELECT * FROM org;</code></pre><p>Anchor member seeds the roots; recursive member joins back to the CTE until no new rows. Always ensure a termination condition to avoid infinite loops.</p></div>
+    </details>
+
+    <details class="q"><summary>Q16. Pivot rows to columns without PIVOT syntax. <span class="lvl m">medium</span></summary>
+      <div class="a"><pre><code>SELECT dept,
+  SUM(CASE WHEN quarter='Q1' THEN amt END) q1,
+  SUM(CASE WHEN quarter='Q2' THEN amt END) q2
+FROM sales GROUP BY dept;</code></pre><p>Conditional aggregation is the portable pivot. Reverse (unpivot) with UNION ALL of one column per source column.</p></div>
+    </details>
+
+    <details class="q"><summary>Q17. What's an index and when does it hurt? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>An index (usually a B+tree) is a sorted structure that turns a full scan into a seek — great for selective lookups, range scans, and ORDER BY/JOIN keys. It hurts on writes (every insert/update maintains it), on low-selectivity columns (optimizer may ignore it), and when you wrap the column in a function (<code>WHERE DATE(ts)=…</code> can't use an index on <code>ts</code>). Rewrite as a sargable range instead.</p></div>
+    </details>
+
+    <details class="q"><summary>Q18. What does "sargable" mean and why care? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Search-ARGument-able: a predicate the engine can satisfy via an index seek. <code>WHERE ts &gt;= '2026-01-01' AND ts &lt; '2026-02-01'</code> is sargable; <code>WHERE YEAR(ts)=2026</code> or <code>WHERE col+0=5</code> or leading-wildcard <code>LIKE '%x'</code> are not — they force scans. Keep the indexed column bare on one side.</p></div>
+    </details>
+
+    <details class="q"><summary>Q19. How do you read/act on an EXPLAIN plan? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Look for: access type (full table scan vs index seek/range), estimated vs actual rows (bad estimates → stale stats), join algorithm and order, and expensive sorts/temp tables. Fixes: add/adjust indexes, make predicates sargable, update statistics, reduce rows earlier, or restructure the join. Big gap between estimated and actual rows is the classic tell of a bad plan.</p></div>
+    </details>
+
+    <details class="q"><summary>Q20. INNER JOIN with a filter in ON vs WHERE for a LEFT JOIN — difference? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>For INNER JOIN it's equivalent. For LEFT JOIN it's not: a condition in <code>ON</code> filters the right table <em>before</em> the join (unmatched left rows survive with NULLs), while the same condition in <code>WHERE</code> runs <em>after</em> and eliminates the NULL-extended rows — effectively turning it into an INNER JOIN. Classic trap.</p></div>
+    </details>
+
+    <details class="q"><summary>Q21. De-duplicate detection: how to find duplicate rows? <span class="lvl e">basic</span></summary>
+      <div class="a"><pre><code>SELECT key_cols, COUNT(*) c
+FROM t GROUP BY key_cols HAVING COUNT(*) &gt; 1;</code></pre><p>To delete keeping one, use ROW_NUMBER per key and delete rn&gt;1. Always confirm the "true key" first — duplicates often reveal a broken upstream join.</p></div>
+    </details>
+
+    <details class="q"><summary>Q22. COUNT(*) vs COUNT(col) vs COUNT(DISTINCT col). <span class="lvl e">basic</span></summary>
+      <div class="a"><p>COUNT(*) counts all rows including NULLs. COUNT(col) counts non-NULL values only. COUNT(DISTINCT col) counts distinct non-NULL values (more expensive — needs a sort/hash). This trips people up in data-quality checks.</p></div>
+    </details>
+
+    <details class="q"><summary>Q23. How would you find records in table A not in table B? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Three ways: <code>LEFT JOIN … WHERE b.key IS NULL</code> (anti-join, usually best), <code>NOT EXISTS</code> (NULL-safe), or <code>EXCEPT</code>. Avoid <code>NOT IN</code> if B's key can be NULL — it returns zero rows.</p></div>
+    </details>
+
+    <details class="q"><summary>Q24. What is a window frame and when does the default bite you? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>The frame defines which rows around the current row the function sees. With ORDER BY and no explicit frame, default is <code>RANGE UNBOUNDED PRECEDING TO CURRENT ROW</code>, which includes <em>all rows tied on the ORDER BY value</em> — so a running SUM jumps at ties. Use <code>ROWS</code> for exact row-by-row behavior.</p></div>
+    </details>
+
+    <details class="q"><summary>Q25. You have a slow analytical query on a billion-row table. Walk me through tuning it. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>(1) Read the plan — find the scan/skew/sort. (2) Reduce data early: partition pruning (filter on partition column), column pruning (avoid SELECT *), predicate pushdown. (3) Make predicates sargable and ensure partitioning/clustering matches the filter. (4) Pre-aggregate or materialize if reused. (5) On MPP/warehouse: check distribution/clustering keys to avoid shuffle-heavy joins; broadcast small dimensions. (6) Validate with before/after runtimes and bytes scanned, not guesses.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="python" data-title="Python" data-cat="Core Foundations">
+  <h2>Python for Data Engineering</h2>
+  <p class="tagline">DE Python interviews aren't LeetCode-hard. They test whether you understand how Python actually behaves — mutability, iteration, the GIL — and whether you write clean, testable data code.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>Everything is an object; names are references</h4>
+    <p>Variables are <em>names bound to objects</em>, not boxes holding values. Assignment binds a name to an object; passing to a function passes the reference. Mutating a mutable object (list, dict) inside a function affects the caller; rebinding the name doesn't. This "pass by object reference" model explains most Python surprises.</p>
+
+    <h4>Mutable vs immutable</h4>
+    <p>Immutable: <code>int, float, str, tuple, frozenset, bytes</code>. Mutable: <code>list, dict, set, bytearray</code>. Only immutable (hashable) objects can be dict keys / set members. The classic trap: a <strong>mutable default argument</strong> is created once and shared across calls.</p>
+    <pre><code>def add(x, acc=[]):   # BUG: acc persists across calls
+    acc.append(x); return acc
+def add(x, acc=None): # FIX
+    acc = acc or []; acc.append(x); return acc</code></pre>
+
+    <h4>The iteration protocol — iterables vs iterators vs generators</h4>
+    <p>An <strong>iterable</strong> has <code>__iter__</code> (list, dict, file). An <strong>iterator</strong> has <code>__next__</code> and is consumed once. A <strong>generator</strong> (function with <code>yield</code>, or a genexpr) is a lazy iterator that produces values on demand — essential in DE for streaming large files without loading them into memory.</p>
+    <pre><code>def read_big(path):
+    with open(path) as f:
+        for line in f:          # lazy, one line at a time
+            yield line.strip()</code></pre>
+
+    <h4>The GIL and true concurrency</h4>
+    <p>CPython's Global Interpreter Lock lets only one thread execute Python bytecode at a time. So threads help <strong>I/O-bound</strong> work (network, disk, DB calls — the GIL is released during I/O) but not <strong>CPU-bound</strong> work. For CPU parallelism use <code>multiprocessing</code> (separate interpreters) or push compute into libraries that release the GIL / run natively (NumPy, PySpark). In DE, most heavy lifting is delegated to Spark/SQL engines, so the GIL rarely bites directly.</p>
+
+    <h4>Data structures &amp; complexity</h4>
+    <p><code>dict</code>/<code>set</code> give O(1) average lookup (hash tables) — use a set for membership tests, not a list (O(n)). <code>list</code> append is amortized O(1), insert-at-front is O(n) (use <code>collections.deque</code>). Comprehensions are faster and clearer than manual loops. Know <code>collections.Counter</code>, <code>defaultdict</code>, and <code>itertools</code> (groupby, chain, islice) — they show fluency.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> pass-by-object-reference · mutable-default trap · list vs generator (memory) · dict/set O(1) · GIL &amp; when threads help · context managers (<code>with</code>) · exception handling · <code>*args/**kwargs</code> · why pandas breaks at scale &amp; when to reach for Spark.</div>
+    <div class="warn"><strong>Common trap:</strong> <code>a = b = []</code> makes both names point to the <em>same</em> list. And <code>list_of_lists = [[]]*3</code> creates three references to one inner list — mutating one mutates all.</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Production-Python habits that read as senior</h3>
+    <p>Type hints + docstrings; small pure functions; config via env vars not hardcoding; logging not <code>print</code>; explicit exceptions with context; idempotent writes; <code>if __name__ == "__main__"</code> entrypoints; unit tests with <code>pytest</code>; virtual environments (<code>venv</code>/<code>poetry</code>) and pinned dependencies. Mentioning these unprompted signals you write real pipeline code, not scripts.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (25)</h3>
+
+    <details class="q"><summary>Q1. Is Python pass-by-value or pass-by-reference? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Neither exactly — it's "pass by object reference." The function receives a reference to the same object. Mutating a mutable arg is visible to the caller; rebinding the parameter name is not. Demonstrate with a list append (visible) vs <code>x = x + 1</code> (not).</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. List vs tuple — when use which? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>List is mutable, variable-length, for homogeneous sequences you'll change. Tuple is immutable, hashable (can be a dict key/set member), slightly lighter, and signals "fixed record." Use tuples for fixed structures and dict keys; lists for collections you mutate.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. What's the mutable-default-argument trap? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Default values are evaluated once at function definition, so a <code>def f(x, acc=[])</code> shares one list across all calls, accumulating state. Fix with <code>acc=None</code> then <code>acc = acc or []</code> inside.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. Explain generators and why they matter in DE. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A generator yields values lazily, holding only one at a time in memory, so you can process a 100GB file or an infinite stream without loading it. It also enables pipelines (chain generators). Contrast with a list comprehension that materializes everything.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. What is the GIL and how do you work around it? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>The Global Interpreter Lock serializes Python bytecode execution to one thread at a time. Threads still help I/O-bound tasks (GIL released during I/O). For CPU-bound parallelism use multiprocessing, or delegate to native libraries (NumPy/PySpark) that release the GIL. In DE, compute is usually pushed to Spark/SQL, so it's mostly moot.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. threading vs multiprocessing vs asyncio — pick one. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>I/O-bound, many waits: asyncio (single thread, event loop) or threading. CPU-bound: multiprocessing (bypasses GIL). asyncio is best for thousands of concurrent network calls; threading is simpler for a handful of blocking I/O calls; multiprocessing for parallel computation.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. How do context managers work? <span class="lvl m">medium</span></summary>
+      <div class="a"><p><code>with</code> calls <code>__enter__</code> on entry and guarantees <code>__exit__</code> on exit (even on exception) — used to release resources: files, DB connections, locks, Spark sessions. Write one with <code>contextlib.contextmanager</code> and a <code>yield</code>. Prevents leaks that plague long-running pipelines.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. What are decorators and where would you use one in a pipeline? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A decorator wraps a function to add behavior without changing its body. In DE: retry-on-failure, timing/metrics, logging, caching, auth. <code>@functools.wraps</code> preserves metadata. Airflow's <code>@task</code> is a decorator you already use conceptually.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. *args and **kwargs? <span class="lvl e">basic</span></summary>
+      <div class="a"><p><code>*args</code> captures extra positional args as a tuple; <code>**kwargs</code> captures extra keyword args as a dict. Used for flexible wrappers/decorators and forwarding args to another function: <code>inner(*args, **kwargs)</code>.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. How would you read a 50GB CSV in Python? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Don't load it whole. Options: iterate line-by-line (generator), <code>pandas.read_csv(chunksize=…)</code> to process in chunks, use a columnar/streaming lib (PyArrow, Polars), or — realistically at that scale — process it in Spark. Emphasize bounded memory and, ideally, converting to Parquet.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. When does pandas break, and what then? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>pandas is single-machine, in-memory — it breaks when data exceeds RAM (~a few GB comfortably) or needs distributed compute. Then move to Spark/PySpark (distributed), DuckDB/Polars (fast single-node, out-of-core), or push aggregation into the warehouse. pandas stays great for small data, prototyping, and last-mile transforms.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. dict vs list for membership testing? <span class="lvl e">basic</span></summary>
+      <div class="a"><p><code>x in some_set/dict</code> is O(1) average (hash lookup); <code>x in some_list</code> is O(n) (linear scan). For repeated membership checks, build a set first. This is a frequent source of accidental O(n²) code.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. Shallow vs deep copy. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Shallow copy (<code>list(x)</code>, <code>copy.copy</code>) duplicates the outer container but shares nested objects. Deep copy (<code>copy.deepcopy</code>) recursively duplicates everything. Matters when you mutate nested structures and don't want to affect the original.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. How do you handle exceptions cleanly in a pipeline task? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Catch specific exceptions (not bare <code>except:</code>), add context, log with stack trace, and decide: retry (transient), skip/quarantine the record (bad data), or fail fast (systemic). Use <code>try/except/else/finally</code>; <code>finally</code> for cleanup. Re-raise or wrap in a custom exception so upstream orchestration sees the failure.</p></div>
+    </details>
+
+    <details class="q"><summary>Q15. What are Python's iterables vs iterators? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>An iterable can produce an iterator (<code>__iter__</code>); an iterator produces the next value (<code>__next__</code>) and raises StopIteration when done. A list is iterable (re-iterable); the iterator from it is single-use. Generators are iterators.</p></div>
+    </details>
+
+    <details class="q"><summary>Q16. Explain list/dict/set comprehensions and a genexpr. <span class="lvl e">basic</span></summary>
+      <div class="a"><p><code>[f(x) for x in xs if c(x)]</code> builds a list eagerly; <code>{k:v …}</code> a dict; <code>{x …}</code> a set; <code>(f(x) for x …)</code> a lazy generator. Comprehensions are faster and clearer than append loops; use a genexpr when you only iterate once.</p></div>
+    </details>
+
+    <details class="q"><summary>Q17. What does @staticmethod / @classmethod do? <span class="lvl m">medium</span></summary>
+      <div class="a"><p><code>@classmethod</code> receives the class (<code>cls</code>) — used for alternative constructors (<code>from_config</code>). <code>@staticmethod</code> receives neither self nor cls — just a namespaced utility. Regular methods receive the instance.</p></div>
+    </details>
+
+    <details class="q"><summary>Q18. How would you make a function retry on transient failures? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A retry decorator with exponential backoff and a cap, retrying only on transient exceptions (timeouts, 5xx), not on logic errors. Use the <code>tenacity</code> library in production. Combine with idempotency so retries are safe.</p></div>
+    </details>
+
+    <details class="q"><summary>Q19. What is __name__ == "__main__" for? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>It guards code that should run only when the file is executed directly, not when imported as a module. Essential so importing your pipeline module for its functions doesn't trigger a full run — and required for multiprocessing on some platforms.</p></div>
+    </details>
+
+    <details class="q"><summary>Q20. How do you test data pipeline code? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Structure logic into small pure functions, then unit-test transforms with pytest on tiny fixture inputs (including edge cases: nulls, empty, dupes). Add data-quality assertions on outputs, and integration tests on a sample. Mock external systems. For Spark, test transform functions on small local DataFrames.</p></div>
+    </details>
+
+    <details class="q"><summary>Q21. Explain memory: why is a generator lighter than a list of the same data? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A list stores every element in memory simultaneously; a generator computes and hands off one element at a time, keeping only current state. So a list of 10M ints costs hundreds of MB; a generator costs a constant few bytes — at the cost of being single-pass and not indexable.</p></div>
+    </details>
+
+    <details class="q"><summary>Q22. What are Python's number/precision pitfalls in data work? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Floats are binary IEEE-754 — <code>0.1+0.2 != 0.3</code>. For money/exact decimals use <code>decimal.Decimal</code>. Beware integer vs float division, and silent precision loss when casting. In pipelines, define numeric types explicitly (schemas) rather than inferring.</p></div>
+    </details>
+
+    <details class="q"><summary>Q23. How do you connect Python to a database safely? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Use a driver/ORM with a connection pool and context managers, parameterized queries (never string-format SQL — SQL injection + type bugs), fetch in batches for large results, and secrets from a vault/env not code. Close connections in <code>finally</code>/<code>with</code>.</p></div>
+    </details>
+
+    <details class="q"><summary>Q24. What is duck typing and how does it affect design? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>"If it walks like a duck…" — Python cares about behavior (methods) not declared type. Lets you write generic code against protocols (anything with <code>.read()</code>). Downside: errors surface at runtime, so type hints + tests compensate.</p></div>
+    </details>
+
+    <details class="q"><summary>Q25. Walk me through structuring a small ETL script well. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Separate concerns: <em>extract</em> (I/O in, returns raw), <em>transform</em> (pure functions, unit-tested), <em>load</em> (idempotent write). Config from env; logging throughout; explicit schema; validate inputs and outputs (row counts, nulls); wrap in try/except with clear failure signals; make the whole run idempotent (safe to re-run for the same date/partition); expose a single entrypoint under <code>__main__</code>. That structure is what interviewers want to hear.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="modeling" data-title="Data Modeling &amp; Warehousing" data-cat="Core Foundations">
+  <h2>Data Modeling &amp; Warehousing</h2>
+  <p class="tagline">Asked in almost every DE interview: star schema, fact vs dimension, SCD Type 1 vs 2, normalization vs denormalization. Have crisp definitions and be ready to model a domain live.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>OLTP vs OLAP — why we model differently</h4>
+    <p>OLTP (transactional apps) optimizes for many small reads/writes → highly normalized, row-store, integrity-first. OLAP (analytics/warehouse) optimizes for large scans and aggregations → denormalized, columnar, read-first. The warehouse exists because running analytics on the OLTP database would both be slow and hammer production.</p>
+
+    <h4>Normalization vs denormalization</h4>
+    <p>Normalization (1NF→3NF) removes redundancy so each fact is stored once — great for OLTP integrity, but analytics queries need many joins. Denormalization deliberately duplicates data to cut joins and speed reads — the warehouse trade. <strong>1NF</strong>: atomic values. <strong>2NF</strong>: no partial dependency on part of a composite key. <strong>3NF</strong>: no transitive dependency (non-key depending on non-key).</p>
+
+    <h4>Dimensional modeling (Kimball) — star schema</h4>
+    <p>A <strong>fact table</strong> holds measurements (numeric, additive) at a defined <em>grain</em>, with foreign keys to dimensions. A <strong>dimension table</strong> holds descriptive context (who/what/where/when). A <strong>star schema</strong> = one fact surrounded by denormalized dimensions. A <strong>snowflake</strong> normalizes dimensions into sub-tables (more joins, less duplication) — usually avoid unless dimensions are huge.</p>
+    <p><strong>Grain is the first decision:</strong> "one row per order line per day." Get grain wrong and every metric is wrong. Fact types: <em>transaction</em> (one row per event), <em>periodic snapshot</em> (one row per entity per period), <em>accumulating snapshot</em> (one row per process, updated as it progresses).</p>
+
+    <h4>Slowly Changing Dimensions (SCD)</h4>
+    <p>How you handle dimension attributes that change over time. <strong>Type 1</strong>: overwrite — no history (fix a typo). <strong>Type 2</strong>: add a new row with effective/expiry dates + a current flag (or surrogate key) — full history, the interview favorite. <strong>Type 3</strong>: add a "previous value" column — limited history. Type 2 is why you use <strong>surrogate keys</strong> (a warehouse-generated integer) instead of the natural business key.</p>
+
+    <h4>Additivity of facts</h4>
+    <p><strong>Additive</strong> measures sum across all dimensions (revenue). <strong>Semi-additive</strong> sum across some but not time (account balance — sum across accounts, not across days; use last value). <strong>Non-additive</strong> can't be summed (ratios, percentages — recompute from components).</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> OLTP vs OLAP · grain · fact vs dimension · star vs snowflake · SCD1 vs SCD2 (and why surrogate keys) · additive/semi/non-additive · normalization forms · fact-table types · conformed dimensions · warehouse vs lake vs lakehouse.</div>
+    <div class="warn"><strong>Trap:</strong> "What's the grain of this fact table?" If you can't answer in one sentence, your model is wrong. Also: never put a measure that changes meaning at a different grain (e.g., unit price) as additive.</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Warehouse vs Lake vs Lakehouse (one paragraph)</h3>
+    <p><strong>Warehouse</strong>: structured, schema-on-write, SQL, governed, great BI performance (Snowflake, Redshift, BigQuery). <strong>Lake</strong>: cheap object storage holding any format, schema-on-read, flexible but easily a "swamp" without governance (ADLS/S3 + Parquet). <strong>Lakehouse</strong>: lake storage + a table format (Delta/Iceberg/Hudi) that adds ACID transactions, schema enforcement, time travel, and upserts — warehouse reliability on lake economics (Databricks). The <strong>medallion architecture</strong> (bronze raw → silver cleaned/conformed → gold business-ready) is how you organize a lakehouse.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (25)</h3>
+
+    <details class="q"><summary>Q1. OLTP vs OLAP? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>OLTP = transactional, many small concurrent reads/writes, normalized, row-oriented, integrity-focused (the app DB). OLAP = analytical, large scans/aggregations, denormalized, columnar, read-optimized (the warehouse). Different workloads → different modeling and storage.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. What is a star schema? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>A central fact table (measures + foreign keys) surrounded by denormalized dimension tables. Simple, few joins, fast for BI. Snowflake schema normalizes dimensions further into sub-tables — more joins, less redundancy.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. Fact vs dimension table? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Fact = numeric measurements at a grain (sales amount, quantity) with FKs to dimensions; typically tall and thin, append-heavy. Dimension = descriptive context (customer, product, date); shorter and wide, changes slowly. Facts answer "how much," dimensions answer "who/what/where/when."</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. Explain SCD Type 1 vs Type 2. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Type 1 overwrites the attribute — no history, used for corrections. Type 2 inserts a new dimension row on change with effective/end dates and a current flag (and a new surrogate key), preserving full history so facts join to the value that was true at event time. Type 3 keeps a single "previous value" column.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. Why use surrogate keys instead of natural keys? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>To support SCD Type 2 (the same business key has multiple versioned rows), to insulate the warehouse from source-key changes/reuse, to enable fast integer joins, and to handle multi-source or missing keys. Keep the natural/business key as an attribute for lineage.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. What is the "grain" of a fact table and why does it matter first? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Grain is what one row represents ("one row per order line item"). It's the first design decision because it determines which dimensions attach and whether measures are additive. Mixed or wrong grain double-counts or loses detail. State it as a single sentence before modeling anything.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. Additive, semi-additive, non-additive measures? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Additive: sum across all dimensions (revenue, quantity). Semi-additive: sum across some but not time (balances, inventory — take last/average over time). Non-additive: can't sum meaningfully (ratios, percentages, unit price) — store components and recompute.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. Normalize vs denormalize — when each? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Normalize for OLTP: eliminate redundancy, protect integrity, cheap writes. Denormalize for OLAP: duplicate to remove joins and speed reads. Warehouses lean denormalized (star schema); source systems lean normalized. It's a read-speed vs write-integrity/storage trade.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Explain 1NF, 2NF, 3NF quickly. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>1NF: atomic column values, no repeating groups. 2NF: 1NF + no non-key column depends on only part of a composite key. 3NF: 2NF + no transitive dependency (non-key depending on another non-key). Mnemonic: each non-key depends on "the key, the whole key, and nothing but the key."</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. Warehouse vs data lake vs lakehouse? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Warehouse: structured, schema-on-write, governed SQL, fast BI. Lake: any format on cheap object storage, schema-on-read, flexible but ungoverned. Lakehouse: lake storage + a transactional table format (Delta/Iceberg) giving ACID, schema enforcement, upserts, time travel — warehouse features on lake cost.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. What is the medallion (bronze/silver/gold) architecture? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Bronze = raw ingested data as-is (immutable landing, replayable). Silver = cleaned, deduplicated, conformed, joined. Gold = business-level aggregates/marts serving BI and ML. Each layer adds quality and is independently reprocessable.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. Conformed dimensions — what and why? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A dimension shared consistently across multiple fact tables/marts (same keys and meaning) — e.g., one Date or Customer dimension used everywhere. They let you compare metrics across processes ("drill across") and are the backbone of an enterprise bus-matrix model.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. How do you handle a late-arriving dimension? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Insert a placeholder ("inferred member") dimension row with the natural key and unknown attributes so the fact can load with a valid FK, then update it (Type 1) or version it (Type 2) when the real record arrives. Prevents facts from being dropped or orphaned.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. Star vs snowflake — trade-off? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Star denormalizes dimensions: fewer joins, faster and simpler queries, some redundancy. Snowflake normalizes them into sub-tables: less storage/redundancy, more joins, more complexity. Default to star; snowflake only when a dimension is genuinely large or shared hierarchies demand it.</p></div>
+    </details>
+
+    <details class="q"><summary>Q15. Transaction vs periodic-snapshot vs accumulating-snapshot fact. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Transaction: one row per event (a sale). Periodic snapshot: one row per entity per period (daily account balance). Accumulating snapshot: one row per process instance updated as it moves through milestones (order → shipped → delivered, with multiple date FKs). Pick by the business question.</p></div>
+    </details>
+
+    <details class="q"><summary>Q16. What is a factless fact table? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A fact table with no measures — just the FKs recording that an event/relationship occurred (student attendance, promotion coverage). You "measure" by counting rows. Useful for coverage and event-tracking questions.</p></div>
+    </details>
+
+    <details class="q"><summary>Q17. Kimball vs Inmon? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Inmon: top-down, build a normalized (3NF) enterprise warehouse first, then derive dimensional marts. Kimball: bottom-up, build dimensional marts (star schemas) tied together by conformed dimensions. Kimball is faster to value and more common in practice; many modern stacks blend both.</p></div>
+    </details>
+
+    <details class="q"><summary>Q18. How would you model a slowly changing customer address with full history? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>SCD Type 2 on the customer dimension: surrogate key PK, natural customer_id, address attributes, <code>valid_from</code>, <code>valid_to</code>, <code>is_current</code>. On change, expire the current row (set valid_to, is_current=false) and insert a new current row. Facts store the surrogate key valid at event time.</p></div>
+    </details>
+
+    <details class="q"><summary>Q19. What is a data mart? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>A subject-focused subset of the warehouse serving one team/domain (finance, marketing). Smaller, faster, easier to govern. Built from conformed dimensions so marts stay consistent with the enterprise model.</p></div>
+    </details>
+
+    <details class="q"><summary>Q20. Degenerate dimension — what is it? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A dimension attribute stored in the fact table with no separate dimension table — typically a transaction identifier like order number or invoice number. It's a dimension key with no other attributes worth a table, kept for grouping/tracing.</p></div>
+    </details>
+
+    <details class="q"><summary>Q21. How do you decide what becomes a fact vs a dimension attribute? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>If it's a continuously-valued measurement you'll aggregate (amount, count, duration) → fact. If it's descriptive context you'll filter/group by (category, region, status) → dimension. Numeric values you group by rather than sum (e.g., a rating band) often belong in a dimension.</p></div>
+    </details>
+
+    <details class="q"><summary>Q22. What is denormalization's downside in a warehouse? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Redundant storage and update anomalies — a changed attribute must be rewritten across many rows. In a warehouse you mitigate by rebuilding/merging dimensions in controlled ETL rather than ad-hoc updates, accepting storage cost for read speed.</p></div>
+    </details>
+
+    <details class="q"><summary>Q23. What is a bridge table? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>A table resolving a many-to-many relationship between a fact and a dimension (or between dimensions) — e.g., an account with multiple customers. It holds the key pairs plus optional allocation/weight factors to avoid double counting.</p></div>
+    </details>
+
+    <details class="q"><summary>Q24. How would you model event/clickstream data for analytics? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Transaction-grain fact (one row per event) with FKs to user, session, page, and a fine-grained date/time dimension; measures like duration. Often stored as partitioned Parquet/Delta by event date. Aggregate to sessions/funnels in gold. Watch cardinality and late/duplicate events (dedup by event_id).</p></div>
+    </details>
+
+    <details class="q"><summary>Q25. Walk me through designing a sales data mart end to end. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Clarify the business questions → set grain ("one row per order line") → identify measures (quantity, amount, discount) → identify dimensions (date, customer, product, store, promotion) → choose SCD strategy per dimension (Type 2 for customer/product) → assign surrogate keys → design the fact with FKs + degenerate order number → define conformed date/customer dims → plan the ETL (bronze→silver→gold, incremental by order date, idempotent) → add DQ checks (row counts, referential integrity, additivity). That structured walk is the answer they want.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="dbinternals" data-title="DB Internals (SQL Engine)" data-cat="Core Foundations">
+  <h2>Database Internals</h2>
+  <p class="tagline">Enough engine internals to answer indexing, ACID, isolation, and locking questions with confidence — the follow-ups that come after live SQL.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>Indexes are B+trees; the index often is the table</h4>
+    <p>Most indexes are B+trees: sorted, balanced, O(log n) lookups, and efficient range scans (leaves are linked). In InnoDB the table is stored <em>as</em> its primary-key B+tree (a <strong>clustered index</strong>) — rows live in PK order in the leaves. Secondary indexes store the PK value, so a lookup via a secondary index does a second seek into the clustered index (a "bookmark lookup") unless the index is <strong>covering</strong> (contains all needed columns).</p>
+
+    <h4>ACID</h4>
+    <p><strong>Atomicity</strong>: all-or-nothing (via undo log/rollback). <strong>Consistency</strong>: constraints hold before/after. <strong>Isolation</strong>: concurrent transactions don't corrupt each other. <strong>Durability</strong>: committed data survives crashes (via the write-ahead/redo log). Databases achieve durability by flushing the log before acknowledging commit, then lazily writing data pages.</p>
+
+    <h4>Isolation levels &amp; the anomalies they prevent</h4>
+    <p>Read Uncommitted (dirty reads possible) → Read Committed (no dirty reads; non-repeatable reads possible) → Repeatable Read (no non-repeatable reads; phantom reads possible in the standard, prevented by InnoDB via gap locks) → Serializable (full isolation, least concurrency). Most systems run Read Committed (default in Postgres/Oracle) or Repeatable Read (default in MySQL/InnoDB). MVCC lets readers see a consistent snapshot without blocking writers.</p>
+
+    <h4>Locking &amp; deadlocks</h4>
+    <p>Writers take row locks; conflicting writers wait. A <strong>deadlock</strong> is a cycle of waits (T1 holds A wants B, T2 holds B wants A) — the engine detects it and kills one transaction; you retry. Reduce deadlocks by accessing rows in a consistent order and keeping transactions short.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> B+tree index &amp; range scans · clustered vs secondary index · covering index · ACID mechanisms (undo/redo logs) · the four isolation levels &amp; their anomalies · MVCC (readers don't block writers) · deadlock cause &amp; fix · when NOT to index · partitioning vs sharding vs replication.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (14)</h3>
+
+    <details class="q"><summary>Q1. How does a B+tree index speed up lookups? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>It keeps keys sorted in a balanced tree, so a lookup is O(log n) instead of scanning every row, and linked leaves make range scans and ORDER BY cheap. The trade: writes must maintain the tree, so indexes cost insert/update/delete time and storage.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. Clustered vs non-clustered (secondary) index? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Clustered index defines the physical row order (in InnoDB the PK — the table IS the index). There's only one. Secondary indexes are separate structures pointing back (via the PK) to rows, so they may require a second lookup unless they "cover" the query.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. What is a covering index? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>An index that contains every column a query needs, so the engine answers entirely from the index without touching the table (no bookmark lookup). Great for hot read paths; costs extra storage and write overhead.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. Explain ACID. <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Atomicity (all-or-nothing via rollback), Consistency (constraints preserved), Isolation (concurrent txns don't interfere), Durability (committed data survives crashes via the WAL/redo log). Together they guarantee reliable transactions.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. What are the isolation levels and what does each allow? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Read Uncommitted: dirty reads. Read Committed: no dirty reads, but non-repeatable reads. Repeatable Read: no non-repeatable reads, but (standard) phantoms. Serializable: none. Higher isolation = less concurrency. Know the default of your engine (MySQL: Repeatable Read; Postgres: Read Committed).</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. What is MVCC? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Multi-Version Concurrency Control: each transaction sees a consistent snapshot via row versions, so readers don't block writers and writers don't block readers. Old versions are kept (undo log) until no transaction needs them, then garbage-collected. It's how databases give isolation without heavy read locks.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. Dirty read, non-repeatable read, phantom read? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Dirty: reading another txn's uncommitted change. Non-repeatable: re-reading the same row returns a different value because another txn committed an update. Phantom: re-running a range query returns new/removed rows because another txn inserted/deleted. Each is prevented at a higher isolation level.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. What causes a deadlock and how do you handle it? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A cycle of lock waits between transactions. The engine detects the cycle and aborts one (the victim); the app should catch the error and retry. Prevent by accessing resources in a consistent order, keeping transactions short, and lowering isolation where safe.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. When should you NOT add an index? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>On low-selectivity columns (few distinct values — the optimizer scans anyway), on small tables, on write-heavy tables where index maintenance dominates, and redundant indexes that duplicate a prefix of another. Every index is a write tax; add only for real read patterns.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. Why can't an index be used on WHERE YEAR(ts)=2026? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Wrapping the column in a function makes the predicate non-sargable — the index is on <code>ts</code>, not on <code>YEAR(ts)</code>. Rewrite as a range: <code>ts &gt;= '2026-01-01' AND ts &lt; '2027-01-01'</code>, which uses the index. (Or add a functional/computed index.)</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. Partitioning vs sharding vs replication? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Partitioning splits one table into segments (by range/hash) within one database for manageability and pruning. Sharding spreads data across multiple database servers for horizontal scale. Replication copies data to other nodes for read scaling and high availability. They solve different problems and are often combined.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. What is a composite index and does column order matter? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>An index on multiple columns. Order matters: it supports queries filtering on a left-prefix (index on (a,b,c) helps <code>a</code>, <code>a,b</code>, <code>a,b,c</code>, not <code>b</code> alone). Put the most selective / most-filtered column first, and match the ORDER BY to avoid a sort.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. OLTP database vs a columnar warehouse — storage difference? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>OLTP is row-store: a row's columns are contiguous, ideal for reading/writing whole records. Warehouses are columnar: each column stored together, so scans read only needed columns and compress well (similar values adjacent) — ideal for aggregations over few columns across many rows.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. What is the write-ahead log (WAL) and why does it matter? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Changes are written to a sequential log and flushed to disk <em>before</em> the commit is acknowledged, giving durability without waiting for random data-page writes. On crash, the engine replays the log (redo) and rolls back uncommitted txns (undo). It's the foundation of both durability and crash recovery, and conceptually the same idea as a database changelog / CDC source.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="spark" data-title="PySpark &amp; Spark" data-cat="Big Data &amp; Streaming">
+  <h2>PySpark &amp; Apache Spark</h2>
+  <p class="tagline">The single most-tested DE skill. You must explain the execution model, the shuffle, joins, skew, and tuning — from memory, out loud. This is where mid-level candidates win or lose.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>Why Spark exists</h4>
+    <p>Data too big for one machine → distribute it across a cluster and move compute to the data. Spark is a distributed engine that partitions data across executors and runs transformations in parallel, in memory where possible. It replaced MapReduce by keeping intermediate data in memory and using a smart optimizer.</p>
+
+    <h4>Architecture — who runs what</h4>
+    <p><strong>Driver</strong>: runs your <code>main</code>, builds the DAG, schedules tasks, holds the SparkSession. <strong>Cluster manager</strong> (YARN/K8s/Standalone): allocates resources. <strong>Executors</strong>: JVM processes on worker nodes that run tasks and cache data. One <strong>task</strong> processes one <strong>partition</strong>. Jobs split into <strong>stages</strong> at shuffle boundaries; stages split into tasks.</p>
+
+    <h4>Lazy evaluation: transformations vs actions</h4>
+    <p><strong>Transformations</strong> (<code>select, filter, join, groupBy, withColumn</code>) are lazy — they build a logical plan, nothing runs. An <strong>action</strong> (<code>count, collect, write, show</code>) triggers execution. Laziness lets Catalyst optimize the whole chain (pushdowns, pruning, reordering) before running. <em>Narrow</em> transformations (map, filter) need no data movement; <em>wide</em> transformations (groupBy, join, distinct) require a <strong>shuffle</strong>.</p>
+
+    <h4>The shuffle — the thing to understand deeply</h4>
+    <p>A shuffle repartitions data across the network so rows with the same key land on the same executor (needed for join/groupBy). It's expensive: disk spill + serialization + network + a stage boundary. Minimize shuffles: filter early, broadcast small tables, pre-partition, avoid unnecessary <code>distinct</code>/<code>repartition</code>. Shuffle count and size are the first thing to look at when tuning.</p>
+
+    <h4>Joins &amp; the killer: data skew</h4>
+    <p>Spark join strategies: <strong>broadcast hash join</strong> (ship a small table to every executor — no shuffle, fastest when one side is small), <strong>sort-merge join</strong> (default for two large tables — both shuffled and sorted by key), and shuffle hash join. <strong>Skew</strong> = one key has far more rows than others, so one task runs forever while others finish. Fixes: enable AQE skew join handling, <strong>salt</strong> the hot key (add a random suffix, join, aggregate), or broadcast if one side is small.</p>
+
+    <h4>Catalyst &amp; Tungsten, AQE</h4>
+    <p><strong>Catalyst</strong> is the query optimizer (logical → optimized logical → physical plan). <strong>Tungsten</strong> is the execution engine (off-heap memory, code generation). <strong>AQE (Adaptive Query Execution)</strong> re-optimizes at runtime using actual stats: coalesces shuffle partitions, converts sort-merge to broadcast when a side turns out small, and splits skewed partitions. Turn it on (<code>spark.sql.adaptive.enabled=true</code>).</p>
+
+    <h4>Partitioning &amp; caching</h4>
+    <p><code>repartition(n)</code> does a full shuffle to n partitions (use to increase parallelism or before a big write); <code>coalesce(n)</code> merges partitions without a full shuffle (use to reduce partitions cheaply, e.g. avoid small files). Cache/persist a DataFrame only if reused multiple times (it's not free — it uses memory). Target ~128–200MB per partition; too many tiny partitions = scheduling overhead, too few = no parallelism and OOM.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> driver/executor/task/partition · lazy eval &amp; transformations vs actions · narrow vs wide · what a shuffle is &amp; how to reduce it · broadcast vs sort-merge join · data skew &amp; salting · AQE · repartition vs coalesce · cache when reused · small-files problem · partition sizing · Catalyst/Tungsten.</div>
+    <div class="warn"><strong>Anti-patterns interviewers probe:</strong> <code>collect()</code> on a big DataFrame (OOMs the driver) · Python UDFs when a built-in exists (serialization cost, no Catalyst optimization — use <code>pyspark.sql.functions</code> or pandas/Arrow UDFs) · calling <code>count()</code> repeatedly · not filtering before a join · writing thousands of tiny files.</div>
+  </div>
+
+  <div class="block theory">
+    <h3>Reading the Spark UI (30-second version)</h3>
+    <p>Jobs → Stages → Tasks. Look for: a stage with one straggler task (skew), heavy Shuffle Read/Write (too much data movement), high spill (memory pressure — increase partitions or memory), and long GC time. The DAG visualization shows shuffle boundaries. This is a very common "have you actually used Spark" question.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (25)</h3>
+
+    <details class="q"><summary>Q1. Transformations vs actions? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Transformations (select, filter, join, groupBy) are lazy — they build a plan and return a new DataFrame without executing. Actions (count, collect, show, write) trigger the actual computation. Laziness lets Catalyst optimize the whole chain before running.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. Narrow vs wide transformation? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Narrow: each output partition depends on one input partition — no data movement (map, filter, union). Wide: output partitions depend on many input partitions — requires a shuffle (groupBy, join, distinct, repartition). Wide transformations create stage boundaries and are where cost lives.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. What is a shuffle and why is it expensive? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A shuffle redistributes data across executors so rows with the same key are colocated (for join/groupBy). It costs disk spill, serialization, and network transfer, and forces a new stage. Reducing shuffles — filter early, broadcast small tables, pre-partition — is the core of Spark tuning.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. Explain the driver, executors, tasks, and partitions. <span class="lvl e">basic</span></summary>
+      <div class="a"><p>The driver runs your program, builds the DAG, and schedules work. Executors are JVM processes on workers that run tasks and cache data. A partition is a chunk of the data; one task processes one partition. Parallelism ≈ number of partitions running across executor cores.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. Broadcast join vs sort-merge join — when each? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Broadcast: when one table is small enough to fit in each executor's memory (default threshold ~10MB, tunable) — ship it everywhere, no shuffle, very fast. Sort-merge: default for two large tables — both are shuffled and sorted by the join key. Force a broadcast with <code>broadcast(df)</code> when you know a side is small; AQE can switch to broadcast at runtime.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. What is data skew and how do you fix it? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Skew is when a few keys hold most of the rows, so one task runs far longer than the rest (visible as a straggler in the UI). Fixes: enable AQE skew handling, salt the hot key (append a random number to split it, join to a replicated dimension, then aggregate), broadcast the small side, or filter/handle the hot key separately.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. repartition vs coalesce? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>repartition(n) does a full shuffle to exactly n partitions (can increase or decrease, balanced) — use before a wide op or big write. coalesce(n) merges existing partitions without a full shuffle (only decreases, may be unbalanced) — use to cut partition count cheaply and avoid small files.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. When should you cache/persist? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Only when a DataFrame is reused across multiple actions (e.g., feeding several outputs or iterative algorithms). Caching costs memory and can evict other data, so caching a once-used DataFrame just wastes resources. Unpersist when done. Choose storage level (MEMORY_AND_DISK) based on size.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Why avoid Python UDFs, and what are the alternatives? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Python UDFs serialize each row between the JVM and a Python worker and are opaque to Catalyst (no pushdown/optimization), so they're slow. Prefer built-in <code>pyspark.sql.functions</code>; if you must, use pandas/vectorized (Arrow) UDFs which batch rows and are far faster. Never do row-at-a-time Python when a native function exists.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. RDD vs DataFrame vs Dataset? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>RDD: low-level, typed, no optimizer — full control, but you optimize manually. DataFrame: high-level, columnar, optimized by Catalyst — the default for DE. Dataset (Scala/Java): typed DataFrame with compile-time safety. In PySpark you use DataFrames; drop to RDDs only for rare low-level needs.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. What is lazy evaluation good for? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>It lets Spark see the entire transformation chain before executing, so Catalyst can push filters down to the scan, prune columns, reorder joins, and combine steps — producing a far more efficient physical plan than running each step eagerly. It also avoids computing unused results.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. Why is collect() dangerous? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>collect() pulls all partitions to the driver's memory. On a large DataFrame it OOMs the driver. Use it only on small results; otherwise write to storage, or use take()/limit() for a peek.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. How do you handle the small-files problem? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Many tiny output files hurt read performance and metadata. Reduce output partitions with coalesce/repartition before write, size partitions to ~128MB+, use Delta <code>OPTIMIZE</code> (bin-packing) or periodic compaction, and partition the table by a sensible column (not too granular). Avoid partitioning by high-cardinality columns.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. What is AQE and what does it do? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Adaptive Query Execution re-optimizes the plan at runtime using real shuffle statistics: it coalesces small shuffle partitions, switches sort-merge to broadcast when a side is actually small, and splits skewed partitions. Enable it (on by default in recent Spark) — it removes a lot of manual tuning.</p></div>
+    </details>
+
+    <details class="q"><summary>Q15. How do you decide the number of partitions? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Aim for ~128–200MB per partition and at least as many partitions as total executor cores (often 2–4×) for good parallelism. Too few → underutilization and OOM/spill; too many → scheduling overhead and small files. <code>spark.sql.shuffle.partitions</code> (default 200) controls post-shuffle partitions; tune to data size, and let AQE coalesce.</p></div>
+    </details>
+
+    <details class="q"><summary>Q16. What happens when a Spark task fails? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Spark retries the task (default up to 4 attempts) on another executor; because RDD/DataFrame lineage is deterministic, it recomputes the lost partition from its parents. If retries exhaust, the stage and job fail. This lineage-based recovery is why Spark is fault-tolerant without replicating intermediate data.</p></div>
+    </details>
+
+    <details class="q"><summary>Q17. Explain jobs, stages, and tasks. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>An action triggers a job. The job is split into stages at shuffle boundaries (each stage is a set of transformations with no shuffle between them). Each stage runs as parallel tasks, one per partition. The Spark UI shows this hierarchy — useful for spotting the expensive stage.</p></div>
+    </details>
+
+    <details class="q"><summary>Q18. How do you read a partitioned Parquet/Delta table efficiently? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Filter on the partition column so Spark prunes partitions (partition pruning) and only reads matching files; select only needed columns (column pruning); rely on predicate pushdown into Parquet. Partition by a low/medium-cardinality column you filter on (e.g., date), not by something like user_id.</p></div>
+    </details>
+
+    <details class="q"><summary>Q19. What is a broadcast variable vs a broadcast join? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>A broadcast join is Spark auto-shipping a small table to executors for a join. A broadcast variable is you explicitly caching a read-only value (a lookup dict, config) on each executor so it isn't shipped with every task. Both avoid repeated data transfer.</p></div>
+    </details>
+
+    <details class="q"><summary>Q20. Your Spark job is slow. Walk me through diagnosing it. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Open the Spark UI: find the longest stage. Check for (1) a straggler task → skew (salt/AQE); (2) huge shuffle read/write → reduce shuffles, broadcast, filter earlier; (3) high spill → more partitions or memory; (4) many tiny tasks → coalesce; (5) a Python UDF → replace with native; (6) reading too much → partition/column pruning. Fix the biggest bottleneck first, measure, repeat.</p></div>
+    </details>
+
+    <details class="q"><summary>Q21. What is checkpointing and how does it differ from cache? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Cache/persist keeps data in memory/disk but preserves lineage (can be recomputed). Checkpoint writes the DataFrame to reliable storage and truncates lineage — used to break very long lineage chains (which slow planning and risk stack issues) and in streaming for fault-tolerant state/offset recovery.</p></div>
+    </details>
+
+    <details class="q"><summary>Q22. How does Spark Structured Streaming work at a high level? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>It treats a stream as an unbounded table, processing data in micro-batches (or continuous). It tracks offsets in a checkpoint for exactly-once, supports event-time windows with watermarks to handle late data and bound state, and writes with idempotent sinks. Same DataFrame API as batch, which is a big selling point.</p></div>
+    </details>
+
+    <details class="q"><summary>Q23. What is a watermark in streaming? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>A watermark tells Spark how late data can arrive ("up to 10 minutes late"), so it can finalize windows and drop state older than that. Without it, windowed aggregation state grows unbounded. It trades a little completeness (very late records dropped) for bounded memory.</p></div>
+    </details>
+
+    <details class="q"><summary>Q24. How do you tune executor memory/cores? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Rule of thumb: ~4–5 cores per executor (more causes HDFS/IO contention), sized so partitions fit in executor memory with room for shuffle/overhead (leave ~10% for overhead). Avoid one giant executor (GC pain) or many tiny ones (overhead). Then watch spill/GC in the UI and adjust. Let AQE handle partition counts.</p></div>
+    </details>
+
+    <details class="q"><summary>Q25. Explain how you'd write an idempotent Spark batch job. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Make re-running the same input produce the same output with no duplicates: process by partition/date, overwrite that partition (dynamic partition overwrite) or MERGE/upsert into Delta on a business key rather than blind append, derive deterministic outputs, and store the processed watermark. So a retry after failure is safe. This is exactly the reliability mindset from production support that interviewers want to hear.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="kafka" data-title="Apache Kafka" data-cat="Big Data &amp; Streaming">
+  <h2>Apache Kafka</h2>
+  <p class="tagline">Asked at a concept level: what it is, the data model, delivery semantics, and consumer groups. You use it at Jio — turn that into confident answers.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>What Kafka is</h4>
+    <p>A distributed, durable, append-only commit log for events. Producers write events to <strong>topics</strong>; consumers read them. It decouples producers from consumers, buffers spikes, retains data for replay, and scales horizontally. Think of it as the "central nervous system" moving data between systems in real time.</p>
+
+    <h4>The data model</h4>
+    <p>A <strong>topic</strong> is split into <strong>partitions</strong> — the unit of parallelism and ordering. Each partition is an ordered, immutable log; every record has an <strong>offset</strong> (its position). <strong>Ordering is guaranteed only within a partition</strong>, not across a topic. Records with the same key go to the same partition (so per-key order holds). Partitions are replicated across brokers for durability; one replica is the <strong>leader</strong>, others are followers in the <strong>ISR</strong> (in-sync replicas).</p>
+
+    <h4>Consumers &amp; consumer groups</h4>
+    <p>Consumers in a <strong>group</strong> share the work: each partition is consumed by exactly one consumer in the group, so max parallelism = number of partitions. Adding consumers beyond that leaves some idle. When consumers join/leave, a <strong>rebalance</strong> reassigns partitions. Consumers track progress by committing <strong>offsets</strong>. Different groups read the same topic independently (pub/sub).</p>
+
+    <h4>Delivery semantics</h4>
+    <p><strong>At-most-once</strong>: commit offset before processing — may lose data. <strong>At-least-once</strong>: process then commit — may duplicate on retry (the common default; make consumers idempotent). <strong>Exactly-once</strong>: idempotent producer + transactions (read-process-write atomically) — real but has overhead. Durability tuning: producer <code>acks=all</code> + <code>min.insync.replicas</code> guarantees a write survives broker loss.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> topic/partition/offset · ordering only within a partition · keys → partition · replication/leader/ISR · consumer group = one consumer per partition · rebalancing · at-most/at-least/exactly-once · acks=all + min.insync.replicas · consumer lag · retention &amp; replay · Kafka Connect &amp; Schema Registry.</div>
+    <div class="warn"><strong>Trap:</strong> "How do you get more parallelism?" Add partitions — but you can't reduce partitions, and adding them breaks key→partition mapping for existing keys. Plan partition count up front.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (15)</h3>
+
+    <details class="q"><summary>Q1. What is Kafka and when would you use it? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>A distributed durable log for streaming events. Use it to decouple systems, ingest high-throughput real-time data, buffer bursts, feed multiple independent consumers, and enable replay. Common for event pipelines, CDC, metrics, and stream processing sources.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. Topic, partition, offset? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Topic = a named stream of events. Partition = an ordered append-only shard of a topic (unit of parallelism/ordering). Offset = a record's sequential position within a partition, used by consumers to track what they've read.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. Does Kafka guarantee ordering? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Only within a single partition, not across a topic. To keep related events ordered, give them the same key so they land in the same partition. If you need global ordering you're limited to one partition (no parallelism) — usually you design for per-key ordering instead.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. How does a consumer group work? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Consumers in a group divide a topic's partitions so each partition is read by exactly one member — parallel consumption up to the partition count. Separate groups each get the full stream (pub/sub). Offsets are committed per group so each group tracks its own position.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. What is a rebalance and why can it hurt? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>When members join/leave or a consumer is deemed dead, Kafka reassigns partitions across the group. During a stop-the-world rebalance consumption pauses; frequent rebalances (from slow processing/timeouts) cause lag. Mitigate with cooperative/incremental rebalancing, proper session/poll timeouts, and keeping processing fast.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. Explain replication, leader, and ISR. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Each partition has a replication factor; one replica is the leader (handles reads/writes), others replicate it. The ISR is the set of replicas caught up with the leader. If the leader fails, a new leader is elected from the ISR. <code>min.insync.replicas</code> defines how many must ack for a durable write.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. At-least-once vs exactly-once — how do you achieve each? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>At-least-once: process the message, then commit the offset — a crash between causes reprocessing (duplicates), so make consumers idempotent. Exactly-once: enable the idempotent producer plus Kafka transactions so consume-process-produce commits atomically with offsets, and downstream reads only committed messages. EOS has throughput cost; many pipelines choose at-least-once + idempotency instead.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. What is consumer lag and why monitor it? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Lag = latest offset produced minus the offset the consumer has committed — how far behind real time you are. Growing lag means consumers can't keep up (scale consumers/partitions, speed up processing). It's the key health metric for a streaming pipeline.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. How do producers decide the partition? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>If a key is set, partition = hash(key) % partitions (same key → same partition, preserving order). No key → round-robin/sticky batching for balance. Choosing a good key controls both ordering and load distribution.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. What does acks=0/1/all mean? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>acks=0: fire-and-forget, fastest, can lose data. acks=1: leader acknowledges, lost if leader dies before replication. acks=all: leader waits for all in-sync replicas — strongest durability, higher latency. Pair acks=all with min.insync.replicas for real guarantees.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. How is Kafka durable / how does retention work? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Messages are persisted to disk (append-only log segments) and replicated. Retention keeps data for a configured time or size (or compacted to keep the latest per key), independent of whether it's been consumed — enabling replay and multiple consumers. Consumers can reset offsets to reprocess.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. What is Kafka Connect and Schema Registry? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Kafka Connect is a framework of ready-made source/sink connectors (DB CDC, S3, JDBC) to move data in/out without custom code. Schema Registry stores Avro/Protobuf/JSON schemas and enforces compatibility so producers and consumers evolve schemas safely. Together they standardize ingestion.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. Kafka vs a traditional message queue (e.g., RabbitMQ)? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Queues typically delete a message once consumed and push to consumers; Kafka is a durable log where consumers pull and data is retained for replay by many independent groups. Kafka favors high-throughput streaming and reprocessing; classic queues favor per-message routing and complex delivery logic.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. How would you handle a "poison" message that keeps failing? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Don't block the partition forever. Retry a bounded number of times with backoff, then route the bad record to a dead-letter topic (DLQ) with error metadata for later inspection, and commit the offset so processing continues. Alert on DLQ volume.</p></div>
+    </details>
+
+    <details class="q"><summary>Q15. How do you scale a Kafka consumer application? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Add consumers to the group up to the partition count (parallelism ceiling), so provision enough partitions in advance. Beyond that, add partitions (carefully — it changes key mapping), speed up per-record processing, or fan out to multiple groups. Watch lag to know when to scale.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="azure" data-title="Azure (ADF + ADLS)" data-cat="Cloud &amp; Platforms">
+  <h2>Azure for Data Engineering</h2>
+  <p class="tagline">Your primary cloud. Focus on ADF (orchestration/copy), ADLS Gen2 (lake storage), incremental loads, Key Vault, and how it wires to Databricks.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>The core services</h4>
+    <p><strong>ADLS Gen2</strong>: hierarchical-namespace object storage — the data lake. <strong>Azure Data Factory (ADF)</strong>: cloud ETL/ELT orchestration — pipelines of activities (Copy, Lookup, Notebook, Stored Proc) with triggers. <strong>Azure Databricks / Synapse</strong>: the compute for transformation. <strong>Key Vault</strong>: secrets. <strong>Integration Runtime (IR)</strong>: the compute that actually moves/transforms data in ADF (Azure IR for cloud, Self-hosted IR for on-prem/private sources).</p>
+
+    <h4>ADF building blocks</h4>
+    <p><strong>Linked service</strong> = connection (to a DB, storage). <strong>Dataset</strong> = a named view of data in a linked service. <strong>Activity</strong> = a step (Copy, Lookup, ForEach, Databricks Notebook). <strong>Pipeline</strong> = a DAG of activities. <strong>Trigger</strong> = schedule / tumbling window / event-based. <strong>Parameters &amp; variables</strong> make pipelines reusable.</p>
+
+    <h4>Incremental loads (the interview scenario)</h4>
+    <p>Instead of full reloads, load only new/changed rows using a <strong>watermark</strong>: store the last-loaded value (e.g., max <code>modified_at</code>), Lookup it, Copy rows greater than it, then update the watermark in a control table (Stored Proc). For deletes/updates use CDC or a MERGE into the destination. This is idempotent and cheap.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> ADLS Gen2 (lake) · ADF pipeline/activity/dataset/linked service · Integration Runtime (Azure vs self-hosted) · triggers (schedule/tumbling/event) · watermark-based incremental load · Key Vault for secrets · ADF → Databricks notebook activity · parameterization · monitoring/retries.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (14)</h3>
+
+    <details class="q"><summary>Q1. What is ADLS Gen2 and why hierarchical namespace? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Azure Data Lake Storage Gen2 is object storage (built on Blob) with a hierarchical namespace giving real directories, atomic folder operations, and POSIX-like ACLs — better for analytics file layouts and partition pruning than flat blob storage. It's the lake substrate for Databricks/Synapse.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. What is Azure Data Factory? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>A managed orchestration/ELT service: you build pipelines of activities (copy data, run a notebook, call a stored proc) with triggers and monitoring. It moves data between many sources and coordinates transformation compute; it's the control plane, not the heavy compute.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. Linked service vs dataset vs activity vs pipeline? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Linked service = a connection/credential to a store or compute. Dataset = a named pointer to data within a linked service (a table, a folder). Activity = one step. Pipeline = an ordered/branching set of activities. This layering makes pipelines reusable and parameterizable.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. What is an Integration Runtime? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>The compute infrastructure ADF uses to run activities. Azure IR runs in the cloud for cloud sources and data flows. Self-hosted IR runs on a VM/on-prem to reach private/on-prem data behind a firewall. Azure-SSIS IR runs SSIS packages. Choose based on where the source lives.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. How do you design an incremental load in ADF? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Keep a watermark (last max modified timestamp/ID) in a control table. Pipeline: Lookup old watermark → Lookup new max from source → Copy rows where value &gt; old and ≤ new → Stored Proc to update the watermark. It's incremental, idempotent, and restartable. For updates/deletes, land to staging and MERGE into the target.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. Types of triggers? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Schedule (wall-clock recurring), Tumbling window (fixed, non-overlapping windows with dependency/backfill and retry — good for time-partitioned incremental loads), and Event-based (fires on blob created/deleted). Tumbling windows are favored for reliable incremental pipelines.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. How do you manage secrets? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Store them in Azure Key Vault and reference them from ADF/Databricks via a Key Vault-linked service or secret scope — never hardcode credentials in pipelines or notebooks. Access is controlled by managed identity/RBAC, and secrets can be rotated without changing code.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. How does ADF trigger Databricks? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Via a Databricks Notebook/Jar/Python activity using a Databricks-linked service. ADF passes parameters, launches the notebook on a job/interactive cluster, and captures output/exit status. Pattern: ADF orchestrates and copies raw data; Databricks does the heavy Spark transformation.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Copy activity: how do you make it fast? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Use parallel copy / partitioned reads (by a column or physical partitions), a staged copy through blob for some sinks, appropriate DIUs (data integration units), compression, and columnar formats (Parquet) at the sink. Filter at source to move less data.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. How do you parameterize pipelines for reuse? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Use pipeline parameters and dataset parameters (table name, path, date), pass values from triggers or a metadata/control table, and drive a ForEach over a list of tables. This "metadata-driven" pattern loads many tables with one parameterized pipeline instead of one pipeline per table.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. How do you handle failures and retries in ADF? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Set activity retry count/interval, use timeout, add failure paths (on-failure dependencies) to log/alert, and design idempotent loads so a rerun is safe. Monitor via the ADF monitoring UI/alerts. Tumbling-window triggers give built-in retry and backfill.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. Mapping data flows vs a Databricks notebook — when each? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Mapping data flows are ADF's visual, Spark-backed transformations — good for simpler, code-light transforms. For complex logic, custom libraries, ML, or when the team already uses Spark, call a Databricks notebook. Choose by complexity and team skill; data flows still spin up Spark under the hood.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. How would you load 200 source tables into the lake? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Metadata-driven framework: a control table lists tables, keys, watermark columns. A parameterized pipeline reads the list, ForEach over it, Lookup watermark, Copy incrementally to bronze (partitioned Parquet/Delta), update watermark. One pipeline scales to all tables and is easy to add to — exactly what production teams build.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. Synapse vs Databricks — quick take? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Both do big-data analytics on Azure. Synapse is Microsoft's integrated analytics (SQL pools + Spark + pipelines), tightly tied to the Azure/BI stack. Databricks is the best-in-class Spark/lakehouse platform with Delta and strong data-engineering/ML tooling. Many shops use ADF/Synapse for orchestration and Databricks for heavy Spark.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="databricks" data-title="Databricks &amp; Delta Lake" data-cat="Cloud &amp; Platforms">
+  <h2>Databricks &amp; Delta Lake</h2>
+  <p class="tagline">You use it daily. Interviewers want the lakehouse concepts: Delta's ACID/time-travel, MERGE, OPTIMIZE/Z-ORDER, VACUUM, and the medallion pattern.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>What Delta Lake is</h4>
+    <p>An open table format that sits on top of Parquet files in a lake and adds a <strong>transaction log</strong> (<code>_delta_log</code>). That log gives you <strong>ACID transactions</strong>, <strong>schema enforcement/evolution</strong>, <strong>time travel</strong> (query old versions), <strong>upserts/deletes</strong> (MERGE), and reliable concurrent reads/writes — turning a messy lake into a "lakehouse" with warehouse-like guarantees on cheap storage.</p>
+
+    <h4>How the transaction log works</h4>
+    <p>Each write creates a new JSON commit in <code>_delta_log</code> listing which Parquet files were added/removed. Readers reconstruct the current table from the log (not by listing the directory), which is what enables atomic commits, snapshot isolation, and time travel. Periodic checkpoints (Parquet) speed up log replay.</p>
+
+    <h4>Key operations</h4>
+    <p><strong>MERGE</strong>: upsert — match on a key, update/insert/delete (the core of SCD and CDC). <strong>Time travel</strong>: <code>VERSION AS OF</code> / <code>TIMESTAMP AS OF</code> for audits, rollbacks, reproducibility. <strong>OPTIMIZE</strong>: bin-pack small files into larger ones (fixes the small-files problem); <strong>Z-ORDER</strong>: co-locate related data to improve data-skipping on filter columns. <strong>VACUUM</strong>: physically delete files no longer referenced (older than a retention window) to reclaim storage — but it removes the ability to time-travel past that point.</p>
+
+    <h4>Medallion architecture on Databricks</h4>
+    <p>Bronze (raw ingested Delta) → Silver (cleaned, deduped, conformed) → Gold (aggregated marts). Autoloader/Structured Streaming ingests incrementally; Delta MERGE handles updates; Unity Catalog governs access and lineage across the layers.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> Delta = Parquet + transaction log · ACID/time travel/schema enforcement · MERGE for upserts/CDC · OPTIMIZE + Z-ORDER (small files &amp; data skipping) · VACUUM (reclaim, limits time travel) · medallion bronze/silver/gold · Autoloader · Unity Catalog · jobs vs interactive clusters · why lakehouse beats separate lake+warehouse.</div>
+    <div class="warn"><strong>Trap:</strong> running <code>VACUUM</code> with a short retention breaks time travel and can corrupt readers/streams mid-write — keep the default 7-day retention unless you understand the consequences.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (16)</h3>
+
+    <details class="q"><summary>Q1. What problem does Delta Lake solve? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Plain lakes (Parquet on object storage) lack transactions, so concurrent writes, partial failures, and updates corrupt or duplicate data, and there's no schema enforcement or history. Delta adds a transaction log giving ACID, schema control, upserts, and time travel — reliability of a warehouse on the economics of a lake.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. How does Delta provide ACID? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Through the ordered <code>_delta_log</code>: each commit atomically records file adds/removes, readers see a consistent snapshot (snapshot isolation), and optimistic concurrency control resolves conflicting writers. A write is all-or-nothing because it's a single log commit.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. What is time travel and when do you use it? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Query a previous table version by version number or timestamp. Uses: audit/debug (what did the data look like yesterday), rollback a bad load, reproduce an ML training set, or compare versions. Limited by the retention window (before VACUUM removes old files).</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. Explain MERGE and a use case. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>MERGE upserts: match target and source on a key, then WHEN MATCHED update/delete and WHEN NOT MATCHED insert — atomically. Core use cases: applying CDC changes, SCD Type 1/2 dimension maintenance, and idempotent loads (re-run without duplicating).</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. What do OPTIMIZE and Z-ORDER do? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>OPTIMIZE compacts many small files into fewer large ones, cutting read overhead (the small-files problem). Z-ORDER (a multi-dimensional clustering) co-locates rows with similar values in the columns you filter on, improving data skipping via min/max stats so queries scan fewer files. Z-ORDER on high-selectivity filter columns.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. What does VACUUM do and what's the risk? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>It deletes data files no longer referenced by the log and older than the retention period, reclaiming storage. Risk: it removes the ability to time-travel before that point, and vacuuming too aggressively can break concurrent readers/streaming jobs relying on those files. Keep the default retention.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. What is the medallion architecture? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Bronze (raw, immutable landing), Silver (cleaned/conformed/deduped), Gold (business aggregates/marts). Each layer is a Delta table, incrementally built and independently reprocessable, improving quality as data flows up.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. What is Autoloader? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Databricks' incremental file ingestion (<code>cloudFiles</code>): it efficiently detects and loads new files from cloud storage (via notifications or listing), tracks what's been processed with a checkpoint (exactly-once), and handles schema inference/evolution. Ideal for continuously landing files into bronze.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Schema enforcement vs schema evolution? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Enforcement rejects writes whose schema doesn't match the table (prevents silent corruption). Evolution lets you intentionally add columns (e.g., <code>mergeSchema</code>) so the table adapts to new fields. Together they give safety by default with controlled change.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. Job cluster vs all-purpose (interactive) cluster? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Interactive/all-purpose clusters are for development and shared notebooks (stay up, costlier). Job clusters are spun up for a scheduled job and torn down after — cheaper and isolated for production workloads. Use job clusters for scheduled pipelines.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. What is Unity Catalog? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Databricks' centralized governance layer: a three-level namespace (catalog.schema.table), fine-grained access control, data lineage, auditing, and discovery across workspaces. It replaces per-workspace hive metastores with unified, governed metadata.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. How do you apply CDC into a Delta table? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Land change records (insert/update/delete with a sequence/timestamp) to staging, deduplicate to the latest change per key, then MERGE into the target: update on matched updates, delete on matched deletes, insert on new. Use Delta Change Data Feed to emit downstream changes. It's idempotent and ordered by the sequence column.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. Why is the lakehouse better than a separate lake + warehouse? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>One copy of data with transactions, governance, and BI performance directly on the lake — no costly, drift-prone ETL to a separate warehouse, no duplicate storage, and both SQL analytics and ML/streaming on the same tables. Lower cost and less inconsistency.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. How do you handle late/duplicate data in a streaming Delta pipeline? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Use a checkpoint for exactly-once offset tracking, watermarks to bound state and handle late events, and MERGE/dedup on an event id so reprocessing doesn't duplicate. Idempotent MERGE plus deterministic keys means a replay is safe.</p></div>
+    </details>
+
+    <details class="q"><summary>Q15. Delta vs Iceberg vs Hudi — one line? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>All are open transactional table formats adding ACID/time-travel/upserts to lakes. Delta is Databricks-native and most common there; Iceberg has strong engine-neutral adoption (Snowflake, Trino, Flink) and hidden partitioning; Hudi excels at streaming upserts/CDC. The concepts transfer across all three.</p></div>
+    </details>
+
+    <details class="q"><summary>Q16. How do you optimize a slow Delta query? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Ensure files are compacted (OPTIMIZE), Z-ORDER/partition on filter columns for data skipping, prune partitions and columns in the query, avoid tiny files from streaming (auto-compaction), keep statistics current, and cache hot tables. Check the Spark UI for the actual bottleneck (skew/shuffle) rather than guessing.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="snowflake" data-title="Snowflake" data-cat="Cloud &amp; Platforms">
+  <h2>Snowflake</h2>
+  <p class="tagline">Cloud data warehouse. Know the compute/storage separation, micro-partitions, virtual warehouses, and the cost model — that's what gets asked.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>The defining idea: separation of storage and compute</h4>
+    <p>Snowflake stores data centrally (compressed, columnar, in cloud object storage) and runs queries on independent <strong>virtual warehouses</strong> (compute clusters) that you size and start/stop separately. Multiple warehouses can query the same data at once without contention, and you pay for storage and compute independently. This elasticity is the whole pitch.</p>
+
+    <h4>Micro-partitions &amp; pruning</h4>
+    <p>Snowflake automatically stores data in immutable <strong>micro-partitions</strong> (~50–500MB compressed), each with metadata (min/max per column). Queries <strong>prune</strong> partitions using that metadata so they scan only relevant data — no manual indexes. <strong>Clustering keys</strong> help pruning on very large tables by keeping related data together.</p>
+
+    <h4>Features you should name</h4>
+    <p><strong>Time Travel</strong> (query/restore data up to N days back), <strong>Zero-copy cloning</strong> (instant metadata-only copies of tables/DBs for dev/test), <strong>Streams</strong> (CDC — track table changes) + <strong>Tasks</strong> (scheduled SQL) for pipelines, <strong>result cache</strong> (repeat queries free), and multi-cluster warehouses for concurrency scaling.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> storage/compute separation · virtual warehouse sizing &amp; auto-suspend (cost!) · micro-partitions &amp; pruning (no indexes) · clustering keys · Time Travel &amp; Fail-safe · zero-copy clone · Streams + Tasks (CDC/pipelines) · result cache · credit-based cost model.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (12)</h3>
+
+    <details class="q"><summary>Q1. What makes Snowflake's architecture different? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>It separates storage from compute (and from cloud services). Data lives once in central object storage; independent virtual warehouses compute over it. You scale compute up/out or spin up isolated warehouses without moving data, and pay for each separately.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. What is a virtual warehouse? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>A named, resizable compute cluster (XS→4XL) that executes queries. You can auto-suspend it when idle and auto-resume on demand to control cost, and run separate warehouses per team/workload so they don't contend. Bigger size = more parallelism per query; multi-cluster = more concurrency.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. What are micro-partitions and how do they help? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Snowflake auto-divides tables into small immutable columnar chunks with per-column min/max metadata. Queries use that metadata to skip (prune) partitions that can't match the filter, scanning far less data — automatically, without user-managed indexes.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. What is a clustering key and when do you need one? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>An explicit ordering hint for very large tables so related rows stay in the same micro-partitions, improving pruning on that column. Only needed for large tables with queries filtering on a specific column where natural clustering has degraded; Snowflake can auto-recluster. Over-clustering costs credits.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. How does Snowflake's cost model work? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>You pay for storage (compressed, per TB) and compute (credits per warehouse-second while running). Control cost with auto-suspend, right-sizing warehouses, avoiding always-on compute, leveraging result cache, and reducing scanned data via pruning/clustering. Idle warehouses that don't suspend are the classic cost leak.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. What is Time Travel and Fail-safe? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Time Travel lets you query or restore data as of a point in the past (up to 1 day standard, up to 90 on Enterprise) — great for undoing mistakes. Fail-safe is an additional 7-day Snowflake-managed recovery window after Time Travel, for disaster recovery only (not self-serve).</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. Explain zero-copy cloning. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>CLONE creates an instant copy of a table/schema/database by copying metadata pointers, not data — no extra storage until the clone diverges (copy-on-write). Perfect for spinning up dev/test/QA environments from production instantly and cheaply.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. Streams and Tasks — what are they for? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>A Stream tracks row-level changes (CDC) on a table since last consumed. A Task runs scheduled SQL (or a DAG of tasks). Combine them to build native ELT: a stream captures new/changed rows, a task periodically MERGEs them downstream — an in-warehouse incremental pipeline.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. How does Snowflake load data (COPY / Snowpipe)? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Bulk load with <code>COPY INTO</code> from a stage (internal or external cloud storage), typically compressed Parquet/CSV. Snowpipe does continuous, near-real-time micro-batch loading triggered by file-arrival notifications. Use COPY for scheduled batches, Snowpipe for streaming file ingestion.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. What is the result cache? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Snowflake caches query results for 24 hours; an identical query on unchanged data returns instantly with no compute cost. There are also warehouse-local data caches. Good to mention when asked how repeated dashboards stay cheap/fast.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. How do you handle semi-structured data (JSON) in Snowflake? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Load it into a VARIANT column and query with path notation (<code>col:field.subfield</code>) and functions like FLATTEN for arrays. Snowflake stores VARIANT columnar-ly and prunes on it, so you can keep raw JSON and shred it on read or into typed columns.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. Snowflake vs Databricks — when would you pick each? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Snowflake: SQL-first analytics/BI, easy elasticity, minimal ops, great for warehousing and semi-structured data. Databricks: Spark-based data engineering, ML, streaming, and open lakehouse (Delta) with code-heavy transforms. Many orgs use both — Databricks for engineering/ML, Snowflake for serving BI — and the line is blurring as each adds the other's features.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="airflow" data-title="Apache Airflow" data-cat="DevOps &amp; Quality">
+  <h2>Apache Airflow</h2>
+  <p class="tagline">Orchestration. Know the architecture, the DAG model, the (confusing) logical date, idempotency, and how retries/backfills work.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>Why orchestration exists</h4>
+    <p>Cron can't express dependencies, retries, backfills, SLAs, or visibility. Airflow runs workflows as <strong>DAGs</strong> (directed acyclic graphs) of tasks with dependencies, scheduling, retries, alerting, and a UI — so complex, dependent pipelines run reliably and are observable.</p>
+
+    <h4>Architecture</h4>
+    <p><strong>Scheduler</strong>: parses DAGs, decides what to run when, and queues tasks. <strong>Metadata DB</strong>: stores DAG/task state (the source of truth). <strong>Executor</strong>: how tasks run (Local, Celery, Kubernetes). <strong>Workers</strong>: execute tasks. <strong>Webserver</strong>: the UI. A task instance = one run of a task for one logical date.</p>
+
+    <h4>The logical date (execution_date) — the classic confusion</h4>
+    <p>A scheduled run's <strong>logical date</strong> is the <em>start of the interval it covers</em>, and the DAG runs at the <em>end</em> of that interval. So a daily DAG for data-date 2026-07-12 actually executes just after midnight on 2026-07-13. You use the logical date to parameterize <em>which data partition</em> to process — never <code>datetime.now()</code>. This is what makes runs deterministic and backfillable.</p>
+
+    <h4>Idempotency &amp; retries</h4>
+    <p>Tasks should be <strong>idempotent</strong>: rerunning for the same logical date produces the same result (overwrite/MERGE the partition, don't blind-append). Then retries and backfills are safe. Airflow gives per-task retries with delay, <strong>sensors</strong> (wait for a file/partition — use deferrable/reschedule mode to free workers), SLAs, and trigger rules. Keep tasks small and atomic.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> DAG/task/operator · scheduler/metadata DB/executor/worker · logical date = interval start, runs at interval end · use logical date not now() · idempotent tasks → safe retries/backfills · XCom for small data (not big payloads) · sensors (deferrable) · retries/SLAs/trigger rules · Celery vs Kubernetes executor.</div>
+    <div class="warn"><strong>Traps:</strong> passing large data through XCom (it's for small values — pass paths/pointers instead) · using <code>datetime.now()</code> in tasks (breaks backfills and idempotency) · top-level heavy code in the DAG file (the scheduler parses it constantly).</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (14)</h3>
+
+    <details class="q"><summary>Q1. What is a DAG? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>A Directed Acyclic Graph of tasks with dependencies — no cycles, so there's a clear order. It defines what runs, in what sequence, and how often. Each execution for a given interval is a DAG run made of task instances.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. Describe Airflow's architecture. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Scheduler decides and queues tasks; the metadata database stores all state; the executor (Local/Celery/Kubernetes) determines how/where tasks run; workers execute them; the webserver serves the UI. The scheduler + metadata DB are the brain; workers are the muscle.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. Explain the logical/execution date. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>It's the start of the data interval the run covers, and the DAG fires at the interval's end. A daily job for 2026-07-12 runs after midnight on the 13th. Parameterize the data partition by this date (not now()) so runs are deterministic and backfills reprocess the correct historical partitions.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. Why must tasks be idempotent? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Because Airflow retries failed tasks and you backfill history — rerunning must not duplicate or corrupt data. Achieve it by overwriting/MERGE-ing the target partition for the logical date rather than appending, and by deriving deterministic outputs. Idempotency is what makes retries/backfills safe.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. What is XCom and its limits? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Cross-communication: a way to pass small values between tasks via the metadata DB. It's not for large data — passing big payloads bloats the DB and is slow. Pass file paths, table names, or row counts, and let downstream tasks read the actual data from storage.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. What are sensors and how do you use them efficiently? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Sensors wait for a condition (a file lands, a partition exists, an external job finishes). Naive sensors occupy a worker slot while polling; use reschedule mode or deferrable (async) sensors so they release the worker between checks — critical at scale to avoid worker starvation.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. What is a backfill? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Running a DAG for past dates it hasn't run (or rerunning history after a fix). Because tasks are parameterized by logical date and idempotent, Airflow can reprocess each historical interval correctly. Control concurrency so a big backfill doesn't overwhelm sources.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. How do retries and alerting work? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Set retries and retry_delay per task; Airflow re-runs on failure with backoff. Configure on-failure callbacks / email / Slack alerts and SLAs for late runs. Combine with idempotency so retries are safe.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Celery vs Kubernetes executor? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Celery uses a pool of long-running workers via a message broker — good throughput, but workers are always on. Kubernetes executor launches a pod per task — isolated, elastic, no idle workers, better dependency isolation, at the cost of pod startup latency. Pick K8s for isolation/scale-to-zero, Celery for steady high volume.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. How do you avoid heavy code at the top level of a DAG file? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>The scheduler parses every DAG file frequently, so top-level DB calls/API queries/imports slow the whole scheduler. Keep top-level code light (just structure); do heavy work inside task callables, use dynamic task mapping carefully, and cache/limit external calls during parsing.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. What are trigger rules? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>They control when a task runs based on upstream states — default <code>all_success</code>, plus <code>all_done</code>, <code>one_success</code>, <code>none_failed</code>, etc. Used for cleanup tasks that must run regardless of failure, or branching/fan-in logic.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. How do you handle dependencies between DAGs? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Use an ExternalTaskSensor (wait for another DAG's task), the TriggerDagRunOperator (fire a downstream DAG), or Airflow Datasets (data-aware scheduling that triggers a DAG when an upstream dataset updates). Datasets are the cleaner modern approach for producer/consumer pipelines.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. Your DAG runs but processes the wrong day's data — why? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Almost always using <code>datetime.now()</code> instead of the logical date, or misunderstanding that the run for interval-start date executes at interval-end. Fix by templating the data path/partition with the logical date (<code>{{ ds }}</code>) so each run targets the correct partition and backfills work.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. How would you orchestrate a daily ingest → transform → publish pipeline? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>A DAG with a schedule; a sensor/Dataset waits for source readiness; an extract task loads the logical-date partition to bronze (idempotent overwrite); a Databricks/Spark task transforms to silver/gold; a DQ-check task validates row counts/nulls and fails the run if bad; a publish task; alerts on failure/SLA. Each task idempotent and parameterized by logical date.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="dq" data-title="Data Quality &amp; Reliability" data-cat="DevOps &amp; Quality">
+  <h2>Data Quality &amp; Reliability</h2>
+  <p class="tagline">Your Jio production-support experience IS this topic. It's senior-signal — reconciliation, RCA, idempotency, SLAs. Lead with real incidents.</p>
+
+  <div class="block theory">
+    <h3>Practical theory you must be able to say out loud</h3>
+
+    <h4>The quality dimensions</h4>
+    <p><strong>Completeness</strong> (nothing missing — row counts, no unexpected NULLs), <strong>Accuracy</strong> (values are correct vs source of truth), <strong>Consistency</strong> (agrees across systems — reconciliation), <strong>Uniqueness</strong> (no duplicates on the key), <strong>Validity</strong> (conforms to type/format/range/enum), <strong>Timeliness</strong> (arrives within SLA), <strong>Referential integrity</strong> (FKs resolve). Frame any DQ answer around these.</p>
+
+    <h4>Where checks live</h4>
+    <p>Push checks left. <strong>Schema/contract</strong> at ingestion (reject or quarantine bad structure), <strong>row-level validation</strong> in transform (drop/flag/quarantine bad rows), <strong>aggregate checks</strong> after load (counts, sums, distributions, reconciliation to source), and <strong>freshness/volume anomaly</strong> monitoring. Tools: Great Expectations / dbt tests / custom assertions. Fail loud on critical checks; warn on soft ones.</p>
+
+    <h4>Reconciliation</h4>
+    <p>Proving the pipeline neither lost nor invented data: compare <strong>source vs target</strong> on counts and control totals (sum of a key measure), row-hash comparisons for detail, and balance checks (e.g., debits = credits). Any mismatch triggers RCA. This is exactly what production support does daily — and it's gold in interviews.</p>
+
+    <h4>Reliability: idempotency &amp; correct reprocessing</h4>
+    <p>Design so any run can be safely retried: process by partition/logical date, overwrite or MERGE (not blind append), use deterministic transforms, track a watermark, and make writes atomic (Delta/temp-then-swap). Then failures are recoverable without duplicates or gaps.</p>
+
+    <div class="key"><strong>Say-it-cold checklist:</strong> 7 DQ dimensions · shift-left / where checks live · quarantine vs fail-fast · reconciliation (count + control totals + row hash) · idempotency &amp; safe reprocessing · watermarks/backfills · observability (freshness, volume, schema drift) · RCA process · SLAs &amp; on-call · data contracts &amp; lineage.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (18)</h3>
+
+    <details class="q"><summary>Q1. What are the dimensions of data quality? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Completeness, accuracy, consistency, uniqueness, validity, timeliness, and referential integrity. A strong answer names them and gives a concrete check for each (row counts for completeness, dedup for uniqueness, range checks for validity, reconciliation for consistency).</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. How do you validate a pipeline's output? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Layered checks: schema/contract at ingest, row-level validation in transform, and aggregate checks after load (row counts vs source, null rates, distinct-key counts, control-total sums, referential integrity). Automate them as pipeline steps that fail the run on critical violations and alert.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. What is reconciliation and how do you do it? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Confirming the target matches the source: compare record counts, compare control totals (sum of a key amount), and for detail use row-level hashes or key set differences. Mismatches → investigate (RCA). It proves no rows were dropped, duplicated, or altered in transit.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. A daily count is suddenly 30% lower. Walk me through RCA. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Confirm it's real (check the DQ metric, not a display bug). Scope it: which source/partition/step dropped? Compare source vs staging vs target counts to localize where volume was lost. Check upstream (source outage, late data, schema change), the pipeline (a filter/join dropping rows, a failed partition, dedup over-collapsing), and time window (holiday/seasonality). Fix root cause, backfill the affected partition idempotently, add a check to catch it earlier, and communicate impact.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. What does idempotency mean and why does it matter? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Running the same job for the same input/date yields the same result with no duplicates. It matters because failures and retries are inevitable — idempotent jobs are safely restartable and backfillable. Achieve it by overwriting/MERGE-ing the target partition keyed by logical date instead of appending.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. How do you handle a bad/duplicate record mid-pipeline? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Decide by severity: reject and quarantine (route to an error table with the reason) for recoverable bad data so the good data flows, drop with logging for noise, or fail fast for systemic corruption. Never silently discard — quarantine keeps an audit trail and lets you reprocess after fixing.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. What is a data contract? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>An agreed, enforced specification between a data producer and consumer — schema, types, semantics, freshness, allowed nulls, and change policy. Enforcing it at ingestion catches breaking upstream changes before they corrupt downstream, shifting the failure left to the producer.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. How do you detect data freshness/volume anomalies? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Track per-run metrics — arrival time vs SLA, row counts, null rates, distinct counts — and alert on deviations from expected ranges or historical baselines (static thresholds or anomaly detection). Freshness and volume are the earliest signals something upstream broke.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Fail-fast vs quarantine — how do you choose? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Fail-fast when a violation means the whole output is untrustworthy (schema break, control-total mismatch) — stop before publishing bad data. Quarantine when most data is good and a minority is bad — isolate the bad rows, let the good ones proceed, and reprocess the quarantine later. Match the blast radius.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. What is data lineage and why is it useful? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>The traceable path of data from source through transformations to outputs. It powers impact analysis (what breaks if this source changes), debugging (where did this wrong number come from), and governance/compliance. Tools capture it automatically (Unity Catalog, OpenLineage).</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. How do you ensure exactly-once semantics end to end? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Combine idempotent writes (MERGE/upsert on a business key, or overwrite partition) with deduplication on a unique event id and checkpointed offsets. True end-to-end exactly-once usually = at-least-once delivery + idempotent, deduplicating sinks, rather than distributed transactions everywhere.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. How would you build monitoring for a critical pipeline? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Instrument each stage: success/failure and duration, input/output row counts, DQ check results, freshness vs SLA, and reconciliation status. Dashboard the metrics, alert on failures/SLA breach/anomalies with clear ownership and runbooks, and log enough context for fast RCA. Distinguish page-worthy from FYI alerts to avoid fatigue.</p></div>
+    </details>
+
+    <details class="q"><summary>Q13. A downstream schema change broke your pipeline. How do you prevent recurrence? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Enforce a data contract / schema validation at ingest so breaking changes are caught and quarantined immediately with a clear error, use schema evolution where additive changes are expected, add a schema-drift alert, and coordinate change management with the producer. Shift the failure to the boundary, not deep in transforms.</p></div>
+    </details>
+
+    <details class="q"><summary>Q14. What's the difference between a warning and a hard-fail check? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>A hard-fail check stops the pipeline and blocks publishing when violated (critical: schema, control totals, PK uniqueness). A warning logs/alerts but lets data flow (soft: minor null-rate drift). Classify each check by business impact so you neither publish bad data nor cry wolf.</p></div>
+    </details>
+
+    <details class="q"><summary>Q15. How do you backfill after fixing a bug without double counting? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Reprocess only the affected logical-date partitions with an idempotent job that overwrites/MERGEs those partitions, so reruns replace rather than append. Validate counts against source after, and confirm downstream aggregates recomputed. The idempotent, partition-scoped design is what makes this safe.</p></div>
+    </details>
+
+    <details class="q"><summary>Q16. Tell me about a production incident you handled. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Use STAR with your real Jio experience: the alert/symptom, how you triaged and localized it (logs, counts, reconciliation), the root cause, the fix and safe backfill, and the preventive measure (new check/alert). Emphasize impact minimized and recurrence prevented — that's the senior signal.</p></div>
+    </details>
+
+    <details class="q"><summary>Q17. How do you test data pipelines before production? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Unit-test transform functions on small fixtures (including edge cases), run integration tests on sample data end-to-end, assert output DQ expectations, test idempotency (run twice → same result), and validate against a known-good baseline. Use dev/staging environments (zero-copy clones help) before promoting.</p></div>
+    </details>
+
+    <details class="q"><summary>Q18. What SLAs/SLOs would you set for a pipeline and why? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Freshness (data available by a time), completeness (≥ expected volume), and correctness (reconciliation passes) tied to business need. Define them with consumers, monitor and alert on breaches, and track error budgets so you balance new work vs reliability. Concrete, measurable, owned — not vague "it should work."</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="devops" data-title="Git, Docker, CI/CD" data-cat="DevOps &amp; Quality">
+  <h2>Git · Docker · CI/CD</h2>
+  <p class="tagline">Supporting skills. You won't be grilled, but confident basics show you ship production code, not scripts.</p>
+
+  <div class="block theory">
+    <h3>Just-enough theory</h3>
+    <p><strong>Git</strong>: distributed version control. Know branch → commit → push → pull request → merge, resolving conflicts, and <code>merge</code> vs <code>rebase</code> (rebase rewrites history for a linear log; don't rebase shared branches). A trunk-based or feature-branch workflow with PR review is standard.</p>
+    <p><strong>Docker</strong>: package an app plus its dependencies into an image that runs identically anywhere — solves "works on my machine." A Dockerfile builds an image; a container is a running instance. In DE you containerize jobs, Airflow, and Spark apps for reproducible deployment.</p>
+    <p><strong>CI/CD</strong>: CI runs tests/linting on every push (catch breakage early); CD deploys automatically after checks pass. For data: also test transformations, validate schemas, and deploy DAGs/notebooks/dbt models through environments (dev → staging → prod) with the same code.</p>
+    <div class="key"><strong>Say-it-cold checklist:</strong> git branch/PR/merge vs rebase/conflict resolution · Docker image vs container / why reproducibility · CI (test on push) vs CD (deploy) · environments dev→staging→prod · infrastructure/config as code · deploy DAGs &amp; dbt via CI/CD.</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (10)</h3>
+
+    <details class="q"><summary>Q1. merge vs rebase? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Merge combines branches preserving history with a merge commit. Rebase replays your commits on top of another branch for a linear history but rewrites commit hashes — never rebase a branch others have pulled. Merge for shared branches; rebase locally to tidy before a PR.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. How do you resolve a merge conflict? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Git marks conflicting regions; you edit to the correct combined result, remove the markers, stage the file, and complete the merge/rebase. Then run tests. Prevent conflicts by pulling often and keeping branches short-lived.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. What problem does Docker solve for DE? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Environment reproducibility — the exact Python/Spark/library versions ship with the code, so a job runs identically on a laptop, CI, and production. It removes dependency drift and makes deployments predictable.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. Image vs container? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>An image is the immutable, built template (layers of filesystem + config). A container is a running instance of an image. You build once, run many containers from the same image.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. What is CI/CD and why does it matter for pipelines? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>CI automatically tests/lints/validates code (including transformation and schema tests) on each push; CD deploys through environments once checks pass. For data teams it prevents broken DAGs/models reaching prod and makes releases repeatable and auditable.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. How would you deploy Airflow DAGs safely? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Version DAGs in Git, run CI (lint, import tests, unit tests) on PRs, and deploy to dev/staging before prod via CD (sync to the DAGs folder or bake into an image). Test that DAGs parse and tasks are idempotent before promotion.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. What is a .gitignore and what should never be committed? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>It excludes files from version control (build artifacts, venvs, data files). Never commit secrets/credentials, large data, or environment-specific config — use env vars/secret managers instead. Committed secrets must be rotated immediately.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. How do you manage environments (dev/staging/prod)? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Same code, environment-specific config (connections, paths, credentials) injected via variables/secret scopes. Promote artifacts through environments with CI/CD; use isolated storage/warehouses per env. Zero-copy clones or sampled data give realistic non-prod testing.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. What is a feature branch workflow? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Create a short-lived branch per change, commit there, open a pull request for review and CI, then merge to main. Keeps main deployable, enables review, and isolates work. Trunk-based development keeps branches very short to reduce merge pain.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. How do you handle secrets in code/deployments? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Never in code or Git. Use a secret manager/vault (Azure Key Vault, Databricks secret scopes) or environment variables injected at runtime, with access via managed identity/RBAC and rotation. Reference secrets by name so code stays portable across environments.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="sysdesign" data-title="System Design" data-cat="Extras">
+  <h2>Data Engineering System Design</h2>
+  <p class="tagline">The senior-round differentiator. You don't need a perfect answer — you need a structured approach and the right trade-offs spoken aloud.</p>
+
+  <div class="block theory">
+    <h3>The framework (use this on every prompt)</h3>
+    <p><strong>1. Clarify requirements.</strong> Ask: batch or streaming? Data volume &amp; velocity? Latency/freshness SLA? Query patterns (who consumes, how)? Consistency needs? Budget? Never start designing before scoping.</p>
+    <p><strong>2. Back-of-envelope math.</strong> Events/day → per second; bytes/event → daily &amp; yearly storage; peak vs average. This sizes everything and shows senior thinking.</p>
+    <p><strong>3. Draw the pipeline stages.</strong> Ingestion → Storage → Processing → Serving, plus orchestration and observability across all of it.</p>
+    <p><strong>4. Make deliberate choices at each stage</strong> (below) and state the trade-off.</p>
+    <p><strong>5. Address cross-cutting concerns:</strong> data quality, idempotency/exactly-once, schema evolution, partitioning, cost, security/governance, monitoring, failure &amp; backfill.</p>
+    <p><strong>6. Discuss bottlenecks &amp; scaling.</strong> Where does it break at 10×? Skew, hot partitions, small files, shuffle, serving load.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>The design space at each stage</h3>
+    <p><strong>Ingestion:</strong> batch (scheduled pulls, files) vs streaming (Kafka/Kinesis) vs CDC (Debezium/Snowflake streams). Push vs pull. Choose by latency SLA.</p>
+    <p><strong>Storage:</strong> lake (Parquet/Delta on object storage) vs warehouse (Snowflake) vs both (lakehouse). Partition by a low-cardinality, frequently-filtered column (usually date). Columnar for analytics.</p>
+    <p><strong>Processing:</strong> batch (Spark/SQL) vs stream (Structured Streaming/Flink). ELT (transform in warehouse) is the modern default; ETL when you must transform before load. Medallion layering.</p>
+    <p><strong>Serving:</strong> BI/warehouse tables, a low-latency store (key-value/OLAP like ClickHouse/Druid) for dashboards, an API, or a feature store for ML. Match to query pattern.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>Three worked designs (be ready to sketch these)</h3>
+    <p><strong>A. Daily batch analytics warehouse.</strong> Sources → ADF/Airflow orchestrated incremental extract (watermark) → bronze Delta on ADLS → Spark clean/conform → silver → gold star-schema marts → Snowflake/Power BI. DQ checks + reconciliation at each layer; idempotent partition overwrites; backfillable.</p>
+    <p><strong>B. Real-time event pipeline.</strong> App → Kafka (partitioned by key) → Structured Streaming (windowed aggregation with watermark, checkpointed) → Delta (MERGE for upserts) → served to a low-latency OLAP store + dashboards. At-least-once + idempotent sink for exactly-once effect. Monitor consumer lag.</p>
+    <p><strong>C. CDC replication.</strong> Source DB → Debezium/native CDC → Kafka → consumer dedups &amp; orders by sequence → MERGE into Delta/warehouse (SCD as needed) → downstream marts. Handles inserts/updates/deletes; idempotent and replayable from offsets.</p>
+    <div class="key"><strong>Golden phrases to say:</strong> "What's the latency SLA?" · "Let me size it first" · "I'd partition by date to enable pruning" · "I'll make it idempotent so retries/backfills are safe" · "I'd add a reconciliation check here" · "This will skew on hot keys, so I'd salt or broadcast" · "At 10× the bottleneck becomes X."</div>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (10)</h3>
+
+    <details class="q"><summary>Q1. Design a pipeline to ingest 1B events/day for analytics. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Clarify latency (near-real-time?) and consumers. Math: ~11.6k events/s average, plan for ~3–5× peak. Kafka (well-partitioned) for ingest → Structured Streaming or micro-batch → partitioned Delta (bronze→silver→gold) on object storage → serve gold to warehouse/OLAP. Address partitioning by event date, small-files compaction, idempotent writes, schema registry, watermarks for late data, and consumer-lag monitoring. Discuss scaling: add partitions/executors, handle skew.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. Batch vs streaming — how do you decide? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Driven by the freshness SLA and cost. If consumers need data within seconds/minutes and value real-time, stream; if hourly/daily is fine, batch is simpler, cheaper, and easier to reason about. Many systems are hybrid (streaming ingest, batch heavy transforms — Lambda; or one streaming path — Kappa).</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. How would you design an idempotent ingestion layer? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Key each record with a stable id, process by logical-date partition, and write via MERGE/upsert or partition overwrite so reruns replace rather than duplicate. Track processed offsets/watermarks in a checkpoint/control table. Result: any retry or backfill is safe and produces the same output.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. How do you handle late-arriving data? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>In streaming: watermarks define how late is accepted and bound window state; very late data is dropped or routed to a correction path. In batch: reprocess affected partitions on a lookback window (e.g., reprocess last 3 days each run) with idempotent overwrites so corrections land without duplicates.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. Design a data quality framework for a platform. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Contract/schema checks at ingest; row-level validations in transform (quarantine bad rows); aggregate checks after load (counts, nulls, control totals, reconciliation to source); freshness/volume anomaly monitoring; classify checks as hard-fail vs warn; central metrics + alerting with ownership/runbooks; lineage for impact analysis. Automated as pipeline steps, not manual.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. How do you choose a partitioning strategy? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Partition by a low/medium-cardinality column that queries filter on (usually date) to enable pruning, targeting reasonable file sizes (~128MB+). Avoid high-cardinality partitions (user_id) — they create millions of tiny files. For skewed access, add sub-partitioning or clustering/Z-ordering.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. Lambda vs Kappa architecture? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Lambda runs parallel batch and speed layers then merges — accurate but two codebases to maintain. Kappa uses a single streaming pipeline and reprocesses by replaying the log — simpler, one codebase, favored now that streaming engines are mature. Choose Kappa unless you have a strong batch-only requirement.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. How would you make a pipeline cost-efficient? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Scan less (partition/column pruning, compaction, columnar formats), right-size and auto-suspend compute, prefer incremental over full loads, cache/materialize reused results, use spot/ephemeral job clusters, and archive cold data to cheaper storage tiers. Measure bytes scanned and compute-hours, not vibes.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Design a CDC pipeline from an OLTP DB to the warehouse. <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Capture changes via log-based CDC (Debezium/native) → Kafka topic per table → consumer orders by the change sequence and dedups → MERGE into staging/target (apply inserts/updates/deletes, SCD2 where history is needed) → build marts. It's low-impact on source, near-real-time, idempotent, and replayable from offsets. Handle schema changes via a registry/contract.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. What are the failure modes and how do you make it resilient? <span class="lvl h">hard</span></summary>
+      <div class="a"><p>Source outage/late data (retries, sensors, lookback reprocessing), bad data (contracts, quarantine), skew/hot partitions (salting/broadcast), small files (compaction), compute failure (idempotent retries, checkpoints), and schema drift (enforcement + alerts). Add monitoring, alerting with runbooks, and tested backfill so recovery is routine, not heroic.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="behavioral" data-title="Behavioral &amp; Project Story" data-cat="Extras">
+  <h2>Behavioral &amp; Project Story</h2>
+  <p class="tagline">Half of every loop. Your production-support experience at Jio is a genuine advantage — most candidates only have tutorials. Prepare 3 stories cold.</p>
+
+  <div class="block theory">
+    <h3>The STAR method</h3>
+    <p><strong>S</strong>ituation (context, briefly) → <strong>T</strong>ask (your responsibility/goal) → <strong>A</strong>ction (what <em>you</em> did — the bulk, with specifics and reasoning) → <strong>R</strong>esult (quantified outcome + what you learned). Keep it ~2 minutes. Lead with impact, use "I" not "we," and include a number wherever possible (rows, %, hours saved, SLA).</p>
+  </div>
+
+  <div class="block theory">
+    <h3>Prepare these stories from your Jio work</h3>
+    <p><strong>1. A production incident you resolved.</strong> The alert, how you triaged (logs, counts, reconciliation), the root cause, the fix + safe backfill, and the preventive check you added. This is your strongest story — it shows ownership, RCA, and reliability thinking.</p>
+    <p><strong>2. A pipeline/process you improved.</strong> A slow or fragile job you optimized (Spark tuning, incremental instead of full load, better DQ) — quantify the before/after (runtime, cost, failures avoided).</p>
+    <p><strong>3. Collaboration / handling ambiguity or conflict.</strong> Working with analysts/upstream teams on a data contract or requirement, or pushing back on a bad request constructively.</p>
+    <div class="tip"><strong>Your positioning line:</strong> "I'm a Data Engineer with 2.5 years at Jio focused on production data pipelines — SQL, Python, PySpark, Kafka, on Azure/Databricks/Snowflake. My edge is reliability: I own production support, do root-cause analysis, and build data-validation and reconciliation into pipelines. I'm looking to bring that to a product-focused data team." Adapt to each JD.</p>
+  </div>
+
+  <div class="block qa">
+    <h3>Interview Q&amp;A (12)</h3>
+
+    <details class="q"><summary>Q1. Tell me about yourself. <span class="lvl e">basic</span></summary>
+      <div class="a"><p>60–90 seconds: current role and years, core stack, one signature strength (production reliability/RCA), a concrete win, and why you're interviewing (growth into a product/fintech/SaaS data team). End pointing at how it fits this role. Rehearse it — it sets the tone.</p></div>
+    </details>
+
+    <details class="q"><summary>Q2. Tell me about a pipeline you built or own. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Pick one end-to-end: the sources, the ingestion (incremental/watermark), the transformation (Spark/SQL, medallion), the destination, orchestration (Airflow/ADF), and the DQ/reconciliation and idempotency you built in. Give scale numbers and the business value. Show you understand the whole lifecycle, not just one task.</p></div>
+    </details>
+
+    <details class="q"><summary>Q3. Describe a difficult production incident. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>STAR: the symptom/alert and impact, how you localized it (compared source/staging/target counts, checked logs and recent changes), the root cause, the immediate fix and idempotent backfill, and the guardrail you added so it can't silently recur. Emphasize calm triage and prevention.</p></div>
+    </details>
+
+    <details class="q"><summary>Q4. Tell me about a time you improved performance. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Concrete Spark/SQL example: identified the bottleneck (skew/shuffle/full scan via the UI or plan), applied a fix (broadcast join, partitioning, incremental load, caching), and quantify the improvement (e.g., "cut runtime from 2h to 25m and cost by 60%"). Show measurement, not guessing.</p></div>
+    </details>
+
+    <details class="q"><summary>Q5. Tell me about a mistake you made. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Pick a real, moderate one, own it without excuses, explain the impact, how you fixed it, and the systemic change that prevents recurrence (a check, a review step, idempotency). Growth and accountability are what's being tested — not perfection.</p></div>
+    </details>
+
+    <details class="q"><summary>Q6. How do you handle disagreement with a teammate or stakeholder? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Seek to understand their goal, bring data/evidence, propose options with trade-offs, and disagree-and-commit once a decision is made. Give a real example (e.g., negotiating a schema/data contract or pushing back on an unsafe change) with a constructive outcome.</p></div>
+    </details>
+
+    <details class="q"><summary>Q7. Why are you leaving / looking to move? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Frame positively toward growth, not away in complaint: you want broader modern-stack exposure, product impact, and scale that a strong product/fintech/SaaS data team offers. Never bad-mouth Jio — highlight what it taught you (production reliability) and what you want next.</p></div>
+    </details>
+
+    <details class="q"><summary>Q8. How do you prioritize when everything is urgent? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Triage by impact and blast radius (data correctness/production-down first), communicate trade-offs and ETAs to stakeholders, and address root causes to reduce recurring firefighting. Give an on-call example where you sequenced incidents sensibly.</p></div>
+    </details>
+
+    <details class="q"><summary>Q9. Tell me about handling ambiguous requirements. <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Describe clarifying the actual business question, making assumptions explicit, delivering a small validated slice, and iterating with feedback — rather than building the wrong thing fully. Concrete example of turning a vague ask into a scoped deliverable.</p></div>
+    </details>
+
+    <details class="q"><summary>Q10. Where do you see yourself in a few years? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Growth into a senior DE owning larger systems and mentoring, deepening distributed-systems/architecture skills — aligned with the company's stack. Show ambition that fits the role, not a plan to leave.</p></div>
+    </details>
+
+    <details class="q"><summary>Q11. Why do you want to work here? <span class="lvl m">medium</span></summary>
+      <div class="a"><p>Be specific: the company's data scale/product, their stack matching your strengths, and the problem space you find compelling. Tie your reliability/production strength to a need you can infer from the role. Generic answers read as low interest — do 15 minutes of homework per company.</p></div>
+    </details>
+
+    <details class="q"><summary>Q12. Do you have questions for us? <span class="lvl e">basic</span></summary>
+      <div class="a"><p>Always yes. Ask about their data stack and scale, how the team handles data quality/on-call, what success looks like in 6 months, and the biggest current data challenge. Thoughtful questions signal seniority and genuine interest — prepare 3–4.</p></div>
+    </details>
+  </div>
+  </section>
+
+  <section class="topic" id="cheat" data-title="Cheat Sheets" data-cat="Extras">
+  <h2>Cheat Sheets — Morning-of Revision</h2>
+  <p class="tagline">Dense reference to skim before an interview. Everything above, compressed.</p>
+
+  <div class="block theory">
+    <h3>SQL window functions</h3>
+    <pre><code>ROW_NUMBER() OVER (PARTITION BY k ORDER BY c)   -- unique rank
+RANK() / DENSE_RANK()                            -- ties: gaps / no gaps
+LAG(x,1) / LEAD(x,1) OVER (ORDER BY t)           -- prev / next row
+SUM(x) OVER (ORDER BY t
+  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) -- running total
+AVG(x) OVER (ORDER BY t ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) -- 7d MA
+FIRST_VALUE/LAST_VALUE, NTILE(4)                 -- quartiles</code></pre>
+    <p>Dedup keep-latest: <code>ROW_NUMBER() PARTITION BY id ORDER BY updated_at DESC = 1</code>. Filter windows in a subquery/CTE, never in WHERE.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>PySpark DataFrame API</h3>
+    <pre><code>df.select("a","b").filter(df.x &gt; 0)
+df.withColumn("y", F.col("x")*2)
+df.groupBy("k").agg(F.sum("v").alias("s"), F.countDistinct("id"))
+df.join(F.broadcast(dim), "key", "left")          # broadcast small side
+df.repartition(200, "key")  / df.coalesce(10)     # shuffle / merge
+df.write.partitionBy("dt").mode("overwrite").format("delta").save(path)
+# Delta upsert:
+DeltaTable.forPath(spark,path).alias("t").merge(
+  src.alias("s"), "t.id = s.id").whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()</code></pre>
+  </div>
+
+  <div class="block theory">
+    <h3>Spark tuning quick hits</h3>
+    <p>Enable AQE. Broadcast small dims. Filter/prune before joins. Salt skewed keys. ~128–200MB/partition. Avoid Python UDFs (use <code>F.*</code> or pandas UDFs). Don't <code>collect()</code> big data. coalesce before write to avoid small files. Cache only if reused. Read the UI: longest stage → skew/shuffle/spill.</p>
+  </div>
+
+  <div class="block theory">
+    <h3>File formats</h3>
+    <table>
+      <tr><th>Format</th><th>Layout</th><th>Best for</th></tr>
+      <tr><td>CSV/JSON</td><td>row, text</td><td>interchange, small/raw; no schema, big &amp; slow</td></tr>
+      <tr><td>Parquet</td><td>columnar</td><td>analytics: column &amp; predicate pushdown, great compression</td></tr>
+      <tr><td>ORC</td><td>columnar</td><td>similar to Parquet, Hive ecosystem</td></tr>
+      <tr><td>Avro</td><td>row</td><td>streaming/Kafka, row-by-row writes, schema evolution</td></tr>
+      <tr><td>Delta/Iceberg</td><td>Parquet + log</td><td>lakehouse: ACID, time travel, upserts</td></tr>
+    </table>
+    <p>Rule: <strong>columnar (Parquet/Delta) for analytics scans; row (Avro) for streaming writes</strong>. Compression: Snappy (fast, default) vs Zstd/Gzip (smaller, slower).</p>
+  </div>
+
+  <div class="block theory">
+    <h3>Must-know one-liners</h3>
+    <p><span class="pill">OLTP</span> normalized, row, transactional. <span class="pill">OLAP</span> denormalized, columnar, analytical. <span class="pill">Star schema</span> fact + denormalized dims. <span class="pill">SCD2</span> new row + dates + surrogate key = history. <span class="pill">Grain</span> what one fact row means. <span class="pill">Shuffle</span> network repartition on wide ops. <span class="pill">Broadcast join</span> ship small table, no shuffle. <span class="pill">Skew</span> hot key → straggler → salt. <span class="pill">Idempotent</span> rerun = same result (overwrite/MERGE). <span class="pill">Medallion</span> bronze→silver→gold. <span class="pill">Delta</span> Parquet + txn log = ACID/time-travel. <span class="pill">Lakehouse</span> lake cost + warehouse guarantees. <span class="pill">Exactly-once</span> at-least-once + idempotent dedup sink. <span class="pill">Kafka order</span> only within a partition. <span class="pill">Watermark</span> how late data can be. <span class="pill">Logical date</span> interval start; runs at interval end. <span class="pill">Reconciliation</span> source vs target counts + control totals. <span class="pill">Micro-partition</span> Snowflake pruning unit. <span class="pill">ELT</span> load raw, transform in-warehouse.</p>
+  </div>
+
+  <div class="tip"><strong>Interview-morning routine:</strong> skim these cheat sheets, re-say 3 STAR stories aloud, warm up with 2 easy SQL problems, and read the company's stack/blog for 15 minutes so your "why here" and questions are specific. You've got this.</div>
+  </section>
+
+
+</main>
+<button id="toTop" aria-label="Back to top">↑</button>
+<script>
+"use strict";
+/* Defensive shell script: tolerates missing/empty fragments. */
+(function(){
+  var LS_PREFIX="debible:", LS_THEME="debible:theme";
+  // Category display order for nav grouping.
+  var CAT_ORDER=["Start Here","Core Foundations","Big Data & Streaming",
+    "Cloud & Platforms","DevOps & Quality","Playbooks","Extras"];
+
+  var $=function(s,r){return (r||document).querySelector(s);};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+
+  document.addEventListener("DOMContentLoaded", init);
+
+  function init(){
+    var sections=$$("section.topic");
+    initTheme();
+    buildNav(sections);
+    initProgress(sections);
+    initQA();
+    initSearch(sections);
+    initScrollSpy(sections);
+    initChrome();
+  }
+
+  /* ---------- Theme ---------- */
+  function initTheme(){
+    var saved=null;
+    try{saved=localStorage.getItem(LS_THEME);}catch(e){}
+    if(saved==="dark"){document.documentElement.setAttribute("data-theme","dark");}
+    var btn=$("#themeBtn");
+    syncThemeBtn();
+    if(btn) btn.addEventListener("click",function(){
+      var dark=document.documentElement.getAttribute("data-theme")==="dark";
+      if(dark) document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.setAttribute("data-theme","dark");
+      try{localStorage.setItem(LS_THEME, dark?"light":"dark");}catch(e){}
+      syncThemeBtn();
+    });
+  }
+  function syncThemeBtn(){
+    var btn=$("#themeBtn"); if(!btn) return;
+    var dark=document.documentElement.getAttribute("data-theme")==="dark";
+    btn.textContent=dark?"☀️ Light":"🌙 Dark";
+  }
+
+  /* ---------- Navigation (grouped by data-cat) ---------- */
+  function buildNav(sections){
+    var nav=$("#nav"); if(!nav) return;
+    var groups={};
+    sections.forEach(function(sec){
+      var cat=sec.getAttribute("data-cat")||"Extras";
+      (groups[cat]=groups[cat]||[]).push(sec);
+    });
+    // Ordered cats first, then any unexpected cats appended.
+    var cats=CAT_ORDER.filter(function(c){return groups[c];});
+    Object.keys(groups).forEach(function(c){if(cats.indexOf(c)<0)cats.push(c);});
+
+    cats.forEach(function(cat){
+      var g=document.createElement("div"); g.className="nav-group";
+      var t=document.createElement("div"); t.className="grp-title"; t.textContent=cat;
+      g.appendChild(t);
+      groups[cat].forEach(function(sec){
+        if(!sec.id){sec.id="sec-"+Math.random().toString(36).slice(2);}
+        var label=sec.getAttribute("data-title")||
+          (sec.querySelector("h2")?sec.querySelector("h2").textContent:sec.id);
+        var a=document.createElement("a");
+        a.className="nav-item"; a.href="#"+sec.id; a.setAttribute("data-target",sec.id);
+        a.innerHTML='<span class="nav-top"><span class="lbl-txt"></span>'+
+          '<span class="pct"></span></span><span class="mini"><span></span></span>';
+        a.querySelector(".lbl-txt").textContent=label;
+        a.addEventListener("click",function(e){
+          e.preventDefault();
+          var el=document.getElementById(sec.id);
+          if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+          document.body.classList.remove("nav-open");
+        });
+        g.appendChild(a);
+        sec._navItem=a; // link back for progress + spy
+      });
+      nav.appendChild(g);
+    });
+  }
+
+  /* ---------- Progress persistence + per-topic % ---------- */
+  function initProgress(sections){
+    var boxes=$$("input.prog[data-key]");
+    boxes.forEach(function(box){
+      var key=LS_PREFIX+box.getAttribute("data-key");
+      var v=null; try{v=localStorage.getItem(key);}catch(e){}
+      if(v==="1") box.checked=true;
+      box.addEventListener("change",function(){
+        try{localStorage.setItem(key, box.checked?"1":"0");}catch(e){}
+        updateProgress(sections);
+      });
+    });
+    updateProgress(sections);
+  }
+  function updateProgress(sections){
+    var totAll=0, chkAll=0;
+    sections.forEach(function(sec){
+      var b=$$("input.prog",sec), n=b.length,
+          c=b.filter(function(x){return x.checked;}).length;
+      totAll+=n; chkAll+=c;
+      if(sec._navItem){
+        var pct=n?Math.round(c/n*100):0;
+        var pctEl=sec._navItem.querySelector(".pct");
+        var barEl=sec._navItem.querySelector(".mini>span");
+        if(pctEl) pctEl.textContent=n?(pct+"%"):"";
+        if(barEl) barEl.style.width=pct+"%";
+      }
+    });
+    var op=totAll?Math.round(chkAll/totAll*100):0;
+    var opEl=$("#overallPct"), obEl=$("#overallBar");
+    if(opEl) opEl.textContent=op+"% ("+chkAll+"/"+totAll+")";
+    if(obEl) obEl.style.width=op+"%";
+  }
+
+  /* ---------- Q&A expand/collapse controls ---------- */
+  function initQA(){
+    $$(".block.qa").forEach(function(block){
+      var qs=$$("details.q",block); if(!qs.length) return;
+      var bar=document.createElement("div"); bar.className="qa-tools";
+      var eBtn=mkBtn("Expand all",function(){qs.forEach(function(d){d.open=true;});});
+      var cBtn=mkBtn("Collapse all",function(){qs.forEach(function(d){d.open=false;});});
+      bar.appendChild(eBtn); bar.appendChild(cBtn);
+      var h3=block.querySelector("h3");
+      if(h3&&h3.nextSibling) block.insertBefore(bar,h3.nextSibling);
+      else block.insertBefore(bar, qs[0]);
+    });
+  }
+  function mkBtn(txt,fn){
+    var b=document.createElement("button"); b.type="button"; b.textContent=txt;
+    b.addEventListener("click",fn); return b;
+  }
+
+  /* ---------- Live search ---------- */
+  function initSearch(sections){
+    var input=$("#search"), info=$("#searchInfo"), timer=null;
+    if(!input) return;
+    input.addEventListener("input",function(){
+      clearTimeout(timer);
+      timer=setTimeout(function(){runSearch(input.value,sections,info);},150);
+    });
+    var reset=$("#expandNav");
+    if(reset) reset.addEventListener("click",function(){
+      input.value=""; runSearch("",sections,info);
+    });
+  }
+  function runSearch(q,sections,info){
+    q=(q||"").trim().toLowerCase();
+    if(q.length<2){ clearSearch(sections); if(info) info.textContent=""; return; }
+    var matches=0;
+    sections.forEach(function(sec){
+      var hit=0;
+      var title=((sec.getAttribute("data-title")||"")+" "+
+        (sec.querySelector("h2")?sec.querySelector("h2").textContent:"")).toLowerCase();
+      var titleHit=title.indexOf(q)>=0;
+
+      // Q&A details
+      $$("details.q",sec).forEach(function(d){
+        var sum=d.querySelector("summary");
+        var txt=(sum?sum.textContent:"").toLowerCase()+" "+d.textContent.toLowerCase();
+        var m=titleHit||txt.indexOf(q)>=0;
+        d.classList.toggle("s-hidden",!m);
+        if(m){hit++; if(txt.indexOf(q)>=0) d.open=true;}
+      });
+      // checklist items
+      $$("ul.checklist li",sec).forEach(function(li){
+        var m=titleHit||li.textContent.toLowerCase().indexOf(q)>=0;
+        li.classList.toggle("s-hidden",!m);
+        if(m) hit++;
+      });
+      // generic list items (projects) — filter too
+      $$("ul:not(.checklist)>li",sec).forEach(function(li){
+        var m=titleHit||li.textContent.toLowerCase().indexOf(q)>=0;
+        li.classList.toggle("s-hidden",!m);
+        if(m) hit++;
+      });
+
+      var show=titleHit||hit>0;
+      sec.classList.toggle("s-hidden",!show);
+      if(sec._navItem) sec._navItem.classList.toggle("s-hidden",!show);
+      if(show) matches++;
+    });
+    if(info) info.textContent=matches+" section"+(matches===1?"":"s")+" match";
+  }
+  function clearSearch(sections){
+    sections.forEach(function(sec){
+      sec.classList.remove("s-hidden");
+      if(sec._navItem) sec._navItem.classList.remove("s-hidden");
+      $$("details.q",sec).forEach(function(d){d.classList.remove("s-hidden");});
+      $$("li",sec).forEach(function(li){li.classList.remove("s-hidden");});
+    });
+  }
+
+  /* ---------- Scroll spy (active nav highlight) ---------- */
+  function initScrollSpy(sections){
+    if(!("IntersectionObserver" in window)||!sections.length) return;
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          $$(".nav-item.active").forEach(function(a){a.classList.remove("active");});
+          var sec=en.target;
+          if(sec._navItem){
+            sec._navItem.classList.add("active");
+            // keep active item visible in sidebar
+            sec._navItem.scrollIntoView({block:"nearest"});
+          }
+        }
+      });
+    },{rootMargin:"-10% 0px -75% 0px", threshold:0});
+    sections.forEach(function(s){io.observe(s);});
+  }
+
+  /* ---------- Chrome: hamburger, back-to-top ---------- */
+  function initChrome(){
+    var ham=$("#hamburger"), scrim=$("#scrim");
+    if(ham) ham.addEventListener("click",function(){document.body.classList.toggle("nav-open");});
+    if(scrim) scrim.addEventListener("click",function(){document.body.classList.remove("nav-open");});
+
+    var top=$("#toTop");
+    if(top){
+      window.addEventListener("scroll",function(){
+        top.style.display=window.scrollY>400?"block":"none";
+      },{passive:true});
+      top.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
+    }
+  }
+})();
+</script>
+</body>
+</html>
