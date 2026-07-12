@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DE-CORE | Python + SQL + PySpark + Airflow Focused Mock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1519;
+    --panel:#182229;
+    --panel2:#1f2b34;
+    --line:#2c3a45;
+    --text:#e8edf3;
+    --muted:#8b99a9;
+    --teal:#2dd4bf;
+    --teal-dim:#0f2d29;
+    --green:#4ade80;
+    --green-dim:#12301e;
+    --red:#f87171;
+    --red-dim:#3a1a1a;
+    --blue:#60a5fa;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    padding:24px 16px 64px;
+  }
+  .wrap{max-width:820px;margin:0 auto}
+  .brand{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+  .brand h1{font-family:'Space Grotesk',sans-serif;font-size:26px;letter-spacing:.5px}
+  .brand .tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--teal);border:1px solid var(--teal);border-radius:4px;padding:2px 8px}
+  .brand .level{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);border:1px solid var(--red);border-radius:4px;padding:2px 8px;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+  .pipe{display:flex;gap:4px;margin:18px 0 6px;flex-wrap:wrap}
+  .pipe span{flex:1;min-width:4px;height:8px;border-radius:2px;background:var(--panel2);transition:background .2s}
+  .pipe span.ok{background:var(--green)}
+  .pipe span.bad{background:var(--red)}
+  .pipe span.cur{background:var(--teal)}
+  .meter{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:18px}
+  .meter b{color:var(--text)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px;margin-bottom:16px}
+  .chip{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--teal);background:var(--teal-dim);border-radius:4px;padding:3px 9px;margin-bottom:14px;letter-spacing:.4px}
+  .qnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:12px;float:right}
+  .qtext{font-size:17.5px;font-weight:600;line-height:1.5;margin-bottom:20px}
+  .qtext code, .opt code, .expl code, .qtext pre, .expl pre{font-family:'JetBrains Mono',monospace;font-size:.92em;background:var(--panel2);padding:1px 5px;border-radius:4px;color:var(--blue)}
+  .qtext pre, .expl pre{display:block;padding:10px 12px;margin:8px 0;white-space:pre-wrap;line-height:1.5;color:#cfd8e2}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.45;padding:13px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--teal)}
+  .opt:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .opt:disabled{cursor:default;opacity:.85}
+  .opt .k{font-family:'JetBrains Mono',monospace;color:var(--muted);margin-right:10px;font-size:13px}
+  .opt.correct{background:var(--green-dim);border-color:var(--green);opacity:1}
+  .opt.correct .k{color:var(--green)}
+  .opt.wrong{background:var(--red-dim);border-color:var(--red);opacity:1}
+  .opt.wrong .k{color:var(--red)}
+  .expl{border-left:3px solid var(--teal);background:var(--panel2);border-radius:0 8px 8px 0;padding:14px 16px;margin-top:16px;font-size:14.5px;line-height:1.6;color:#cfd8e2;display:none}
+  .expl b.v{font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.5px;display:block;margin-bottom:6px}
+  .expl.show{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .btn{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:.3px;background:var(--teal);color:#0a1e1c;border:none;border-radius:8px;padding:12px 26px;cursor:pointer;margin-top:18px}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--teal);border:1px solid var(--teal)}
+  .hidden{display:none}
+  .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:18px 0}
+  .catbtn{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:12px 14px;cursor:pointer;font-family:'Inter',sans-serif}
+  .catbtn:hover{border-color:var(--teal)}
+  .catbtn b{display:block;font-size:14.5px;margin-bottom:3px}
+  .catbtn span{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted)}
+  .score-big{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;line-height:1}
+  .score-big small{font-size:20px;color:var(--muted)}
+  .verdict{color:var(--teal);font-size:16px;margin:10px 0 22px}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:8px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+  td.num{font-family:'JetBrains Mono',monospace}
+  .bar{height:6px;border-radius:3px;background:var(--panel2);overflow:hidden;min-width:90px}
+  .bar i{display:block;height:100%;background:var(--green)}
+  .bar i.mid{background:var(--teal)}
+  .bar i.low{background:var(--red)}
+  .review-item{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:10px;background:var(--panel2);font-size:14px;line-height:1.55}
+  .review-item .rq{font-weight:600;margin-bottom:6px}
+  .review-item .ra{color:var(--red)}
+  .review-item .rc{color:var(--green)}
+  .review-item .re{color:var(--muted);margin-top:6px}
+  h2.sec{font-family:'Space Grotesk',sans-serif;font-size:18px;margin:26px 0 12px}
+  @media (max-width:520px){.qtext{font-size:16px}.card{padding:18px}.pipe span{height:6px}}
+  @media (prefers-reduced-motion: reduce){.expl.show{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <h1>DE&#8209;CORE</h1>
+    <span class="tag">FOCUSED MOCK - CORE STACK</span>
+    <span class="level">HARDER</span>
+  </div>
+  <p class="sub">Python + SQL + PySpark + Airflow only. The four pillars every Data Engineering interview keeps circling back to &mdash; drilled at the tier of DE-101 / DE-102. No cloud noise, no vendor trivia. Just the code you write every day.</p>
+
+  <div id="start" class="card">
+    <div class="qtext">Choose your run</div>
+    <p style="color:var(--muted);font-size:14px;line-height:1.6">Full 80-question focused test or drill a single topic. Every answer explains itself &mdash; right or wrong.</p>
+    <div class="catgrid" id="catgrid"></div>
+    <button class="btn" id="startFull">Start full test (80 Q)</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <div class="pipe" id="pipe"></div>
+    <div class="meter">
+      <span>Q <b id="mq">1</b> / <b id="mt">80</b></span>
+      <span style="color:var(--green)">&#10003; <b id="mok">0</b></span>
+      <span style="color:var(--red)">&#10007; <b id="mbad">0</b></span>
+      <span>Accuracy <b id="macc">&ndash;</b></span>
+    </div>
+    <div class="card">
+      <span class="qnum" id="qnum"></span>
+      <span class="chip" id="qcat"></span>
+      <div class="qtext" id="qtext"></div>
+      <div id="opts"></div>
+      <div class="expl" id="expl"></div>
+      <button class="btn hidden" id="nextBtn">Next question &rarr;</button>
+    </div>
+    <button class="btn ghost" id="quitBtn" style="margin-top:0">End test &amp; see results</button>
+  </div>
+
+  <div id="result" class="hidden">
+    <div class="card">
+      <div class="score-big"><span id="finalScore">0</span><small> / <span id="finalTotal">80</span></small></div>
+      <div class="verdict" id="verdict"></div>
+      <h2 class="sec">Topic breakdown</h2>
+      <table id="breakdown"><thead><tr><th>Topic</th><th>Score</th><th>Strength</th></tr></thead><tbody></tbody></table>
+      <h2 class="sec" id="reviewHead">Review your misses</h2>
+      <div id="review"></div>
+      <button class="btn" id="retryBtn">Take it again</button>
+      <button class="btn ghost" id="retryWrong" style="margin-left:10px">Retry only my wrong answers</button>
+    </div>
+  </div>
+</div>
+<script>
+const QUESTIONS = [
+// ---------------- SQL (20) ----------------
+{c:"SQL",q:"Given a table <code>logins(user_id, login_ts)</code>, write a query to find users who logged in for 5 or more <em>consecutive</em> days. The canonical trick uses:",o:["A self-join on <code>login_ts + 1 day</code>","Gaps-and-islands: <code>ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY login_date)</code> subtracted from the date to form a group key, then <code>COUNT(*) &gt;= 5</code>","<code>LAG</code> only, checking 4 previous rows","Group by user_id and count distinct days"],a:1,e:"Gaps-and-islands: <code>login_date - INTERVAL rn DAY</code> is constant for consecutive-day runs. Group by (user_id, that constant), <code>HAVING COUNT(*) &gt;= 5</code>. Every streak / consecutive / run problem uses this same trick."},
+{c:"SQL",q:"You want the 2nd highest salary <em>per department</em>. Which handles ties correctly if you want the 2nd distinct salary value?",o:["<code>ROW_NUMBER()</code> = 2","<code>RANK()</code> = 2","<code>DENSE_RANK()</code> = 2","<code>LAG(salary, 2)</code>"],a:2,e:"<code>DENSE_RANK</code> gives 1,1,2,2,3 &mdash; so rank 2 = 2nd distinct value regardless of ties. <code>RANK</code> skips (1,1,3), so no rank 2 exists when there's a tie at 1st. <code>ROW_NUMBER</code> arbitrarily picks one row per salary."},
+{c:"SQL",q:"Consider: <pre>SELECT COUNT(*) FROM t WHERE col = NULL;</pre>What does this return?",o:["The count of rows where col IS NULL","0, always &mdash; because <code>= NULL</code> is never TRUE","An error","The total row count"],a:1,e:"<code>col = NULL</code> evaluates to UNKNOWN (3-valued logic), not TRUE. The WHERE filter drops UNKNOWN rows, so COUNT is always 0. Use <code>IS NULL</code> to test for NULL. This is one of the most common SQL bugs in production."},
+{c:"SQL",q:"Given <code>orders(order_id, customer_id, amount, order_ts)</code>, find each customer's <em>running total</em> ordered by time. Correct clause:",o:["<code>SUM(amount) OVER(PARTITION BY customer_id ORDER BY order_ts)</code>","<code>SUM(amount) OVER(PARTITION BY customer_id)</code>","<code>SUM(amount) GROUP BY customer_id</code>","<code>SUM(amount) OVER(ORDER BY customer_id)</code>"],a:0,e:"Window frame defaults to <code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> when ORDER BY is present &mdash; that's the running total. Without ORDER BY, the frame is the whole partition, giving the customer's grand total on every row."},
+{c:"SQL",q:"Query optimizer picks a <em>hash join</em> over <em>nested loop join</em> when:",o:["Always","One input is small enough to fit its hash table in memory and both inputs are large enough that hashing beats repeated index lookups","Tables have indexes","Data is sorted"],a:1,e:"Nested loop is best when the outer is tiny and the inner has an index (O(outer &times; log inner)). Hash join builds a hash on the smaller side, streams the larger, and wins when the small side fits in memory and no useful index exists. Merge join wins when both sides are already sorted on the join key."},
+{c:"SQL",q:"Predict the output: <pre>SELECT NULL = NULL AS a, NULL &lt;&gt; NULL AS b, NULL IS NULL AS c;</pre>",o:["TRUE, FALSE, TRUE","NULL, NULL, TRUE","FALSE, FALSE, TRUE","Error"],a:1,e:"<code>= NULL</code> and <code>&lt;&gt; NULL</code> both return NULL (unknown), never TRUE or FALSE. Only <code>IS NULL</code> / <code>IS NOT NULL</code> return proper booleans. This is why <code>WHERE col = NULL</code> silently filters everything out."},
+{c:"SQL",q:"You have <code>events(user_id, event_ts, event_type)</code>. Definition of a session: gap &gt; 30 min between consecutive user events. Which window function pattern assigns session IDs?",o:["<code>ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY event_ts)</code>","Compute <code>LAG(event_ts)</code>, flag new session when gap &gt; 30min, then <code>SUM(flag) OVER(PARTITION BY user_id ORDER BY event_ts)</code>","<code>DENSE_RANK()</code>","<code>NTILE(10)</code>"],a:1,e:"Sessionization: compute time-gap-since-previous with LAG, mark 1 when gap exceeds threshold else 0, then running SUM of that flag = incrementing session number per user. Classic pattern &mdash; interviewers ask this often."},
+{c:"SQL",q:"Recursive CTE to walk an employee hierarchy from a CEO down. Which piece is required?",o:["The anchor (base case) plus the recursive member <code>UNION ALL</code>-ed &mdash; recursive member references the CTE by name","Only a base SELECT","A stored procedure","<code>WITH RECURSIVE</code> is optional in every dialect"],a:0,e:"Structure: anchor member (e.g., <code>WHERE manager_id IS NULL</code>) UNION ALL a recursive member that joins the CTE to itself on <code>emp.manager_id = cte.emp_id</code>. Termination is implicit when the recursive step returns no new rows. Postgres/SQL Server/Snowflake all require the <code>RECURSIVE</code> keyword; MySQL 8+ too."},
+{c:"SQL",q:"<pre>SELECT dept, AVG(salary)\nFROM emp\nGROUP BY dept\nHAVING AVG(salary) &gt; (SELECT AVG(salary) FROM emp);</pre>Correctly:",o:["Returns departments whose average salary exceeds the overall average","Errors because HAVING can't have a subquery","Returns nothing","Returns all departments"],a:0,e:"Valid SQL. HAVING filters groups after aggregation and can contain scalar subqueries. Common interview question &mdash; also good candidate for a CTE for readability if the subquery is complex."},
+{c:"SQL",q:"You need to compute month-over-month revenue growth. Best window pattern:",o:["Self-join on <code>month = prev_month + 1</code>","<code>(revenue - LAG(revenue) OVER(ORDER BY month)) / LAG(revenue) OVER(ORDER BY month)</code>","<code>SUM(revenue) OVER(ORDER BY month)</code>","<code>RANK()</code>"],a:1,e:"<code>LAG</code> gives the previous row's value in a single pass &mdash; no join, no subquery. Self-join works but reads worse and can miss months with zero revenue. Wrap in NULLIF to guard against divide-by-zero."},
+{c:"SQL",q:"<pre>SELECT * FROM a LEFT JOIN b ON a.id = b.id WHERE b.status = 'X';</pre>What is the effective join type here?",o:["Still LEFT JOIN &mdash; unmatched rows kept","Effectively INNER JOIN &mdash; the WHERE on <code>b.status</code> filters out NULL-b rows","CROSS JOIN","RIGHT JOIN"],a:1,e:"Classic gotcha. Any predicate on the right-side table in WHERE (not in ON) rejects the NULL-b rows a LEFT JOIN was designed to keep. If you want to keep unmatched a rows, put <code>AND b.status = 'X'</code> in the ON clause instead."},
+{c:"SQL",q:"You have <code>t(id, val)</code> with 500M rows. Query: <code>SELECT * FROM t WHERE UPPER(val) = 'ACME';</code> and there is an index on <code>val</code>. What happens?",o:["Uses the index normally","<em>Cannot</em> use the index &mdash; wrapping the column in a function makes the predicate non-SARGable; full scan","Uses the index but slower","Errors"],a:1,e:"Non-SARGable: any function on the indexed column (UPPER, CAST, DATE(), +1) prevents index seek. Fix: index a functional expression (<code>CREATE INDEX ... ON t(UPPER(val))</code>) or normalize casing at write time. This is a classic 'slow query' interview scenario."},
+{c:"SQL",q:"<code>EXPLAIN ANALYZE</code> in Postgres shows a step with <code>rows=1</code> planned but <code>actual rows=8_000_000</code>. Most likely cause?",o:["Query is broken","Stale statistics or bad correlation estimate on a filter/join predicate &mdash; run ANALYZE, or the predicate is on a correlated column the planner can't model","Postgres bug","Not enough memory"],a:1,e:"Huge planned-vs-actual gap = cardinality misestimate. Causes: stale stats (fix: ANALYZE), correlated columns (planner assumes independence), user-defined functions treated as opaque, or complex predicates. Downstream operators (join order, hash vs merge) get chosen with wrong assumptions and blow up."},
+{c:"SQL",q:"Snowflake / most modern warehouses: <code>SELECT DISTINCT col FROM t</code> vs <code>GROUP BY col</code>. Difference?",o:["DISTINCT is faster","GROUP BY is faster","In modern optimizers they typically compile to the same physical plan &mdash; use whichever is clearer","GROUP BY is only for aggregations"],a:2,e:"For a plain distinct-values query, most modern optimizers (Snowflake, BigQuery, Spark, DuckDB) compile them to identical plans. Use GROUP BY when you're computing aggregates anyway; DISTINCT for a pure de-dupe read."},
+{c:"SQL",q:"You want the <em>top 3 products per category by revenue</em>. Best pattern?",o:["<code>LIMIT 3</code>","<code>ROW_NUMBER() OVER(PARTITION BY category ORDER BY revenue DESC)</code> then filter <code>= 1..3</code>","<code>GROUP BY category</code>","Manual joins"],a:1,e:"Top-N-per-group is the textbook window function use case. <code>ROW_NUMBER</code> for exactly 3 (arbitrary tiebreak), <code>RANK</code> if you want to include ties, <code>DENSE_RANK</code> for top-3-distinct-values. Interviewers ask this in every SQL round."},
+{c:"SQL",q:"<pre>SELECT id, name FROM t\nWHERE id IN (SELECT id FROM other WHERE flag = 1);</pre>vs <pre>WHERE EXISTS (SELECT 1 FROM other o WHERE o.id = t.id AND flag = 1);</pre>Which is generally safer?",o:["IN","EXISTS &mdash; handles NULLs correctly (IN returns UNKNOWN if the subquery contains NULL, filtering out all rows) and is often better optimized","Identical always","Neither"],a:1,e:"IN + NULL bug: if the subquery returns any NULL id, <code>x IN (list_with_null)</code> becomes UNKNOWN for every non-matching row and the whole outer filter goes empty. EXISTS returns a proper boolean per correlated row. Modern optimizers often plan them identically for non-NULL cases, but EXISTS is safer as a default habit."},
+{c:"SQL",q:"MERGE (upsert) semantics: two rows in the source match the same target row on the join key. What happens?",o:["Both apply cleanly","Undefined / error in most engines &mdash; MERGE requires that the source produces at most one match per target row; violates the 'no double update' rule","Only first applies","Rows are averaged"],a:1,e:"Snowflake, SQL Server, Postgres MERGE (15+), Databricks Delta MERGE &mdash; all raise 'multiple source rows matched' unless the target update is idempotent. Fix: de-dupe the source first, or use a QUALIFY / ROW_NUMBER filter picking the winning row before the MERGE."},
+{c:"SQL",q:"Find employees whose salary is above their department average. Correlated subquery version:",o:["<code>WHERE salary &gt; (SELECT AVG(salary) FROM emp e2 WHERE e2.dept = e.dept)</code>","<code>WHERE salary &gt; AVG(salary)</code>","<code>GROUP BY dept HAVING salary &gt; AVG(salary)</code>","<code>WHERE salary IN (AVG(salary))</code>"],a:0,e:"Correlated subquery references the outer row's <code>e.dept</code>. Modern optimizers often rewrite this as a window function: <code>WHERE salary &gt; AVG(salary) OVER(PARTITION BY dept)</code> is cleaner, single-pass, and preferred stylistically."},
+{c:"SQL",q:"You need median. Standard cross-DB pattern:",o:["<code>AVG(col)</code>","<code>PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY col)</code> (or engine-specific <code>MEDIAN</code>, <code>APPROX_PERCENTILE</code>)","<code>MID(col)</code>","<code>COUNT(*)/2</code>"],a:1,e:"<code>PERCENTILE_CONT</code> (continuous interpolation) or <code>PERCENTILE_DISC</code> (returns an actual value from the set) are ANSI. Warehouses expose <code>MEDIAN()</code>, <code>APPROX_PERCENTILE</code>, or <code>PERCENTILE_APPROX</code> for cheap approximate quantiles on huge tables."},
+{c:"SQL",q:"<pre>SELECT COUNT(*) FROM a, b WHERE a.id = b.id;</pre>vs<pre>SELECT COUNT(*) FROM a JOIN b ON a.id = b.id;</pre>",o:["First is CROSS JOIN, second is INNER","Both are inner joins &mdash; comma-join with equality predicate = INNER JOIN; but ANSI JOIN syntax is preferred for clarity and to avoid accidental cross joins when a predicate is missing","First errors","Different row counts"],a:1,e:"Semantically identical when the predicate matches the join. Danger: forget the WHERE and comma-join silently becomes CROSS JOIN &mdash; N&times;M rows. ANSI JOIN syntax forces you to write the ON clause, making mistakes visible. Use it always."},
+// ---------------- Python (20) ----------------
+{c:"Python",q:"Predict the output: <pre>def f(x, lst=[]):\n    lst.append(x)\n    return lst\nprint(f(1)); print(f(2)); print(f(3))</pre>",o:["[1] [2] [3]","[1] [1,2] [1,2,3] &mdash; mutable default argument evaluated once at def time and shared","Error","[3] [3] [3]"],a:1,e:"Classic Python gotcha. Default arguments are evaluated once when the function is defined, not on each call. Every call sees the same list. Fix: use <code>lst=None</code> then <code>lst = lst or []</code> inside. Interviewers love this one."},
+{c:"Python",q:"<pre>a = [1,2,3]\nb = a\nb += [4]\nprint(a)</pre>Output?",o:["[1,2,3]","[1,2,3,4] &mdash; <code>+=</code> on a list calls <code>__iadd__</code> which mutates in place","Error","[4]"],a:1,e:"<code>+=</code> on lists is in-place (like <code>extend</code>). Both <code>a</code> and <code>b</code> point to the same object. Contrast with <code>b = b + [4]</code>, which rebinds <code>b</code> to a new list and leaves <code>a</code> alone."},
+{c:"Python",q:"A generator function differs from a regular function returning a list because:",o:["It's faster","It's lazy &mdash; produces one value at a time via <code>yield</code>, keeps state between calls, and does not materialize all results in memory","It can only yield ints","Generators cannot be iterated"],a:1,e:"Generators return an iterator. Memory is O(1) regardless of stream size. Combined with <code>itertools.islice</code>, <code>chain</code>, etc., they let you process billion-row streams with a few KB of memory. Downside: single-pass (can't rewind)."},
+{c:"Python",q:"<pre>d = {'a': 1}\nfor k in d:\n    d['b'] = 2</pre>What happens?",o:["Runs fine","<code>RuntimeError: dictionary changed size during iteration</code>","Silently drops the new key","Adds b safely"],a:1,e:"Iterating a dict (or set) while mutating it raises RuntimeError on next iteration. Safe patterns: iterate over <code>list(d.keys())</code> to snapshot, or collect changes in a separate dict and merge after."},
+{c:"Python",q:"What does <code>@functools.lru_cache(maxsize=None)</code> do to a pure function?",o:["Compiles it","Memoizes results keyed on arguments (must be hashable); makes recursive calls with overlapping subproblems dramatically faster","Runs it in parallel","Adds logging"],a:1,e:"Textbook example: recursive Fibonacci goes from exponential to linear. Args must be hashable (tuple / int / str; not list / dict). <code>maxsize=None</code> = unbounded cache; use a real bound in production to avoid memory bloat."},
+{c:"Python",q:"<pre>class A:\n    x = []\na1 = A(); a2 = A()\na1.x.append(1)\nprint(a2.x)</pre>Output?",o:["[]","[1] &mdash; <code>x</code> is a class attribute, shared across instances until reassigned","Error","None"],a:1,e:"Class attributes live on the class, not the instance. Mutating one is seen by all instances. Set instance state in <code>__init__</code>: <code>self.x = []</code>. Same shape as the mutable-default-arg bug."},
+{c:"Python",q:"<pre>with open('f.txt') as f:\n    data = f.read()\nprint(f.closed)</pre>Output?",o:["False","True &mdash; context manager exit closed the file automatically","Error","Nothing"],a:1,e:"<code>__exit__</code> closes the file even on exception. This is the whole point of context managers. Custom ones: implement <code>__enter__</code>/<code>__exit__</code>, or use <code>@contextmanager</code> from contextlib to write them as a generator."},
+{c:"Python",q:"CPython's GIL means:",o:["Python cannot run in parallel","Only one thread executes Python bytecode at a time in a single interpreter &mdash; threads still help for I/O-bound work; CPU-bound needs multiprocessing or C extensions releasing the GIL","Threads are useless","Only async is allowed"],a:1,e:"Threads yield on I/O (network, disk) so they're great for I/O concurrency. CPU-bound Python code sees no speedup from threading. Options: <code>multiprocessing</code> (separate interpreters), NumPy/pandas (C code releases GIL), or subinterpreters / free-threaded CPython in 3.13+."},
+{c:"Python",q:"<pre>x = [1,2,3,4,5]\nprint(x[::-1])\nprint(x[::2])\nprint(x[-2:])</pre>Predict all three:",o:["[5,4,3,2,1] / [1,3,5] / [4,5]","Errors","[1,2,3,4,5] / [1,2,3,4,5] / [1,2,3,4,5]","[5] / [1] / [5]"],a:0,e:"<code>[::-1]</code> = reverse. <code>[::2]</code> = every second element from the start. <code>[-2:]</code> = last two. Slice syntax is <code>[start:stop:step]</code>, all optional, negative allowed."},
+{c:"Python",q:"<pre>def decorator(fn):\n    def wrapper(*a, **kw):\n        print('before')\n        r = fn(*a, **kw)\n        print('after')\n        return r\n    return wrapper\n\n@decorator\ndef greet(): print('hi')\n\ngreet()</pre>Output order?",o:["hi / before / after","before / hi / after","before / after / hi","hi only"],a:1,e:"Decorators wrap: <code>greet = decorator(greet)</code>. Calling <code>greet()</code> runs <code>wrapper()</code>, which prints 'before', calls the original (prints 'hi'), prints 'after'. Use <code>@functools.wraps(fn)</code> on wrapper to preserve name/docstring."},
+{c:"Python",q:"<pre>a = (1, 2, [3, 4])\na[2].append(5)\nprint(a)</pre>",o:["Error &mdash; tuples immutable","<code>(1, 2, [3, 4, 5])</code> &mdash; tuple is immutable but the list inside is mutable","<code>(1, 2, [3, 4])</code>","<code>None</code>"],a:1,e:"Tuple immutability means you can't reassign its slots &mdash; but objects those slots point to can still be mutated. Common surprise. Also means such tuples are <em>not hashable</em> and can't be dict keys / set members."},
+{c:"Python",q:"<pre>import asyncio\nasync def slow(): await asyncio.sleep(1); return 1\n\nasync def main():\n    r = await asyncio.gather(slow(), slow(), slow())\n    return r\n\nasyncio.run(main())</pre>Roughly how long does this take?",o:["~3 seconds","~1 second &mdash; <code>gather</code> runs coroutines concurrently on one event loop; sleeps overlap","~0 seconds","Errors"],a:1,e:"Three sleeps of 1s run concurrently ~= 1s total. asyncio gives you single-threaded concurrency for I/O-bound work &mdash; no parallelism (still bound by GIL for CPU), but huge for many overlapping network/disk calls."},
+{c:"Python",q:"Difference between <code>@staticmethod</code> and <code>@classmethod</code>:",o:["They're the same","<code>staticmethod</code> gets no implicit first arg &mdash; a plain function in a class namespace. <code>classmethod</code> receives the class as first arg <code>cls</code> &mdash; commonly used for alternate constructors","Only staticmethod is real","classmethod is deprecated"],a:1,e:"Idiomatic use: <code>@classmethod def from_json(cls, data): return cls(...)</code> lets subclasses correctly instantiate themselves. staticmethod is for utility functions that logically belong to the class but don't need self or cls."},
+{c:"Python",q:"<pre>x = 'abc'\ny = x\nx += 'd'\nprint(y)</pre>Output?",o:["'abcd'","'abc' &mdash; strings are immutable; <code>+=</code> rebinds <code>x</code> to a new object, <code>y</code> still points to the original","Error","'d'"],a:1,e:"Compare with the list <code>+=</code> case: lists mutate in place, strings don't (they can't). Every <code>str +=</code> creates a new string &mdash; O(n) each time. Building strings in a loop should use <code>''.join(list)</code> for O(n) total instead of O(n&sup2;)."},
+{c:"Python",q:"You need to process a 50 GB CSV that doesn't fit in memory. Best pandas approach?",o:["<code>pd.read_csv(f)</code>","<code>pd.read_csv(f, chunksize=100_000)</code> and iterate, or switch to Polars / DuckDB / PySpark for lazy execution","<code>pd.read_csv(f).to_dict()</code>","Load into a list first"],a:1,e:"<code>chunksize</code> returns a TextFileReader iterator &mdash; process one chunk at a time and write results out. For serious out-of-core work, Polars (streaming), DuckDB (SQL over file), or Spark (distributed) beat pandas by a wide margin."},
+{c:"Python",q:"<pre>d = {'a': 1, 'b': 2, 'c': 3}\nprint({v: k for k, v in d.items()})</pre>",o:["<code>{1: 'a', 2: 'b', 3: 'c'}</code>","<code>{'a': 1, 'b': 2, 'c': 3}</code>","Error","<code>{}</code>"],a:0,e:"Dict comprehension inverting keys and values. Watch out: if any values collide, later ones overwrite earlier &mdash; you lose keys. Idiomatic for compact transforms; combined with conditions <code>{k:v for k,v in d.items() if v &gt; 1}</code>."},
+{c:"Python",q:"<code>__slots__ = ['x', 'y']</code> on a class does what?",o:["Nothing","Replaces the per-instance <code>__dict__</code> with a fixed set of attributes &mdash; less memory, faster attribute access, but no dynamic attributes","Makes the class abstract","Adds getters"],a:1,e:"Big memory win for classes instantiated millions of times (e.g., a graph node type). Trade-offs: can't add new attributes at runtime, harder to pickle, doesn't play well with multiple inheritance unless all bases use slots."},
+{c:"Python",q:"<pre>lst = [1,2,3,4,5]\nprint(list(filter(lambda x: x % 2, lst)))\nprint([x for x in lst if x % 2])</pre>Result of both?",o:["Both <code>[1, 3, 5]</code>","filter version errors","filter returns <code>[2, 4]</code>","Different results"],a:0,e:"<code>x % 2</code> is truthy for odd (1) and falsy for even (0). Both idioms produce <code>[1, 3, 5]</code>. Modern style prefers comprehensions &mdash; more readable and often faster than <code>filter</code>/<code>map</code> + lambda."},
+{c:"Python",q:"Which is the most memory-efficient way to sum 10 million numbers from a generator?",o:["<code>sum(list(gen))</code>","<code>sum(gen)</code> &mdash; consumes the generator lazily, O(1) memory","<code>reduce(lambda a,b: a+b, gen)</code>","Convert to numpy first"],a:1,e:"<code>sum()</code> accepts any iterable and streams. <code>sum(list(gen))</code> materializes the whole thing first &mdash; defeats the point of using a generator. Same principle for <code>max</code>, <code>min</code>, <code>any</code>, <code>all</code>."},
+{c:"Python",q:"<pre>try:\n    print('a')\n    raise ValueError\nexcept ValueError:\n    print('b')\nfinally:\n    print('c')</pre>Output?",o:["a b c","a c","b c","a b"],a:0,e:"<code>finally</code> runs regardless of whether the try body succeeded, raised and was handled, or raised and re-propagated. Use it for cleanup that must happen (close files, release locks, revert state). Context managers wrap this pattern for you."},
+// ---------------- PySpark (20) ----------------
+{c:"PySpark",q:"You call <code>df.count()</code> twice on a large DataFrame that reads from S3. What happens by default?",o:["Both calls hit cache","Both calls re-read from S3 and re-execute the entire lineage &mdash; DataFrames are lazy, not cached, unless you call <code>.cache()</code> or <code>.persist()</code>","Only first re-reads","Errors"],a:1,e:"Actions like <code>count</code>, <code>collect</code>, <code>show</code> trigger full recomputation from source every time. If you call multiple actions on the same DF, <code>.cache()</code> (memory) or <code>.persist(StorageLevel.MEMORY_AND_DISK)</code> saves the recompute. Uncache when done to free executor memory."},
+{c:"PySpark",q:"AQE (Adaptive Query Execution) does which of the following at runtime?",o:["Nothing new","Coalesces shuffle partitions, switches join strategy (SMJ to broadcast if stats allow), and handles skew via skewed-partition splitting &mdash; all based on <em>actual</em> stage stats","Only broadcast joins","Only compression"],a:1,e:"Pre-AQE, the physical plan was frozen at compile time using estimates from statistics (often wrong). AQE re-plans between stages using true row counts. Enable with <code>spark.sql.adaptive.enabled=true</code> (default in 3.2+). Massive win on skewed / cardinality-misestimated jobs."},
+{c:"PySpark",q:"A broadcast join is triggered when:",o:["Any join","One side is below <code>spark.sql.autoBroadcastJoinThreshold</code> (default 10MB), or you hint it explicitly with <code>broadcast(df)</code> from <code>pyspark.sql.functions</code>","Both sides are small","Never automatically"],a:1,e:"Small side is broadcast to every executor, avoiding the shuffle. Enormous speedup for star-schema fact-vs-dim joins. Explicit hint: <code>large.join(broadcast(small), 'id')</code>. Danger: broadcasting a not-actually-small DF blows up driver memory."},
+{c:"PySpark",q:"Data skew: one key has 90% of rows in a join. AQE-era fix?",o:["Nothing, Spark handles it","Enable <code>spark.sql.adaptive.skewJoin.enabled</code>; it detects skewed partitions from runtime stats and splits them across tasks. Alternative: salting the join key manually","Only broadcast","Repartition first"],a:1,e:"AQE skew handling splits a skewed partition into subpartitions, replicating the small side, so a mega-partition doesn't stall one task while everyone waits. When AQE isn't available, salting = add a random suffix to the hot key on both sides for the join, then strip."},
+{c:"PySpark",q:"<pre>df.withColumn('c', F.lit(1)).withColumn('d', F.lit(2)).withColumn('e', F.lit(3))</pre>vs one <code>select</code> with all three &mdash; performance?",o:["Chain is faster","Single <code>select</code> is generally cleaner and slightly cheaper: chained <code>withColumn</code> creates multiple projection nodes the optimizer merges; excessive chains (100s) can slow analysis / cause perf issues","Same always","Chain errors"],a:1,e:"Catalyst merges the projections, so semantically identical. But hundreds of <code>withColumn</code> calls in a loop are a known performance smell (analysis phase slowdown, deep plan trees). Use a single <code>select</code> with a list of expressions instead."},
+{c:"PySpark",q:"<code>groupBy(...).agg(...)</code> vs <code>reduceByKey</code> on RDDs. Why is DataFrame API preferred?",o:["It looks nicer","Catalyst + Tungsten give code-generation, columnar representation, and vectorization. RDDs are Python objects &mdash; slow serialization, no whole-stage codegen","RDD is faster","No difference"],a:1,e:"Modern Spark: prefer DataFrame / Dataset / SQL APIs. RDDs still exist for very low-level custom logic but skip most optimizations. Same principle for structured streaming vs DStreams &mdash; the newer typed API wins."},
+{c:"PySpark",q:"You need a custom column transform. Python UDF vs Pandas UDF (aka vectorized UDF)?",o:["Same speed","Pandas UDF is dramatically faster &mdash; uses Arrow to batch-transfer to Python and operates on Series, so no per-row serialization overhead","Python UDF is faster","Neither works"],a:1,e:"Plain Python UDF: row-by-row, boxed/unboxed each row across the JVM-Python boundary &mdash; often 10&ndash;100x slower than built-in functions. Pandas UDF (scalar / grouped map / iterator): Arrow-backed batches, near-native perf. Rule: prefer built-in <code>pyspark.sql.functions</code>; if you need custom, use Pandas UDF."},
+{c:"PySpark",q:"<code>df.repartition(100, 'user_id')</code> vs <code>df.coalesce(100)</code>. Difference?",o:["They're identical","<code>repartition</code> does a full shuffle to N partitions, hashed by the given key. <code>coalesce</code> only combines existing partitions (no shuffle), can only reduce count, may leave skew","Both shuffle","Neither works"],a:1,e:"<code>coalesce</code> is cheap (no shuffle) and used to reduce partition count before write. <code>repartition</code> rebalances and can partition by expression &mdash; needed before joins/aggregations that require co-located keys or to eliminate skew."},
+{c:"PySpark",q:"You write a Spark job producing many small Parquet files. Why is this bad?",o:["It's not bad","Metadata overhead per file, more S3 listings, worse query performance downstream, more scheduler pressure &mdash; the 'small-file problem'","Files are corrupt","Duplicate keys"],a:1,e:"Rule of thumb: target 128 MB &ndash; 1 GB per Parquet/ORC file. Fixes: <code>coalesce</code> before write, use <code>partitionBy</code> thoughtfully (don't partition on high-cardinality columns), or run Delta / Iceberg compaction (<code>OPTIMIZE</code>) periodically."},
+{c:"PySpark",q:"Structured streaming: <em>watermarking</em> exists to:",o:["Speed up queries","Bound how late an event can arrive and still be aggregated into a window &mdash; lets Spark drop old state and progress the aggregation","Encrypt data","Log events"],a:1,e:"Without watermarks, state grows forever waiting for possible late data. <code>withWatermark('event_ts', '10 minutes')</code> says: I accept events up to 10 min late; older ones drop; windows past that can be finalized and state cleared. Required for stateful aggregations in append mode."},
+{c:"PySpark",q:"Which join strategy is used when both sides are large and pre-sorted / bucketed on the join key?",o:["Broadcast Hash Join","Shuffle Hash Join","Sort-Merge Join &mdash; O(N+M) after sort, streaming both sides, no in-memory hash of either. Default for big-vs-big joins","Cartesian"],a:2,e:"SMJ is Spark's workhorse for large-vs-large joins. Pre-bucketing / pre-sorting on the join key eliminates the sort stage, huge win. Choice: BHJ (small side broadcast), SHJ (hash on smaller side, rare), SMJ (default big), Cartesian (avoid)."},
+{c:"PySpark",q:"You call <code>df.collect()</code> on a 500 GB DataFrame. What happens?",o:["Prints all rows","Driver OOMs &mdash; collect brings <em>every row</em> to the driver JVM as Java/Python objects","Cluster distributes it","Returns a stream"],a:1,e:"Never <code>collect</code> anything large. Use <code>show(n)</code>, <code>take(n)</code>, <code>write.*</code>, or <code>toPandas()</code> with Arrow enabled and a known small size. Anti-pattern: <code>df.collect(); for row in ...</code> on real data."},
+{c:"PySpark",q:"<pre>df.write.partitionBy('country').parquet(path)</pre>What's the effect?",o:["Nothing","Creates directory-per-value layout <code>country=US/...</code>. Reads with <code>country = 'US'</code> get partition pruning. Bad if <code>country</code> has millions of distinct values &mdash; small-file explosion","Errors if country has nulls","Compresses"],a:1,e:"Partition on low-cardinality, frequently-filtered columns (date, region). High-cardinality partitioning (user_id, event_id) creates millions of tiny files &mdash; the classic <code>partitionBy</code> mistake. For high-cardinality, use bucketing or Z-order (Delta) / clustering (Iceberg) instead."},
+{c:"PySpark",q:"<code>cache()</code> vs <code>persist(StorageLevel.DISK_ONLY)</code>:",o:["No difference","<code>cache()</code> = <code>persist(MEMORY_AND_DISK)</code>. <code>DISK_ONLY</code> skips memory entirely &mdash; useful when the DF is too big to fit but you still want to avoid recomputation","persist is deprecated","cache is deprecated"],a:1,e:"Storage levels give control: <code>MEMORY_ONLY</code> (fast, may evict), <code>MEMORY_AND_DISK</code> (default), <code>DISK_ONLY</code> (survives eviction), plus <code>_SER</code> variants for serialized (denser but slower access). Choose based on DF size vs cluster memory."},
+{c:"PySpark",q:"Structured streaming exactly-once end-to-end requires:",o:["Nothing special","An idempotent / transactional sink (Delta, Kafka with EOS, foreachBatch with dedupe), plus checkpointing so restart resumes from the last committed offsets","Only checkpointing","Only Delta"],a:1,e:"Spark's checkpoint gives exactly-once state and offset tracking on the source side. The sink must not double-write on retry &mdash; Delta gives this transactionally, Kafka needs idempotent producer + EOS, arbitrary sinks need <code>foreachBatch</code> with a dedupe key. Weak link breaks the guarantee."},
+{c:"PySpark",q:"You want to add a monotonically increasing ID per row of a DataFrame. Best function?",o:["<code>rand()</code>","<code>monotonically_increasing_id()</code> &mdash; guaranteed monotonic but not consecutive (encodes partition ID); or <code>row_number() OVER(ORDER BY ...)</code> for consecutive but forces a single-partition sort","<code>uuid()</code>","<code>hash()</code>"],a:1,e:"<code>monotonically_increasing_id</code> is cheap and distributed. Consecutive IDs are expensive (require global ordering &mdash; one task). Pick based on need: unique-per-row is enough for most cases; strict 1..N is only sometimes worth the perf cost."},
+{c:"PySpark",q:"<code>spark.sql.shuffle.partitions</code> default value and why it matters?",o:["10","200 by default &mdash; too high for small jobs (tiny tasks, scheduler overhead) and too low for very large ones (huge tasks, spill). Tune per job, or let AQE coalesce","1000","Auto"],a:1,e:"200 is a legacy default that suits neither extreme. Rule of thumb: aim for ~128&ndash;256 MB per shuffle partition. AQE's <code>coalescePartitions</code> handles the too-many case at runtime; for too-few, set explicitly to <code>spark.sql.shuffle.partitions=&lt;target&gt;</code>."},
+{c:"PySpark",q:"Delta Lake <code>MERGE INTO</code> under the hood for a large target:",o:["Rewrites the whole table","Reads matching files, applies changes, and rewrites <em>only</em> the affected files (copy-on-write); optionally uses deletion vectors (Delta 3+) for less rewrite","Never rewrites","Streams"],a:1,e:"Copy-on-write: files touched by matching keys get rewritten with the merged output; unaffected files are untouched. Deletion vectors (newer Delta) mark rows deleted logically without rewriting the file &mdash; further optimizing merge/update perf. Iceberg calls the analog 'merge-on-read'."},
+{c:"PySpark",q:"You suspect skew because one task takes 40 min while others finish in 2 min. First diagnostic?",o:["Add memory","Check the Spark UI stage detail: task duration distribution, records read per task, and the skewed key via <code>df.groupBy('key').count().orderBy(desc('count'))</code>","Increase partitions","Restart"],a:1,e:"Skew shows up in the UI as a wildly uneven task-duration histogram. Confirm by counting rows per key. Fixes: AQE skew join, salting the key, filtering out the hot key and joining it separately, or repartitioning by a composite key."},
+{c:"PySpark",q:"<code>df.explain(True)</code> shows the <em>physical</em> plan. Reading it top to bottom means:",o:["Top runs first","Bottom runs first &mdash; the leaves are the scans (data sources), and the plan is a tree, evaluated bottom-up","Random order","Left to right"],a:1,e:"Physical plans are trees. Leaves (scans, exchanges from stage boundaries) run first, feeding up. Look for: bad join type (SMJ where BHJ would fit), missing partition pruning (no <code>PushedFilters</code>), Exchange nodes indicating shuffles you didn't expect."},
+// ---------------- Airflow (20) ----------------
+{c:"Airflow",q:"Difference between <code>execution_date</code> (Airflow 1/2) and <code>logical_date</code> (Airflow 2.2+) and <code>data_interval_start</code>?",o:["All the same","They point to the same instant &mdash; the <em>start</em> of the data interval the DAG run is processing, not the wall-clock time it started running. <code>logical_date</code> is the renamed name","logical_date is the runtime","execution_date is the end of the interval"],a:1,e:"Big source of confusion. A daily DAG scheduled at midnight for interval [2024-01-01, 2024-01-02) runs at 2024-01-02 00:00 wall-clock, but its <code>logical_date</code> (= <code>data_interval_start</code>) is 2024-01-01. This is why 'yesterday's data' works idiomatically."},
+{c:"Airflow",q:"You want to run 500 dynamic tasks (one per file) that get discovered at runtime. Best pattern in Airflow 2.3+?",o:["Static <code>for</code> loop at DAG parse time","Dynamic Task Mapping: <code>my_task.expand(file=list_of_files)</code> &mdash; tasks are expanded at runtime based on upstream output","Multiple DAG files","SubDAGs"],a:1,e:"Dynamic Task Mapping (2.3+) is the modern replacement for SubDAGs and TaskGroup hacks. Upstream returns a list, downstream <code>.expand()</code> creates one mapped task instance per element. Great for per-file, per-tenant, per-partition workflows."},
+{c:"Airflow",q:"A sensor polls every 30s for 2 hours, occupying a worker slot the whole time. Better in Airflow 2.2+?",o:["Nothing to do","Convert to a <em>deferrable operator</em> / async sensor &mdash; releases the worker slot and hands off to the triggerer, waking up only when the condition is met","Reduce poke interval","Add more workers"],a:1,e:"Sensors in <code>poke</code> mode hold a slot. <code>reschedule</code> mode releases slot between pokes but still runs the scheduler. Deferrable operators / triggerer (async) fully free the slot and wake up on an event &mdash; drops sensor cost by 10&ndash;100x on wait-heavy DAGs."},
+{c:"Airflow",q:"Best way to share a small value (like a run ID) between tasks?",o:["Global variable","<code>XCom</code> &mdash; return a value from one task, pull it in another with <code>ti.xcom_pull</code> or via templating <code>{{ ti.xcom_pull(...) }}</code>. Small payloads only","Files on disk","Environment variables"],a:1,e:"XCom is the built-in per-DagRun key-value store, backed by the metadata DB. Small values only (default 1&ndash;48 KB depending on DB). Big blobs &rarr; write to S3 / GCS and pass the URI via XCom. Custom XCom backends (S3) let you keep the API and store larger objects."},
+{c:"Airflow",q:"<code>catchup=False</code> on a DAG means:",o:["The DAG runs faster","When unpaused, Airflow will not backfill past missed schedules &mdash; only the most recent interval is queued going forward","No scheduling","No retries"],a:1,e:"<code>catchup=True</code> (old default) fills every missed interval since <code>start_date</code>, useful for reproducible backfills. <code>catchup=False</code> avoids the flood when you unpause an old DAG. Explicit backfills are still possible via <code>airflow dags backfill</code>."},
+{c:"Airflow",q:"You have 10 DAGs each hitting the same API rate-limited to 5 concurrent requests. Correct control?",o:["<code>max_active_runs</code>","<code>concurrency</code>","A <em>Pool</em> with 5 slots that all API-hitting tasks belong to &mdash; limits cross-DAG concurrency at the resource level","Manual gates"],a:2,e:"Pools model shared external resources (API keys, DB connections, GPU boxes). Assign <code>pool='api_pool'</code> on any task using that resource; Airflow enforces total concurrent slots across all DAGs. Task-level <code>concurrency</code> only limits within a DAG."},
+{c:"Airflow",q:"Task fails on transient network error. Retry configuration to give 3 attempts with exponential backoff?",o:["<code>retries=3, retry_delay=timedelta(minutes=1), retry_exponential_backoff=True, max_retry_delay=timedelta(minutes=30)</code>","<code>retries=3</code> alone","<code>retry=3</code>","<code>retries=True</code>"],a:0,e:"<code>retry_delay</code> = base delay, <code>retry_exponential_backoff=True</code> = doubles each time (with jitter). Cap with <code>max_retry_delay</code>. Add <code>on_failure_callback</code> to alert only when all retries are exhausted, avoiding pager noise on transient blips."},
+{c:"Airflow",q:"A callback should fire when a task <em>misses</em> its expected completion time. Which config?",o:["<code>on_failure_callback</code>","<code>sla=timedelta(minutes=30)</code> plus <code>sla_miss_callback</code> at DAG level","<code>timeout</code>","<code>trigger_rule</code>"],a:1,e:"SLA is different from timeout. Timeout kills the task. SLA is a soft deadline &mdash; task keeps running, but a callback fires so you know it's late. Great for freshness alerts. Note: SLA logic has known quirks in some versions; deferrable timers or an external monitor are alternatives."},
+{c:"Airflow",q:"<code>trigger_rule='all_done'</code> on a downstream task means:",o:["Runs only if all upstream succeeded","Runs after all upstream have finished, regardless of their state (success, failed, skipped) &mdash; used for cleanup / notification tasks","Never runs","Runs in parallel"],a:1,e:"Rule set: <code>all_success</code> (default), <code>all_failed</code>, <code>all_done</code>, <code>one_success</code>, <code>one_failed</code>, <code>none_failed</code>, <code>none_skipped</code>. <code>all_done</code> is the idiomatic 'run cleanup either way' rule. <code>none_failed</code> covers 'succeeded OR skipped'."},
+{c:"Airflow",q:"You want to reuse a chain of related tasks visually and logically. Airflow 2 preferred construct?",o:["SubDAG","<em>TaskGroup</em> &mdash; visual grouping in the UI with no separate scheduler state, no DAG-in-DAG complexity. SubDAGs are deprecated","Sub-workflow file","Manual copy-paste"],a:1,e:"SubDAGs had a laundry list of issues (own executor, own scheduler quirks, hard to debug). TaskGroups are pure visual + namespace grouping &mdash; recommended. Combine with dynamic task mapping for expanded per-tenant sub-workflows."},
+{c:"Airflow",q:"Executor choice for a workload of many small tasks with tight per-task startup?",o:["KubernetesExecutor &mdash; new pod per task, high overhead","CeleryExecutor with a warm worker pool &mdash; workers stay running, task pickup is quick","SequentialExecutor","LocalExecutor on a laptop"],a:1,e:"K8sExecutor scales to zero and isolates every task in its own pod &mdash; ideal for heterogeneous heavy tasks, less ideal for many quick tasks (pod startup &gt; task duration). Celery keeps a warm pool. CeleryKubernetesExecutor is a hybrid &mdash; heavy tasks go to K8s, light ones to Celery."},
+{c:"Airflow",q:"You need to trigger DAG B when DAG A finishes on the same logical_date. Best mechanism?",o:["Cron",'<code>TriggerDagRunOperator</code> at the end of A, or <em>datasets</em> (Airflow 2.4+): A produces a Dataset, B is scheduled on <code>schedule=[dataset]</code> &mdash; the modern data-aware scheduling',"Manual UI trigger","Sensors"],a:1,e:"Datasets (2.4) are the recommended replacement for cross-DAG triggering. Declarative: 'B runs whenever these datasets update.' Multi-dataset schedules combine naturally &mdash; runs when <em>all</em> upstream datasets have been updated in the current window."},
+{c:"Airflow",q:"<code>ExternalTaskSensor</code> waits on a task in another DAG. Common failure mode?",o:["Never fails","If the two DAGs have different schedules or logical_dates don't align, the sensor waits forever &mdash; use <code>execution_delta</code> or <code>execution_date_fn</code> to map correctly. Better: use datasets","Auth issue","No connection"],a:1,e:"Classic bug: hourly DAG waiting on daily DAG will match logical_dates only once per day and time out the other 23 hours. Datasets (2.4+) sidestep this by keying on the actual event (dataset updated), not logical time. If you must use ExternalTaskSensor, get the mapping right."},
+{c:"Airflow",q:"Secrets should be:",o:["Hardcoded in DAG","Stored in a <em>Secrets Backend</em> (AWS Secrets Manager, HashiCorp Vault, GCP Secret Manager) referenced via connections / variables &mdash; DAG code never sees the secret material","In env vars","In XCom"],a:1,e:"Configure <code>secrets_backend</code> in <code>airflow.cfg</code>. DAGs use <code>BaseHook.get_connection('id')</code> or <code>Variable.get(...)</code>; Airflow transparently fetches from the backend. Rotates safely, auditable, no plaintext in metadata DB."},
+{c:"Airflow",q:"How do you unit-test a DAG's structure (no execution)?",o:["Only by running it","Instantiate the DAG in a Python test, assert on tasks/dependencies via <code>dag.task_ids</code> and <code>task.upstream_task_ids</code>; use <code>dag.test()</code> (2.5+) to actually run tasks in-process","Skip testing","Only integration tests"],a:1,e:"Unit level: pytest checks the DAG parses, has the expected task graph, no cycles, no missing deps. Integration: <code>dag.test()</code> runs the whole DAG locally, useful in CI. Add lint via <code>ruff</code> and DAG parsing time checks."},
+{c:"Airflow",q:"<code>@task</code> decorator (TaskFlow API) main benefit over classic PythonOperator?",o:["Nothing","Cleaner code (regular function signatures), automatic XCom via return value / arg passing, better typing &mdash; while still lowering to the same underlying operator","Runs faster","Auto-parallelization"],a:1,e:"TaskFlow: <code>@task def extract(): return data; @task def transform(x): ...; transform(extract())</code>. Function chaining defines the dependency graph <em>and</em> the XCom passing implicitly. Compact, testable Python, no manual XCom boilerplate. Prefer it for new DAGs."},
+{c:"Airflow",q:"A DAG parses slowly (10+ seconds) and slows the scheduler. Common cause?",o:["Too many tasks","Heavy work at DAG import time &mdash; e.g., API calls, DB queries, big file reads at module scope. Move that work into task callables, not the DAG file top level","Wrong executor","Old Airflow"],a:1,e:"Scheduler reparses DAG files continuously. Any work in top-level code runs every parse. Rule: DAG files should be pure structure declaration &mdash; imports, DAG object, task definitions. All I/O and expensive work goes inside task callables, evaluated at run time."},
+{c:"Airflow",q:"<code>max_active_runs=1</code> at DAG level vs task-level <code>max_active_tis_per_dag</code>:",o:["Identical","<code>max_active_runs</code> limits concurrent DagRuns of this DAG; task-level limits how many task instances of one task can run at once across DagRuns","Both control retries","No such settings"],a:1,e:"Use <code>max_active_runs=1</code> for DAGs whose state can't overlap (a full-load ETL rewriting the same table). Task-level <code>max_active_tis_per_dag</code> caps concurrency of a specific hot task (e.g., a heavy DB write) even when many DagRuns are in-flight."},
+{c:"Airflow",q:"You want to short-circuit a downstream branch if a condition fails. Correct operator?",o:["<code>DummyOperator</code>","<code>ShortCircuitOperator</code> &mdash; if the callable returns falsy, all downstream tasks are marked skipped. Also <code>BranchPythonOperator</code> for choosing between branches","<code>PythonOperator</code>","<code>TriggerDagRunOperator</code>"],a:1,e:"<code>ShortCircuitOperator</code>: 'stop here on false'. <code>BranchPythonOperator</code>: 'return task_id(s) to run, skip the rest'. Both integrate with <code>trigger_rule</code> to control what happens on the not-taken branch."},
+{c:"Airflow",q:"Idempotency in Airflow tasks matters because:",o:["It doesn't","Retries and manual reruns must produce the same result. Non-idempotent tasks (INSERTs that create duplicates, blind appends) create dirty state on retry. Design: DELETE-then-INSERT for the interval, or MERGE, or partition overwrite","Only for backfills","Only for streaming"],a:1,e:"Every serious data pipeline reruns at some point &mdash; retries, backfills, code fixes. Idempotent tasks are safe to rerun any number of times. Techniques: partition-scoped overwrites (<code>WHERE date = '{{ ds }}'</code>), MERGE keyed on unique IDs, upserts to Delta/Iceberg, transactional sinks."}
+];
+
+// ---------------- App logic ----------------
+let pool = [];
+let idx = 0;
+let answered = [];
+let okCount = 0, badCount = 0;
+
+const $ = id => document.getElementById(id);
+
+function categories(){
+  const m = {};
+  QUESTIONS.forEach(q => m[q.c] = (m[q.c]||0)+1);
+  return m;
+}
+
+function buildStart(){
+  const grid = $("catgrid");
+  grid.innerHTML = "";
+  const cats = categories();
+  Object.keys(cats).forEach(c => {
+    const b = document.createElement("button");
+    b.className = "catbtn";
+    b.innerHTML = "<b>"+c+"</b><span>"+cats[c]+" questions &middot; practice this topic</span>";
+    b.onclick = () => startQuiz(QUESTIONS.filter(q => q.c === c));
+    grid.appendChild(b);
+  });
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length-1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(qs){
+  pool = qs.slice();
+  idx = 0; okCount = 0; badCount = 0;
+  answered = new Array(pool.length).fill(null);
+  $("start").classList.add("hidden");
+  $("result").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  buildPipe();
+  render();
+  window.scrollTo({top:0});
+}
+
+function buildPipe(){
+  const pipe = $("pipe");
+  pipe.innerHTML = "";
+  pool.forEach(() => pipe.appendChild(document.createElement("span")));
+}
+
+function updatePipe(){
+  const spans = $("pipe").children;
+  for(let i = 0; i < pool.length; i++){
+    spans[i].className = "";
+    if(answered[i]) spans[i].className = answered[i].correct ? "ok" : "bad";
+    else if(i === idx) spans[i].className = "cur";
+  }
+}
+
+function updateMeter(){
+  $("mq").textContent = idx+1;
+  $("mt").textContent = pool.length;
+  $("mok").textContent = okCount;
+  $("mbad").textContent = badCount;
+  const done = okCount + badCount;
+  $("macc").textContent = done ? Math.round(okCount/done*100)+"%" : "\u2013";
+}
+
+function render(){
+  const q = pool[idx];
+  $("qcat").textContent = q.c.toUpperCase();
+  $("qnum").textContent = "Q" + String(idx+1).padStart(2,"0");
+  $("qtext").innerHTML = q.q;
+  const opts = $("opts");
+  opts.innerHTML = "";
+  const letters = ["A","B","C","D"];
+  q.o.forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = "<span class='k'>"+letters[i]+"</span>" + opt;
+    b.onclick = () => pick(i, b);
+    opts.appendChild(b);
+  });
+  $("expl").className = "expl";
+  $("expl").innerHTML = "";
+  $("nextBtn").classList.add("hidden");
+  updatePipe();
+  updateMeter();
+}
+
+function pick(i, btn){
+  if(answered[idx]) return;
+  const q = pool[idx];
+  const correct = (i === q.a);
+  answered[idx] = {pick:i, correct:correct};
+  correct ? okCount++ : badCount++;
+
+  const buttons = $("opts").children;
+  for(let j = 0; j < buttons.length; j++){
+    buttons[j].disabled = true;
+    if(j === q.a) buttons[j].classList.add("correct");
+  }
+  if(!correct) btn.classList.add("wrong");
+
+  const ex = $("expl");
+  ex.innerHTML = "<b class='v' style='color:" + (correct ? "var(--green)'>&#10003; CORRECT" : "var(--red)'>&#10007; NOT QUITE") + "</b>" + q.e;
+  ex.classList.add("show");
+
+  $("nextBtn").textContent = (idx === pool.length-1) ? "See my results \u2192" : "Next question \u2192";
+  $("nextBtn").classList.remove("hidden");
+  updatePipe();
+  updateMeter();
+}
+
+$("nextBtn").onclick = () => {
+  if(idx === pool.length-1){ finish(); return; }
+  idx++;
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+};
+
+$("quitBtn").onclick = finish;
+$("startFull").onclick = () => startQuiz(shuffle(QUESTIONS));
+$("retryBtn").onclick = () => { $("result").classList.add("hidden"); $("start").classList.remove("hidden"); buildStart(); };
+
+function verdictFor(pct){
+  if(pct >= 90) return "Elite on core stack. Python, SQL, PySpark, Airflow &mdash; the four you'll be tested on most &mdash; are locked in.";
+  if(pct >= 75) return "Very strong core. Fix the weak topic below and you're interview-ready on the stack.";
+  if(pct >= 60) return "Good base. The topic breakdown shows exactly which of the four to drill next.";
+  if(pct >= 40) return "The gaps here matter &mdash; this is what interviewers keep circling back to. Review misses, retake.";
+  return "Come back after DE-100. Rebuild these fundamentals first &mdash; every DE role opens with them.";
+}
+
+function finish(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
+
+  const attempted = answered.filter(a => a).length;
+  $("finalScore").textContent = okCount;
+  $("finalTotal").textContent = attempted || pool.length;
+  const pct = attempted ? Math.round(okCount/attempted*100) : 0;
+  $("verdict").textContent = pct + "% accuracy \u2014 " + verdictFor(pct);
+
+  const stats = {};
+  pool.forEach((q, i) => {
+    if(!answered[i]) return;
+    stats[q.c] = stats[q.c] || {ok:0, total:0};
+    stats[q.c].total++;
+    if(answered[i].correct) stats[q.c].ok++;
+  });
+  const tbody = $("breakdown").querySelector("tbody");
+  tbody.innerHTML = "";
+  Object.keys(stats).sort((a,b) => (stats[a].ok/stats[a].total) - (stats[b].ok/stats[b].total)).forEach(c => {
+    const s = stats[c];
+    const p = Math.round(s.ok/s.total*100);
+    const cls = p >= 75 ? "" : (p >= 50 ? "mid" : "low");
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td>"+c+"</td><td class='num'>"+s.ok+"/"+s.total+"</td><td><div class='bar'><i class='"+cls+"' style='width:"+p+"%'></i></div></td>";
+    tbody.appendChild(tr);
+  });
+
+  const rev = $("review");
+  rev.innerHTML = "";
+  let missed = [];
+  pool.forEach((q, i) => {
+    if(answered[i] && !answered[i].correct){
+      missed.push(q);
+      const d = document.createElement("div");
+      d.className = "review-item";
+      d.innerHTML = "<div class='rq'>["+q.c+"] "+q.q+"</div>"
+        + "<div class='ra'>Your answer: "+q.o[answered[i].pick]+"</div>"
+        + "<div class='rc'>Correct: "+q.o[q.a]+"</div>"
+        + "<div class='re'>"+q.e+"</div>";
+      rev.appendChild(d);
+    }
+  });
+  if(!missed.length){
+    $("reviewHead").textContent = "No misses \u2014 clean sweep on the core stack \uD83C\uDFAF";
+    $("retryWrong").classList.add("hidden");
+  } else {
+    $("reviewHead").textContent = "Review your misses ("+missed.length+")";
+    $("retryWrong").classList.remove("hidden");
+    $("retryWrong").onclick = () => startQuiz(missed);
+  }
+  window.scrollTo({top:0});
+}
+
+buildStart();
+</script>
+</body>
+</html>

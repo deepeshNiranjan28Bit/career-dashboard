@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DE-102 | Advanced Data Engineering Mock Test - Vol 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#10151b;
+    --panel:#1a222c;
+    --panel2:#212b37;
+    --line:#2e3a48;
+    --text:#e8edf3;
+    --muted:#8b99a9;
+    --amber:#f5a524;
+    --amber-dim:#3a2e14;
+    --green:#4ade80;
+    --green-dim:#12301e;
+    --red:#f87171;
+    --red-dim:#3a1a1a;
+    --blue:#60a5fa;
+    --purple:#a78bfa;
+    --purple-dim:#2a1f47;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    padding:24px 16px 64px;
+  }
+  .wrap{max-width:820px;margin:0 auto}
+  .brand{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+  .brand h1{font-family:'Space Grotesk',sans-serif;font-size:26px;letter-spacing:.5px}
+  .brand .tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--purple);border:1px solid var(--purple);border-radius:4px;padding:2px 8px}
+  .brand .level{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);border:1px solid var(--red);border-radius:4px;padding:2px 8px;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+  .pipe{display:flex;gap:4px;margin:18px 0 6px;flex-wrap:wrap}
+  .pipe span{flex:1;min-width:4px;height:8px;border-radius:2px;background:var(--panel2);transition:background .2s}
+  .pipe span.ok{background:var(--green)}
+  .pipe span.bad{background:var(--red)}
+  .pipe span.cur{background:var(--purple)}
+  .meter{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:18px}
+  .meter b{color:var(--text)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px;margin-bottom:16px}
+  .chip{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--purple);background:var(--purple-dim);border-radius:4px;padding:3px 9px;margin-bottom:14px;letter-spacing:.4px}
+  .qnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:12px;float:right}
+  .qtext{font-size:17.5px;font-weight:600;line-height:1.5;margin-bottom:20px}
+  .qtext code, .opt code, .expl code, .qtext pre, .expl pre{font-family:'JetBrains Mono',monospace;font-size:.92em;background:var(--panel2);padding:1px 5px;border-radius:4px;color:var(--blue)}
+  .qtext pre, .expl pre{display:block;padding:10px 12px;margin:8px 0;white-space:pre-wrap;line-height:1.5;color:#cfd8e2}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.45;padding:13px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--purple)}
+  .opt:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+  .opt:disabled{cursor:default;opacity:.85}
+  .opt .k{font-family:'JetBrains Mono',monospace;color:var(--muted);margin-right:10px;font-size:13px}
+  .opt.correct{background:var(--green-dim);border-color:var(--green);opacity:1}
+  .opt.correct .k{color:var(--green)}
+  .opt.wrong{background:var(--red-dim);border-color:var(--red);opacity:1}
+  .opt.wrong .k{color:var(--red)}
+  .expl{border-left:3px solid var(--purple);background:var(--panel2);border-radius:0 8px 8px 0;padding:14px 16px;margin-top:16px;font-size:14.5px;line-height:1.6;color:#cfd8e2;display:none}
+  .expl b.v{font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.5px;display:block;margin-bottom:6px}
+  .expl.show{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .btn{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:.3px;background:var(--purple);color:#1a1030;border:none;border-radius:8px;padding:12px 26px;cursor:pointer;margin-top:18px}
+  .btn:hover{filter:brightness(1.12)}
+  .btn.ghost{background:transparent;color:var(--purple);border:1px solid var(--purple)}
+  .hidden{display:none}
+  .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:18px 0}
+  .catbtn{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:12px 14px;cursor:pointer;font-family:'Inter',sans-serif}
+  .catbtn:hover{border-color:var(--purple)}
+  .catbtn b{display:block;font-size:14.5px;margin-bottom:3px}
+  .catbtn span{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted)}
+  .score-big{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;line-height:1}
+  .score-big small{font-size:20px;color:var(--muted)}
+  .verdict{color:var(--purple);font-size:16px;margin:10px 0 22px}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:8px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+  td.num{font-family:'JetBrains Mono',monospace}
+  .bar{height:6px;border-radius:3px;background:var(--panel2);overflow:hidden;min-width:90px}
+  .bar i{display:block;height:100%;background:var(--green)}
+  .bar i.mid{background:var(--amber)}
+  .bar i.low{background:var(--red)}
+  .review-item{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:10px;background:var(--panel2);font-size:14px;line-height:1.55}
+  .review-item .rq{font-weight:600;margin-bottom:6px}
+  .review-item .ra{color:var(--red)}
+  .review-item .rc{color:var(--green)}
+  .review-item .re{color:var(--muted);margin-top:6px}
+  h2.sec{font-family:'Space Grotesk',sans-serif;font-size:18px;margin:26px 0 12px}
+  @media (max-width:520px){.qtext{font-size:16px}.card{padding:18px}.pipe span{height:6px}}
+  @media (prefers-reduced-motion: reduce){.expl.show{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <h1>DE&#8209;102</h1>
+    <span class="tag">ADVANCED MOCK TEST - VOL 2</span>
+    <span class="level">HARDEST</span>
+  </div>
+  <p class="sub">The final tier. Real production scenarios, deep internals, architectural tradeoffs, on-call debugging. If you can clear this consistently, you can walk into a senior-DE interview cold and answer whatever comes.</p>
+
+  <div id="start" class="card">
+    <div class="qtext">Choose your run</div>
+    <p style="color:var(--muted);font-size:14px;line-height:1.6">Take the full test or drill a single topic. Same feedback-first format &mdash; every answer explains itself, and the explanations are basically mini interview notes.</p>
+    <div class="catgrid" id="catgrid"></div>
+    <button class="btn" id="startFull">Start full test</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <div class="pipe" id="pipe"></div>
+    <div class="meter">
+      <span>Q <b id="mq">1</b> / <b id="mt">100</b></span>
+      <span style="color:var(--green)">&#10003; <b id="mok">0</b></span>
+      <span style="color:var(--red)">&#10007; <b id="mbad">0</b></span>
+      <span>Accuracy <b id="macc">&ndash;</b></span>
+    </div>
+    <div class="card">
+      <span class="qnum" id="qnum"></span>
+      <span class="chip" id="qcat"></span>
+      <div class="qtext" id="qtext"></div>
+      <div id="opts"></div>
+      <div class="expl" id="expl"></div>
+      <button class="btn hidden" id="nextBtn">Next question &rarr;</button>
+    </div>
+    <button class="btn ghost" id="quitBtn" style="margin-top:0">End test &amp; see results</button>
+  </div>
+
+  <div id="result" class="hidden">
+    <div class="card">
+      <div class="score-big"><span id="finalScore">0</span><small> / <span id="finalTotal">100</span></small></div>
+      <div class="verdict" id="verdict"></div>
+      <h2 class="sec">Topic breakdown</h2>
+      <table id="breakdown"><thead><tr><th>Topic</th><th>Score</th><th>Strength</th></tr></thead><tbody></tbody></table>
+      <h2 class="sec" id="reviewHead">Review your misses</h2>
+      <div id="review"></div>
+      <button class="btn" id="retryBtn">Take it again</button>
+      <button class="btn ghost" id="retryWrong" style="margin-left:10px">Retry only my wrong answers</button>
+    </div>
+  </div>
+</div>
+<script>
+const QUESTIONS = [
+// ---------------- SQL (22) ----------------
+{c:"SQL",q:"You want <code>SUM(amount)</code> per user for only rows where <code>status='paid'</code>, but the SELECT must also return the total transaction count regardless of status. Correct pattern?",o:["Two separate queries then JOIN","Conditional aggregation: SUM(CASE WHEN status='paid' THEN amount END) AS paid_sum, COUNT(*) AS all_count","GROUP BY status","HAVING status='paid'"],a:1,e:"Different filter conditions per aggregate = conditional aggregation with CASE inside the aggregate. Filtering the whole query with WHERE would corrupt COUNT(*). Some dialects also support the FILTER (WHERE ...) clause: SUM(amount) FILTER (WHERE status='paid')."},
+{c:"SQL",q:"Query: <pre>SELECT user_id\nFROM orders o1\nWHERE (SELECT COUNT(*) FROM orders o2\n       WHERE o2.user_id = o1.user_id AND o2.ts &lt; o1.ts) &lt; 3;</pre>What does this return?",o:["Users with fewer than 3 orders total","The first 3 orders per user (order rank &lt; 3 → rows where at most 2 predecessors exist)","Users with exactly 3 orders","All users"],a:1,e:"The correlated subquery counts predecessors of the current row for the same user. Rows where predecessors &lt; 3 are the first three orders (ranks 0,1,2). This is a pre-window-function way to write ROW_NUMBER()&lt;=3 — slow but classic."},
+{c:"SQL",q:"An INDEX SEEK on a B-tree costs approximately:",o:["O(n)","O(log n) — depth of the tree","O(1)","O(n log n)"],a:1,e:"B-trees are typically 3-5 levels deep even for billion-row tables. Each level is a disk page. That's why a single indexed lookup on a huge table is fast, and why compound leftmost-prefix rules matter — they determine whether the seek is possible."},
+{c:"SQL",q:"You see a query plan with 'Sort (Warning: sort spills to disk)'. The bottleneck is:",o:["CPU","memory_grant insufficient for the sort operation — data spilled to tempdb; fix with more memory, an index that provides ORDER, or reducing sort volume","Network","GC"],a:1,e:"Sorts want to fit in memory. When they don't, engines spill sorted runs to disk and merge them — orders of magnitude slower. Fixes: index-order the sort key (index removes the sort), reduce rows before sorting (WHERE early), or grant more memory."},
+{c:"SQL",q:"A LEFT JOIN with a WHERE clause on the RIGHT table's columns (not IS NULL) effectively:",o:["Preserves left outer join semantics","Becomes an INNER JOIN because unmatched rows have NULL on the right, and a non-null equality predicate on the right filters them out","Errors","Duplicates rows"],a:1,e:"WHERE right.col = 'X' eliminates NULL right-side rows produced by unmatched left rows — the same effect as INNER JOIN. Push right-table filters into the ON clause to preserve LEFT JOIN semantics."},
+{c:"SQL",q:"The 'MERGE JOIN' physical operator requires:",o:["Nothing","Both inputs sorted on the join key (or an index providing sort order); good for large sorted inputs and range joins","Small right side","Hash function"],a:1,e:"Merge join is a two-pointer walk — cheap in CPU but demands sorted input. If both sides are already sorted (indexed or pre-shuffled), merge join is near-optimal. Otherwise the sort cost may dominate and hash join wins."},
+{c:"SQL",q:"A recursive CTE without a valid base case will:",o:["Return NULL","Loop until the engine's recursion depth limit is hit (or infinite spin), then error or slow massively","Run once","Return the base row"],a:1,e:"Recursive CTEs need a UNION ALL of an anchor (base case) and a recursive step that eventually returns no new rows. Bad recursion (self-referential without termination) hits MAX RECURSION limits (100 default in SQL Server) or explodes memory."},
+{c:"SQL",q:"To find the last order per customer without a window function, which works?",o:["MAX(ts) GROUP BY customer_id + JOIN back to orders on (customer_id, ts)","SELECT DISTINCT customer_id","LIMIT 1","MIN(order_id)"],a:0,e:"Classic pre-window pattern: get MAX(ts) per customer in a subquery, then join back to fetch the full row for that timestamp. Watch for ties (two orders at the same ts) — you may need a tiebreaker like MAX(order_id)."},
+{c:"SQL",q:"In an <code>OVER (PARTITION BY x ORDER BY y RANGE BETWEEN INTERVAL '7' DAY PRECEDING AND CURRENT ROW)</code>, RANGE differs from ROWS how?",o:["Same thing","RANGE is value-based (all rows within 7 days of the current row's y value); ROWS is positional (the previous N rows regardless of gaps)","RANGE is faster","RANGE requires numeric"],a:1,e:"For time-series with irregular gaps, RANGE with an INTERVAL gives correct time-windowed aggregates. ROWS 6 PRECEDING assumes evenly-spaced data. Also: RANGE with default frame extends to all peer rows sharing the current row's ORDER BY value."},
+{c:"SQL",q:"You need a query that runs 'as of a specific timestamp' against snapshotted data. Which pattern?",o:["Regular JOIN","Point-in-time (temporal) JOIN: WHERE dim.effective_from &lt;= event_ts AND (dim.effective_to &gt; event_ts OR is_current)","LATEST JOIN","Snapshot table"],a:1,e:"Fact rows carry event_ts; dimension is SCD2 with effective ranges. The temporal predicate picks the version of the dimension that was current at each event's time. Foundation for reproducible historical reporting."},
+{c:"SQL",q:"For a query on billions of rows, the optimizer chooses a nested-loop join with a table-scan on the outer input. Likely reason?",o:["Random choice","Cardinality mis-estimate — optimizer thought the outer input was tiny; check statistics and estimated vs actual rows in the plan","Better than hash","No indexes"],a:1,e:"Nested loops are fine when the outer is small and the inner has an index. When outer is huge and the optimizer thought it was small, you get catastrophic nested lookups. UPDATE STATISTICS, add missing indexes, or hint the join type."},
+{c:"SQL",q:"Deadlock scenario: TxA locks tableX then tries to lock tableY. TxB locks tableY then tries to lock tableX. The DB engine will:",o:["Wait forever","Detect the cycle in its wait-for graph and abort one (the 'victim') to break the deadlock; the app receives an error and should retry","Merge transactions","Crash"],a:1,e:"Deadlock detection is periodic (e.g., every 1-5 seconds). One transaction is rolled back — usually the one with the smallest log write or by policy. App-level: catch deadlock errors and retry the whole transaction."},
+{c:"SQL",q:"You need row-level updates on a Snowflake/BigQuery/Databricks-style analytical table with MERGE. What's the KEY caveat?",o:["Nothing special","MERGE INTO in columnar/analytical engines rewrites entire files/partitions for changes — high write amplification; batch changes and design for it","Faster than OLTP","Row-level free"],a:1,e:"Analytical stores are optimized for reads on immutable files. A single row update rewrites the whole file (Delta, Iceberg, Snowflake micro-partition). Batch updates, minimize touched files (partition alignment), or use CDC-style append + view."},
+{c:"SQL",q:"<code>SELECT COUNT(*)</code> vs <code>SELECT COUNT(id)</code> where id is the PK — do they differ in performance?",o:["COUNT(*) is always slower","In most engines they're the same for a PK, but COUNT(1)/COUNT(*) skip fetching column data while COUNT(nullable_col) must check nulls; internally often identical for PK","COUNT(1) is a hack","Always different"],a:1,e:"Modern optimizers treat COUNT(*), COUNT(1), and COUNT(pk) the same — none must fetch column data since the PK is NOT NULL. COUNT(nullable) is the only true different case. The COUNT(1) 'trick' is a myth."},
+{c:"SQL",q:"You want to update a row and see the previous value in one atomic statement. In Postgres this is:",o:["Two queries","UPDATE ... SET col = new WHERE ... RETURNING old.col, new.col — via the RETURNING clause (also OUTPUT in T-SQL)","Trigger","Impossible"],a:1,e:"RETURNING (Postgres/Snowflake), OUTPUT (SQL Server), and similar clauses in Oracle expose the mutated rows atomically. Great for CDC and audit patterns without extra reads."},
+{c:"SQL",q:"A dashboard query filters 'last 90 days' but the WHERE uses <code>CAST(ts AS DATE) &gt;= CURRENT_DATE - 90</code>. Performance issue?",o:["None","Wrapping ts in CAST makes it non-SARGable; the optimizer can't use an index on ts. Rewrite: WHERE ts &gt;= CURRENT_DATE - INTERVAL '90 day'","CAST is required","Result is wrong"],a:1,e:"Non-SARGable predicates force scans. Rewriting to keep the column bare on one side lets the optimizer use a range seek. This is the number-one 'why is my dashboard slow' answer in real teams."},
+{c:"SQL",q:"In Postgres, <code>SELECT ... FOR UPDATE SKIP LOCKED</code> is used to:",o:["Skip transactions","Implement queue-like semantics: multiple workers concurrently claim different rows without blocking each other","Bypass ACID","Delete rows"],a:1,e:"FOR UPDATE takes row locks. SKIP LOCKED lets each worker claim available rows and move on if a row is already claimed — classic 'work queue in a table' pattern without external queue infrastructure."},
+{c:"SQL",q:"A window function <code>PARTITION BY user_id ORDER BY ts</code> over 1B rows is slow. Best mitigation:",o:["Add more columns","Ensure a supporting index (user_id, ts); optimizer can then avoid re-sorting; also consider filtering to a narrower window first","Use GROUP BY","Reduce columns"],a:1,e:"Window functions cost = partitioning + sorting within partitions. An index matching (partition-by, order-by) can serve rows already grouped and sorted, letting some engines skip the sort. Filtering earlier (WHERE ts &gt; ...) shrinks the work."},
+{c:"SQL",q:"<code>SELECT * FROM t WHERE lower(email) = 'x@y.com'</code> is slow. Best fix on Postgres:",o:["Nothing","Create a functional index: CREATE INDEX ON t (lower(email))","Add composite index","Use LIKE"],a:1,e:"Postgres supports expression/functional indexes. Indexing lower(email) makes the lookup use the index directly. Alternative: store email in canonical case on insert and index the raw column."},
+{c:"SQL",q:"A <code>WITH RECURSIVE</code> anchor + recursive step joins to itself. When does the recursion STOP?",o:["Manually","When the recursive step returns an empty set — the working table becomes empty and the CTE finishes","After 100 rows","Never"],a:1,e:"Each iteration feeds the previous iteration's output back in. When the recursive query produces no new rows, iteration ends. Bad joins that always produce rows create infinite recursion (bounded only by engine limits/memory)."},
+{c:"SQL",q:"For time-series data with billions of rows, the standard warehouse pattern is:",o:["Single table","Partition by event date (or partition column matching most-common filter), cluster by high-cardinality secondary filter, optimize for scan-and-prune","Index everything","No design"],a:1,e:"Partitioning aligns with the primary filter (usually time) so pruning is effective. Clustering/Z-ORDER within partitions helps secondary filters. Small tables + broadcast joins finish it off. This is the modern lakehouse playbook."},
+{c:"SQL",q:"You need 'exactly one row per user per day' with LATEST value. Which is idiomatic?",o:["MAX(ts) GROUP BY user, date + JOIN","QUALIFY ROW_NUMBER() OVER (PARTITION BY user, date ORDER BY ts DESC) = 1 (Snowflake/Databricks) — or subquery filter for other engines","DISTINCT ON","LIMIT 1"],a:1,e:"QUALIFY (Snowflake, Databricks, Teradata) filters window-function results without a subquery — the cleanest form. Postgres uses DISTINCT ON (user, date) ORDER BY user, date, ts DESC. Both beat the multi-step JOIN pattern for readability and often for performance."},
+
+// ---------------- Python (12) ----------------
+{c:"Python",q:"<pre>from concurrent.futures import ThreadPoolExecutor\ndef compute(x):\n    total = 0\n    for _ in range(10**7): total += 1\n    return total\nwith ThreadPoolExecutor(4) as ex:\n    list(ex.map(compute, range(4)))</pre>Expected speedup vs sequential on a 4-core machine?",o:["~4x","~1x (or worse) — CPU-bound work is bottlenecked by the GIL; use ProcessPoolExecutor instead","0.25x","Depends on GC"],a:1,e:"Threads share the GIL for Python bytecode. CPU-bound loops don't parallelize with threads. Switch to multiprocessing (ProcessPoolExecutor) or push work to native code (NumPy, Spark, Cython)."},
+{c:"Python",q:"<pre>d = {'a':1,'b':2}\nfor k in list(d):\n    if d[k] &gt; 0: d[k*2] = d[k]\nprint(len(d))</pre>Why is <code>list(d)</code> important here?",o:["Cosmetic","Freezes the keys at loop start — mutating a dict while iterating it raises RuntimeError","Faster","Sorts keys"],a:1,e:"Iterating a dict directly is a live view. Any structural change (add/delete key) during iteration raises RuntimeError: dictionary changed size during iteration. list(d) snapshots the keys."},
+{c:"Python",q:"<pre>class C:\n    __slots__ = ('a','b')\n    def __init__(self, a, b):\n        self.a, self.b = a, b\n\nc = C(1, 2)\nc.z = 3  # ?</pre>Result?",o:["Sets c.z = 3","AttributeError — __slots__ restricts allowed attributes and disables __dict__","Silent","Adds z as class attr"],a:1,e:"__slots__ replaces per-instance __dict__ with a fixed-slot layout. Saves memory dramatically for millions of small objects (common in DE). Trade-off: no dynamic attributes; harder to pickle/subclass without care."},
+{c:"Python",q:"<pre>import time\ndef timer(fn):\n    def wrap(*a, **k):\n        t = time.time()\n        r = fn(*a, **k)\n        print(time.time()-t)\n        return r\n    return wrap\n\n@timer\ndef slow(): time.sleep(1)\nprint(slow.__name__)</pre>Output?",o:["'slow'","'wrap' — the decorator replaced slow's name; fix with @functools.wraps(fn)","Error","None"],a:1,e:"Decorators replace the function with the wrapper. Metadata (__name__, __doc__, signature) leaks through unless preserved. Always use functools.wraps in production decorators."},
+{c:"Python",q:"<pre>a = [1,2,3]\nb = a\nc = a[:]\na.append(4)\nprint(b, c)</pre>Output?",o:["[1,2,3,4] [1,2,3,4]","[1,2,3,4] [1,2,3]","[1,2,3] [1,2,3]","[1,2,3,4] []"],a:1,e:"b = a is name binding (same object). c = a[:] is a shallow copy (new list, same-typed contents). Mutating a affects b (same object) but not c (independent list)."},
+{c:"Python",q:"<pre>with open('a.txt') as f:\n    lines = f.readlines()\n# process(lines) 5 minutes later\nprint(f.closed)</pre>Result?",o:["False","True — 'with' closes on exit; f is closed after the block, even though we still hold a reference","Error","Depends on GC"],a:1,e:"The context manager guarantees f.close() at block exit. The variable f still exists (Python doesn't invalidate names) but the underlying file handle is closed. Any read on it now raises."},
+{c:"Python",q:"<pre>def gen():\n    try:\n        yield 1\n        yield 2\n    finally:\n        print('cleanup')\n\ng = gen()\nnext(g)\ndel g</pre>Does 'cleanup' print?",o:["No","Yes — when the generator is garbage-collected, GeneratorExit is thrown in, running the finally block","Only on error","Only on completion"],a:1,e:"Generators support cleanup via try/finally. On close (explicit .close() or garbage collection), GeneratorExit is thrown at the current yield point, propagating through finally. Critical for resource management in streaming pipelines."},
+{c:"Python",q:"For a data engineering script that fans out 1000 HTTP requests to different endpoints, best choice?",o:["Sequential requests","asyncio + aiohttp (event loop I/O concurrency) — cheaper than threads, non-blocking waits","Multiprocessing","Threads only"],a:1,e:"HTTP is I/O-bound; async/await lets one thread juggle thousands of concurrent waits with tiny per-connection overhead. Threads work too but with more memory per connection and the same GIL is fine since it's I/O."},
+{c:"Python",q:"<pre>class Base:\n    def __init__(self): print('Base')\nclass A(Base):\n    def __init__(self): super().__init__(); print('A')\nclass B(Base):\n    def __init__(self): super().__init__(); print('B')\nclass C(A, B):\n    def __init__(self): super().__init__(); print('C')\nC()</pre>Print order?",o:["Base A B C","Base B A C — MRO for diamond inheritance is C→A→B→Base","C B A Base","Only C"],a:1,e:"Python's C3 linearization computes MRO as C → A → B → Base. super() in A calls the NEXT in MRO (B, not Base directly). Prints Base first (from B calling super().__init__), then B, A, C on the way back up."},
+{c:"Python",q:"<pre>a = [1,2,3]\nb = {a: 'x'}</pre>What happens?",o:["Works fine","TypeError — lists are unhashable (they're mutable); dict keys must be hashable (immutable-hash contract)","Silent","AttributeError"],a:1,e:"Dict keys and set members must implement __hash__ and be immutable in the sense of hash stability. Use a tuple (1,2,3) as key; or freeze the list via tuple(a); or hash a frozenset for unordered."},
+{c:"Python",q:"You need to process a 200 GB CSV in chunks with pandas. Which parameter enables chunked reading?",o:["nrows","chunksize=N returns an iterator of N-row DataFrames; iterate and process each chunk","header","dtype"],a:1,e:"pd.read_csv(path, chunksize=100000) yields DataFrames of 100k rows at a time — bounded memory. Use dtype hints and usecols to further trim per-chunk memory. For truly big data, prefer Spark/Polars."},
+{c:"Python",q:"<pre>from typing import Optional\ndef f(x: int = None) -&gt; Optional[int]: return x\n</pre>Best practice concern with the signature?",o:["None","Default None + type int is misleading; should be Optional[int] or int | None with default None. Type checkers (mypy) will flag it.","Runs fine so it's fine","Return type is wrong"],a:1,e:"The signature says x: int but allows None as default — inconsistent with the declared type. Correct: x: Optional[int] = None (or x: int | None = None in Python 3.10+). Signals intent clearly and satisfies static type checkers."},
+
+// ---------------- PySpark (18) ----------------
+{c:"PySpark",q:"A Spark job reads 1000 small (1 MB) files and takes 20 minutes just to start. What is happening?",o:["Cluster is small","Small-file problem — file listing + per-file overhead dominate; compact upstream, use Delta OPTIMIZE, or read via a manifest / recursive listing tuned for many files","Bad Python","Network"],a:1,e:"The 'small files' problem: metadata overhead per file dwarfs actual read time. Fixes: compact upstream to 128-256 MB files, use OPTIMIZE on Delta, or move to Auto Loader with notification mode."},
+{c:"PySpark",q:"You see <code>Executor lost due to OOM</code> during a stage with a large shuffle. Best first tuning step?",o:["Add executors","Increase executor memory, reduce spark.sql.shuffle.partitions per partition size, or reduce cache footprint; also check for skew","Restart","Change scheduler"],a:1,e:"Executor OOM during shuffle usually means (a) partitions too large, (b) not enough executor memory for shuffle buffers, or (c) skew causing one task to blow up. Diagnose with Spark UI's stage details before blindly increasing memory."},
+{c:"PySpark",q:"<code>df.write.format('delta').mode('overwrite').option('overwriteSchema','true').save(path)</code> is dangerous because:",o:["It's slow","overwriteSchema replaces schema — any drop/type-change is silent; can break downstream and lose column-level history in the log","Nothing","It fails"],a:1,e:"overwriteSchema is a big hammer. Use only for intentional schema resets. Prefer mergeSchema=true for additive evolution, and version the pipeline so schema changes are code-reviewed and traceable."},
+{c:"PySpark",q:"You want to write to Delta with idempotency so replaying the same batch doesn't duplicate. Best pattern?",o:["Add a timestamp column","MERGE INTO target USING batch ON matching_keys WHEN NOT MATCHED THEN INSERT — inserts only new rows; retries are safe","INSERT OVERWRITE","Append with dedup"],a:1,e:"MERGE with WHEN NOT MATCHED provides append-idempotency. For streaming, use foreachBatch + MERGE, plus a stable batch_id or watermark. Prevents duplicates on retries and out-of-order events."},
+{c:"PySpark",q:"<code>df.groupBy('a').agg(collect_list('b'))</code> on 100M rows fails with OOM. Cause?",o:["Small cluster","collect_list gathers ALL values per group into a single row's array — a hot key can explode; use grouped counts or approximate aggregations instead","Bad Python","Serialization"],a:1,e:"collect_list is O(N) per group in memory. One super-key (bot users, null keys) explodes into a giant array. Alternatives: sample, use approximate distinct, materialize the array to storage per group, or salt-and-reduce."},
+{c:"PySpark",q:"<code>df.repartition(200)</code> followed by <code>df.write.parquet(path)</code> produces how many output files?",o:["1","~200 (one per partition, per write task)","Random","Depends on schema"],a:1,e:"Each partition produces one output file per writer. If you want fewer/larger files, coalesce before writing (with awareness that coalesce is narrow — no rebalance), or use write.option('maxRecordsPerFile', N) for finer control."},
+{c:"PySpark",q:"AQE's dynamic switch to broadcast join happens when:",o:["Never","Runtime statistics show a joined side is small enough (below spark.sql.adaptive.autoBroadcastJoinThreshold, default 30 MB) even if the planner initially chose sort-merge","On error","Manually only"],a:1,e:"Static broadcast threshold uses estimates. AQE observes actual runtime size after the first stage completes and can flip a sort-merge join into a broadcast — one of AQE's most impactful features."},
+{c:"PySpark",q:"You call <code>df.count()</code> on a cached DataFrame, then again on the same df. Second call:",o:["Same as first","Faster — the cached DataFrame is materialized; second count runs against cached blocks without recomputing lineage","Slower","Errors"],a:1,e:"First action materializes and caches. Subsequent actions on the same cached DF hit memory (or spilled disk) instead of re-executing. Verify with Storage tab in Spark UI — visible 'Cached' RDDs with hit stats."},
+{c:"PySpark",q:"Structured Streaming with <code>outputMode('complete')</code> requires:",o:["No requirements","An aggregation in the query — 'complete' outputs the ENTIRE result table each trigger; only sensible for aggregations","Delta output","Kafka source"],a:1,e:"Complete mode dumps the whole aggregate state each trigger. Append mode outputs only new rows (no aggregation over unbounded input without watermark). Update mode outputs changed aggregates."},
+{c:"PySpark",q:"You need EXACTLY-ONCE writes from Structured Streaming to a JDBC sink. Standard approach?",o:["Trust the sink","foreachBatch + transactional upsert keyed by batch_id, checkpointing enabled; Spark ensures each batch runs at least once but the batch's own idempotence delivers exactly-once semantically","Nothing possible","At-most-once"],a:1,e:"Spark's checkpointing guarantees at-least-once per batch. Combine with idempotent writes (upsert by primary key + batch_id), and duplicate batches after failure produce no net change. This is the standard EOS-to-external-sink recipe."},
+{c:"PySpark",q:"You see <code>Skewed partition detected</code> in Spark logs. AQE's response is:",o:["Nothing","Splits the skewed partition into smaller sub-partitions and replicates the matching partition on the other side of the join","Kills the job","Adds executors"],a:1,e:"AQE skew join handling detects partitions above a threshold, splits them into smaller ranges, and duplicates the matching partition from the other side so each sub-task has bounded work. Massive speedup for skew-heavy joins."},
+{c:"PySpark",q:"For a Spark job writing to S3, you observe long commit times at the end. Root cause?",o:["Slow S3","Default FileOutputCommitter v1/v2 has slow rename semantics on eventually-consistent object stores; use S3A committers, DBIO commit, or Delta which sidesteps rename","Slow write","Bad code"],a:1,e:"HDFS-style commit protocols do a rename at the end. S3 renames are copy+delete — O(files). Use magic/directory committers, S3A optimized committer, or Delta/Iceberg which use a metadata log and skip rename entirely."},
+{c:"PySpark",q:"<code>spark.sql.files.maxPartitionBytes</code> (default 128 MB) controls:",o:["Executor size","Target size of each read task's slice of file data (splits files or bundles small files up to this size)","Shuffle","Write size"],a:1,e:"Larger value = fewer bigger tasks (better for scan-heavy jobs, more risk of long tails); smaller = more tasks (better parallelism, more overhead). Tune with cluster size and file layout in mind."},
+{c:"PySpark",q:"Spark's Tungsten engine primarily provides:",o:["A UI","Off-heap memory management, whole-stage code generation (WSCG), and cache-aware processing — all delivering large speedups over RDD's Python-object-per-row model","Networking","Job scheduling"],a:1,e:"Tungsten + Catalyst are why DataFrames wildly outperform RDDs on the same logic. WSCG fuses many operators into one loop of generated Java bytecode; off-heap storage bypasses JVM GC pressure."},
+{c:"PySpark",q:"You have two 1 TB tables to join on user_id. Neither fits in memory for broadcast. Best strategy?",o:["Broadcast anyway","Sort-merge join with matching pre-shuffled partitioning (bucket by user_id on both) to skip the shuffle; otherwise let AQE tune and handle skew at runtime","Nested loop","Cross join"],a:1,e:"For big-big joins, sort-merge is standard. Bucketing by the join key on both sides pre-shuffles the data on write, making downstream joins skip the shuffle entirely — biggest tuning win when queries repeat on stable keys."},
+{c:"PySpark",q:"<code>df.write.mode('append').saveAsTable('t')</code> vs <code>df.write.mode('append').insertInto('t')</code> — key difference?",o:["Same thing","saveAsTable uses DataFrame's schema (may mismatch); insertInto strictly matches target table's schema by position — safer for existing tables","Different speeds","Different formats"],a:1,e:"saveAsTable can rewrite/mismatch schema silently, especially with column reorder. insertInto is strict positional — fewer surprises for existing tables. Prefer insertInto (or Delta MERGE) for production appends."},
+{c:"PySpark",q:"Spark's driver has 4 GB memory. You call <code>df.toPandas()</code> on a 20 GB DataFrame. Result?",o:["Slow but works","Driver OOM — toPandas() collects everything to the driver JVM then converts. For big data use .write, sampling, or Arrow-optimized collection","Runs fine","Warning only"],a:1,e:"toPandas is essentially collect() + type conversion. It only makes sense for small results. Enable spark.sql.execution.arrow.pyspark.enabled=true for faster smaller conversions, but the size limit is still the driver."},
+{c:"PySpark",q:"Structured Streaming state store grows unbounded. Root cause?",o:["Bad code","No watermark on an aggregation or join over event time — Spark keeps state forever waiting for late data","Full disk","Wrong version"],a:1,e:"Event-time aggregations must define a watermark so state older than (max_event_time - watermark) can be evicted. Without it, state accumulates until OOM. withWatermark('event_ts', '1 hour') is the fix."},
+
+// ---------------- Kafka (10) ----------------
+{c:"Kafka",q:"You want Kafka to guarantee AT MOST N messages between commit and processing (bounded lag). Configure:",o:["Impossible","max.poll.records + fetch.min.bytes + a polling loop with manual commits per successful batch","auto.commit=true","enable.idempotence"],a:1,e:"The consumer poll loop pulls up to max.poll.records per call. Commit after each successful batch bounds worst-case reprocessing to that many records on crash. Combine with max.poll.interval.ms tuning so slow processing doesn't trigger a rebalance."},
+{c:"Kafka",q:"Producer sends batch, no ack in delivery.timeout.ms. If idempotence is OFF and retries are enabled:",o:["Never duplicates","May produce DUPLICATE messages — network retry can commit the same batch twice; enable.idempotence=true prevents this","Kills producer","At-most-once"],a:1,e:"Without idempotence, retries after ambiguous ack states double-write. Idempotent producer tags each batch with a producer ID + sequence number; broker deduplicates. It's a free-ish safety net — turn it on."},
+{c:"Kafka",q:"You compact a topic. A tombstone (null value) for key K is written. When is the tombstone itself deleted?",o:["Immediately","After delete.retention.ms — gives consumers time to see the deletion event before it's compacted away","Never","At next segment roll"],a:1,e:"Default delete.retention.ms is 24h. Long enough for consumers to observe the deletion; then compaction removes the tombstone. If a consumer resumes after longer than this, it won't see the delete event — plan retention around consumer SLAs."},
+{c:"Kafka",q:"You add 5 more partitions to a topic. Consequences for existing consumers?",o:["None","A rebalance is triggered; NEW partitions receive future messages, and existing key-to-partition mappings for those keys will change → per-key ordering can break across the old/new boundary","Old data moves","Consumer group hangs"],a:1,e:"Partition count increases change hash(key) % partitions for future writes. Old data stays put. Downstream systems relying on per-key ordering may see out-of-order events during the transition. Plan carefully; consider re-keying or a new topic."},
+{c:"Kafka",q:"A Kafka Streams application's changelog topic exists to:",o:["Log errors","Persist internal state (KTable/aggregation stores) as a compacted topic, so recovery can rebuild state from Kafka after failure","Debug","Buffer"],a:1,e:"Changelog topics are log-compacted mirrors of the local RocksDB state store. On restart, Streams reads the changelog to reconstruct state — no separate database needed. That's the foundation of fault tolerance in Streams."},
+{c:"Kafka",q:"A consumer with <code>isolation.level=read_committed</code>:",o:["Reads every message","Reads only committed transactional messages; skips aborted ones and buffers uncommitted ones until commit/abort","Reads from one broker","Blocks writes"],a:1,e:"Required for exactly-once semantics on the consumer side. Trade-off: latency — the LSO (Last Stable Offset) may trail the LEO if there are long-running transactions. Non-transactional messages are still consumed normally."},
+{c:"Kafka",q:"Consumer group rebalance takes 30 seconds and disrupts processing. Standard mitigation?",o:["Restart","Cooperative rebalancing (CooperativeStickyAssignor) + static membership (group.instance.id) — most partitions stay assigned; only affected ones move","Bigger cluster","Fewer partitions"],a:1,e:"Eager rebalancing revokes ALL partitions from ALL consumers, then reassigns. Cooperative only reassigns affected partitions (much less disruption). Static membership avoids rebalances on transient consumer restarts."},
+{c:"Kafka",q:"Broker's ISR (in-sync replica) list drops a follower. Cause could be:",o:["Broker restart","Follower fell behind by more than replica.lag.time.max.ms (default 30s) — usually slow disk, network, or overloaded follower","Producer bug","Consumer lag"],a:1,e:"Followers must fetch within the lag window to stay in-sync. Slow followers get kicked from ISR; leader keeps serving. If min.insync.replicas is not met, acks=all writes fail — a signal to investigate the slow broker immediately."},
+{c:"Kafka",q:"You need to preserve global order across a topic. What are you forced to give up?",o:["Nothing","Partitioning (parallelism) — global order means 1 partition, which caps throughput; alternative is per-key order via keyed partitioning","Replication","Retention"],a:1,e:"Kafka orders per partition only. Global order = 1 partition = 1 consumer worth of throughput. Most designs relax to per-key ordering (all events for user X in order), which Kafka does natively via key hashing."},
+{c:"Kafka",q:"Kafka Connect vs writing a custom consumer/producer:",o:["Same","Kafka Connect provides declarative connectors with built-in offset management, retries, schemas (Avro/Schema Registry), and standardized error handling — less code, more consistent","Slower","No difference"],a:1,e:"Connect is the standard way to get data in/out of Kafka. Battle-tested source/sink connectors, offset tracking, DLQ handling, single-message transforms, and REST API for management. Reserve custom clients for logic Connect can't express."},
+
+// ---------------- Airflow (10) ----------------
+{c:"Airflow",q:"A DAG's tasks succeed individually but the DAG run is marked failed. Likely cause?",o:["Bug","A required task in a trigger_rule chain was upstream_failed/skipped, propagating failure; or DAG-level timeout / SLA fired","Random","Airflow bug"],a:1,e:"DAG state is derived from task states and trigger rules. A skipped/failed upstream can cascade if downstream doesn't tolerate it (trigger_rule='all_success' is default). Check dependencies and set trigger_rule='none_failed_min_one_success' or 'all_done' where appropriate."},
+{c:"Airflow",q:"A task in the middle of a DAG needs to run only on the FIRST run of the month. Best implementation?",o:["Multiple DAGs","BranchPythonOperator inspecting logical_date.day == 1, skipping downstream if not the first; alternatively a ShortCircuitOperator","depends_on_past","Custom scheduler"],a:1,e:"Branch/ShortCircuit inspect the run's logical_date and skip or proceed. Cleaner than splitting DAGs. Use context['logical_date'] (or ds) inside a Python callable."},
+{c:"Airflow",q:"You need a task to fetch data from an API that rate-limits at 60 req/min. Best Airflow pattern?",o:["Retry aggressively","Dynamic task mapping with a controlled pool: set pool='api_pool' with 1 slot; combine with retries and exponential backoff for rate-limit responses","Sequential DAG","Sleep in code"],a:1,e:"Airflow Pools limit concurrent tasks on a shared resource. Assign the API task to a pool with N slots = allowed parallelism. Then dynamic mapping fans out safely without exceeding the API's limit."},
+{c:"Airflow",q:"You want to catch up a paused DAG for the last 30 days. Best command:",o:["airflow dags trigger","airflow dags backfill --start-date ... --end-date ... — replays each interval; ensure tasks are idempotent","Delete and recreate","Unpause"],a:1,e:"Backfill runs all missed intervals in order. Idempotence is essential (partition-overwrite, MERGE by keys) so re-running the same interval doesn't duplicate data. Watch for catchup=True which auto-backfills when unpausing."},
+{c:"Airflow",q:"An Airflow DAG hits <code>max_active_runs=1</code>. Long-running interval delays subsequent intervals. Effect?",o:["Skipped","Queued — the next run waits for the current one to finish, causing lag; monitor the 'Landing Times' UI graph","Killed","Merged"],a:1,e:"With max_active_runs=1, runs are serialized. If a run overruns its interval, the next queues up. Watch landing times to detect drift. Increase parallelism only when tasks are truly independent — otherwise you get race conditions or duplicate work."},
+{c:"Airflow",q:"You need to share credentials across many DAGs without hardcoding. Best pattern?",o:["Environment variables","Connections + Variables in the metadata DB (or ideally a Secrets Backend like AWS Secrets Manager / Azure Key Vault / HashiCorp Vault)","Files","XComs"],a:1,e:"Connections abstract endpoints; Variables store config values. Secrets backends externalize both to real vaults with rotation, audit, and RBAC. Never hardcode secrets in DAG code — it's committed to git and visible in logs."},
+{c:"Airflow",q:"A DAG uses top-level import of pandas + heavy config parsing. Impact?",o:["None","Slow scheduler / DagBag parsing — top-level code runs on every parse cycle; move heavy work inside task callables","Faster runs","Nothing"],a:1,e:"Airflow re-parses every DAG file frequently (min_file_process_interval). Heavy imports/computation at module level cripple the scheduler. Rule: DAG files should be light; work goes inside operators/callables."},
+{c:"Airflow",q:"For a DAG that must NOT skip failed intervals, use:",o:["catchup=False","catchup=True with depends_on_past=True on critical tasks — enforces sequential success across intervals","No catchup","Manual reruns"],a:1,e:"catchup=True fills missing intervals; depends_on_past ensures each interval waits for the prior interval's task to succeed. Combined, gives strict sequential replay. Common for cumulative aggregations that require contiguous data."},
+{c:"Airflow",q:"You want to test a DAG's logic without waiting for the scheduler. Best CLI?",o:["airflow scheduler","airflow tasks test dag_id task_id logical_date — runs one task instance immediately, ignoring dependencies and not persisting state","airflow dags trigger","airflow db init"],a:1,e:"tasks test is your dev loop. Runs the task with the given logical_date and prints output — no state, no dependencies checked. Perfect for iterating on operator logic and templating."},
+{c:"Airflow",q:"You want alerts on tasks running longer than expected. Best mechanism?",o:["Manual watch","SLAs on tasks (sla=timedelta(hours=1)) plus SLA miss callbacks / alerts via on_failure_callback / integrations with Slack/PagerDuty","Retries","Sensors"],a:1,e:"SLA misses are recorded and can trigger callbacks. In practice, teams often complement with data-observability tools (Monte Carlo, Datadog) for freshness alerts because Airflow SLA has known reliability issues in older versions."},
+
+// ---------------- Snowflake (8) ----------------
+{c:"Snowflake",q:"You have a 100 GB table with daily inserts. Queries filter <code>WHERE event_date = ?</code>. Current query scans everything. Fix?",o:["Add index","Add CLUSTER BY (event_date). Snowflake auto-re-clusters micro-partitions so queries filtering event_date scan only relevant partitions","VACUUM","Bigger warehouse"],a:1,e:"Snowflake has no user indexes. Clustering keys guide the auto-clustering service. Filter-column clustering enables micro-partition pruning — the primary performance lever on large tables in Snowflake."},
+{c:"Snowflake",q:"You need to expose a subset of a table to a partner without letting them see other columns/rows. Best pattern?",o:["Give access","Secure View (or Row Access Policy + Masking Policy) — restricts columns/rows at query time; Data Sharing for external accounts","Copy table","Encryption"],a:1,e:"Secure views hide the underlying query definition and mask sensitive data. Row access policies apply conditional filters. Masking policies redact columns. For external accounts, use Data Sharing (Reader Accounts / Listings) — no data copy needed."},
+{c:"Snowflake",q:"A Task fires but SELECT SYSTEM$STREAM_HAS_DATA('mystream') returns FALSE. What is happening?",o:["Task broken","No new changes since last consumption — the task is designed to be conditional on stream having data (WHEN clause) so nothing runs","Bug","Warehouse suspended"],a:1,e:"Tasks WHEN SYSTEM$STREAM_HAS_DATA(...) short-circuit when the stream is empty, saving compute. This is the standard streams+tasks CDC-pipeline idiom in Snowflake."},
+{c:"Snowflake",q:"Snowflake's 'zero-copy clone' of a 10 TB table creates:",o:["A 10 TB copy","Metadata that references the same underlying storage; new storage is used only for divergent data (copy-on-write)","A snapshot","A view"],a:1,e:"Clones are instantaneous and near-free. Perfect for dev/test environments. Divergent writes create new micro-partitions; unchanged data is shared. Combine with time-travel-based clones for point-in-time restore."},
+{c:"Snowflake",q:"You want fast query response for repeated identical dashboard queries. Best mechanism?",o:["Materialized views","Result cache — identical query text within 24h, no data change, returns instantly with no warehouse cost","Bigger warehouse","Preload"],a:1,e:"Result cache is FREE and cross-session. If the query text matches exactly and underlying data is unchanged, no warehouse compute is used. For queries with slight variations, materialized views or query acceleration service help."},
+{c:"Snowflake",q:"Snowflake credits are consumed primarily by:",o:["Storage","Warehouse compute (per-second billing while running) + Serverless features (Snowpipe, Auto-Clustering, Query Acceleration) + Cloud Services (10% free tier)","Users","Roles"],a:1,e:"Storage is a separate line item and much cheaper. Compute (warehouses + serverless services) is the big cost lever. Auto-suspend on warehouses is the single biggest cost hygiene practice."},
+{c:"Snowflake",q:"Your COPY INTO load has bad rows failing. To skip and continue:",o:["Ignore","ON_ERROR = 'CONTINUE' — skips bad rows and logs them, load succeeds for good rows; combine with VALIDATE() function to inspect failures","Delete file","Manual fix"],a:1,e:"ON_ERROR options: ABORT_STATEMENT (default), CONTINUE (skip), SKIP_FILE, SKIP_FILE_N%. VALIDATE() reports bad rows after the load. Match strictness to your data quality strategy."},
+{c:"Snowflake",q:"A materialized view in Snowflake automatically refreshes:",o:["Manually only","In the background, incrementally — Snowflake tracks changes and updates the MV; you pay for the maintenance compute","Never","On query"],a:1,e:"Snowflake MVs are auto-maintained (unlike some DBs' manual refresh). Cost trade-off: MV maintenance credits + storage vs faster reads. Best for expensive aggregates that are queried often relative to base table churn."},
+
+// ---------------- Databricks / Delta (8) ----------------
+{c:"Databricks",q:"You OPTIMIZE a Delta table with Z-ORDER on user_id. Later queries filter on session_id (unrelated). Impact?",o:["Faster","Little to no benefit — Z-ORDER's data skipping helps only for the ordered columns; queries on other columns still scan","Slower","Same"],a:1,e:"Z-ORDER co-locates values of specified columns per file; file-level min/max stats then skip files for filters on those columns. Filters on other columns can't leverage the skip. Choose ZORDER columns to match top query filter patterns."},
+{c:"Databricks",q:"A structured streaming query on Delta writes with <code>availableNow=True</code>. This trigger:",o:["Runs continuously","Consumes all currently available data in bounded micro-batches, then stops — 'streaming semantics for batch workloads'","Runs once","Errors"],a:1,e:"availableNow (Databricks 10.4+) replaces the older once=True for incremental workflows. Processes all currently pending files/records with checkpoint updates, then exits. Great for scheduled Auto Loader jobs."},
+{c:"Databricks",q:"You need CDC output of your Delta table with row-level before/after. Enable:",o:["Nothing needed","delta.enableChangeDataFeed = true; then read via table_changes('t', start_version) — returns _change_type, _commit_version, _commit_timestamp, plus row values","VACUUM","OPTIMIZE"],a:1,e:"CDF gives per-row change history without hand-rolling it. Powers Delta Live Tables' STREAMING TABLE OF CHANGES pattern and downstream CDC consumers. Enable per-table via TBLPROPERTIES."},
+{c:"Databricks",q:"You get <code>ConcurrentDeleteReadException</code> during a streaming read. Cause?",o:["Bug","A concurrent VACUUM or OPTIMIZE removed files the reader was tracking; increase retention or coordinate maintenance windows","Broken cluster","Wrong version"],a:1,e:"Streaming readers reference specific data files. VACUUM (or table replacement) removing them mid-read breaks the stream. Fix: keep the RETAIN window comfortably longer than max streaming lag, or pause streams during maintenance."},
+{c:"Databricks",q:"You want to schedule <code>OPTIMIZE</code> on a hot Delta table. Best strategy?",o:["Nightly always","Predictive Optimization (managed) OR triggered by write volume — e.g., after N writes or file count exceeds threshold. Full-table OPTIMIZE nightly wastes compute on already-optimized files","Every hour","Never"],a:1,e:"Predictive Optimization automates this. Manual approach: trigger OPTIMIZE conditionally based on small-file count or via a metadata check. Blanket nightly OPTIMIZE rewrites even well-compacted files, burning credits."},
+{c:"Databricks",q:"Databricks SQL Serverless vs Classic warehouses:",o:["Same","Serverless clusters spin up in seconds (managed by Databricks), reducing cold-start latency; Classic uses cloud-provider VMs with slower start","Both pay-per-query","Serverless is slower"],a:1,e:"Serverless SQL was purpose-built for BI concurrency and instant startup. Classic warehouses take minutes to launch on your cloud subscription. Cost per DBU differs by product — check pricing for your region."},
+{c:"Databricks",q:"You have 100 small tasks in a Spark job producing 100 tiny output files. Fix at write time?",o:["Nothing","Coalesce/repartition before write, use maxRecordsPerFile, or on Delta let optimizeWrite handle it (auto compaction after write)","Just OPTIMIZE later","Ignore"],a:1,e:"Options: (1) coalesce(n) to reduce partitions pre-write; (2) delta.autoOptimize.optimizeWrite=true compacts inline; (3) delta.autoOptimize.autoCompact=true triggers auto-compaction after writes. Prevention beats cleanup."},
+{c:"Databricks",q:"Photon engine (Databricks) primarily targets:",o:["Python jobs","C++ vectorized execution for SQL/DataFrame workloads on Databricks — significant speedups for scan-heavy analytical queries","Streaming only","ML"],a:1,e:"Photon is a native, vectorized query engine drop-in replacement for parts of the Spark execution layer, focused on analytical SQL/DataFrame workloads. Enable on the warehouse/cluster; not all operations are Photon-compatible but the gains are large where applicable."},
+
+// ---------------- Azure (6) ----------------
+{c:"Azure",q:"An ADF pipeline copies from ADLS to Synapse using PolyBase, but hits BULK LOAD errors on bad rows. Best config?",o:["Ignore","Set staging + rejectValue / rejectType in the Copy activity's PolyBase settings; bad rows redirect to a reject location for inspection","Slow retry","Manual"],a:1,e:"PolyBase supports row-level fault tolerance via reject settings. Redirect bad rows to a container for postmortem instead of failing the whole load. For very messy data, use Databricks pre-cleaning."},
+{c:"Azure",q:"Databricks in Azure needs to read ADLS Gen2 securely without keys in code. Best pattern?",o:["Store SAS in code","Managed Identity (system-assigned or user-assigned) with RBAC on the storage account; Databricks assumes the identity via cluster/pool config","Copy files","Public access"],a:1,e:"Managed identities eliminate secrets. Cluster runs under a service principal / managed identity with 'Storage Blob Data Contributor' on the container. Modern secure baseline for Azure lakehouses."},
+{c:"Azure",q:"Azure Event Grid vs Event Hubs vs Service Bus:",o:["Same thing","Event Grid: reactive event routing (pub/sub, small volume, filtering); Event Hubs: high-throughput streaming ingest (Kafka-like); Service Bus: enterprise messaging (queues, transactions, ordering)","Interchangeable","Different regions"],a:1,e:"Rough sizing: Event Grid for millions of small state-change events; Event Hubs for millions/sec of telemetry (partitioned like Kafka); Service Bus for transactional enterprise messaging with sessions, dead-letter, and DLQ."},
+{c:"Azure",q:"Synapse Dedicated SQL Pool (formerly SQL DW) uses which distribution strategy for large fact tables?",o:["Round robin","Hash distribution on a high-cardinality frequently-joined column — avoids cross-node data movement for joins on that column","Replication","Random"],a:1,e:"Hash distribution places rows with the same hash on the same node — joins on the distribution column are compute-node-local. Small dimensions can be REPLICATE (copied to every node) to avoid shuffle for those joins. Wrong choice = expensive DMS shuffles."},
+{c:"Azure",q:"You need continuous ingest of streaming events with per-key ordering. Best Azure component?",o:["Blob","Event Hubs with partition key = your ordering key (Kafka-style semantics); optionally Stream Analytics or Databricks reads it","Service Bus queue","Table"],a:1,e:"Event Hubs is the Azure-native equivalent of Kafka for high-throughput event streaming. Partition key preserves order within a partition. Also exposes Kafka protocol endpoint for direct Kafka client compatibility."},
+{c:"Azure",q:"Cost of an ADF pipeline is dominated by:",o:["Storage","Activity runs (metered per orchestration hour and per Data Flow compute hour) — heavy Data Flow use is the biggest lever; monitor and offload to Databricks when justified","Triggers","Datasets"],a:1,e:"Pipeline orchestration is cheap. Data Flows spin up Spark clusters and are expensive per hour. For heavy transforms, running Databricks jobs orchestrated by ADF is often cheaper and more flexible."},
+
+// ---------------- Warehousing (6) ----------------
+{c:"Warehousing",q:"Late-arriving fact rows (event happened yesterday, arrived today) into an SCD2 dimension — challenge?",o:["No challenge","Must join using the dimension version that was current AT the fact's event_ts, not at load_ts; needs point-in-time join and effective-date logic","Ignore","Overwrite"],a:1,e:"Standard fact-load process joins current dimension. For late facts, that's wrong — the customer's address today may not be what it was 3 days ago. Use effective_from/to windows to find the historically-correct dim row."},
+{c:"Warehousing",q:"You need to track measures at multiple grains (daily, weekly, monthly). Best design?",o:["One giant table","Aggregate tables (or materialized views) per grain, refreshed from the base fact — reads hit the smallest sufficient grain","GROUP BY every query","Store all"],a:1,e:"Pre-aggregating common grains (weekly/monthly rollups) trades storage for read performance. Star-schema tools automatically route queries to the right aggregate. dbt makes this pattern clean and testable."},
+{c:"Warehousing",q:"A slowly changing dimension where you want history but also the CURRENT value on the fact for filtering — implement:",o:["Type 1","Type 6 (hybrid) — Type 2 for history + Type 1 attributes duplicated to hold the current value; enables both filter patterns","Type 3","Two dimensions"],a:1,e:"Type 6 = 1+2+3. Combines versioned history rows with current-value columns overwritten on all rows for that entity. Users can filter 'show all sales for the entity's CURRENT tier' or 'show sales at the tier active at that time.'"},
+{c:"Warehousing",q:"Data vault modeling (Hubs, Links, Satellites) exists to:",o:["Replace star","Provide a normalized, auditable, source-agnostic integration layer BEFORE building star schemas — resilient to source-system change; verbose but very flexible","Encrypt","Speed queries"],a:1,e:"Data Vault 2.0 sits between raw and star. Hubs = business keys, Links = relationships, Satellites = descriptive attributes (versioned). Trades query simplicity for lineage, agility, and audit — often used in regulated industries."},
+{c:"Warehousing",q:"An 'accumulating snapshot' fact table represents:",o:["Point-in-time","A process with discrete milestones (order placed, paid, shipped, delivered) — one row per instance, updated as it progresses through stages","History","Aggregations"],a:1,e:"Different from transactional (one row per event) and periodic snapshot (one row per entity per period). Accumulating snapshot fits pipelines with a defined lifecycle — great for funnel/cycle-time analysis."},
+{c:"Warehousing",q:"You have a fact table growing by 100M rows/day. Best storage design in a lakehouse?",o:["No partitioning","Partition by event_date; cluster/Z-ORDER by high-cardinality frequently-filtered columns; retain hot data with fine partitioning, older data compacted / archived","Sort by id","Single file"],a:1,e:"Time-partitioning aligns with the primary filter and enables partition pruning. Secondary clustering helps sub-partition pruning. Consider hot/cold tiering (recent detail, older aggregated) if query patterns differ by age."},
+
+// ---------------- Data Quality / DE Systems (6) ----------------
+{c:"Data Quality",q:"You need to detect silent data quality regressions (drift) automatically. Best approach?",o:["Manual checks","Track daily distribution statistics (null %, distinct count, min/max/mean, top values) per column; alert on deviations vs rolling baseline","Full profile","Nothing"],a:1,e:"Anomaly detection on data profile metrics catches silent drift: schema change, upstream bug, quiet data loss. Great Expectations, dbt-expectations, Deequ, or custom SQL do this. Baseline should adapt (seasonality, growth)."},
+{c:"Data Quality",q:"A pipeline has: raw → cleaned → curated → serving. Which layer should carry the STRICTEST data contracts?",o:["Raw","Serving — SLA on freshness, schema, quality; downstream consumers depend on it. Raw stays flexible for capture; strictness increases toward serving","Cleaned","Curated"],a:1,e:"Bronze/Silver/Gold pattern. Raw absorbs source volatility. Each downstream layer enforces more contracts (schema, tests, freshness) until serving is highly-guaranteed. Break contracts at the earliest layer where you can afford flexibility."},
+{c:"Data Quality",q:"You get a 3 AM PagerDuty for a stale table. Fastest correct triage step?",o:["Rerun job","Check the pipeline's DAG run history for the latest failure; then upstream source freshness; then compute layer health — top-down triage, most common root causes first","Reboot","Blame source"],a:1,e:"Runbook mindset: verify the observation, then walk up the dependency chain. Airflow logs → source system freshness → compute/network health. Restart only after understanding root cause; blind restarts hide real issues."},
+{c:"Data Quality",q:"A dbt project has 300 models. Tests take 2 hours per full run. Best strategy?",o:["Fewer tests","dbt build with state-based selection (--defer + --state) — only run changed/downstream models and tests in CI; full run daily/weekly","Nothing","Manual"],a:1,e:"State-aware runs shrink CI feedback to minutes. Full runs remain scheduled for coverage. Layering: unit-style tests on lightweight models, expensive tests only on gold layer with sampling if needed."},
+{c:"Data Quality",q:"A single upstream API change breaks 20 downstream tables. Best PREVENTION:",o:["Test after","Data contracts + schema registry + CI-gated schema evolution — producers commit to schemas, breaking changes are blocked or require coordination","Manual","Ignore"],a:1,e:"Shift-left on schema. Confluent Schema Registry (Avro/Protobuf), Apache Iceberg schema evolution rules, or dbt's persist_docs + tests act as contracts. Producer changes go through review before hitting consumers."},
+{c:"Data Quality",q:"You need to prove GDPR-style right-to-erasure across a lakehouse. Best design?",o:["Manual delete","Delete requests → central deletion service → DELETE / MERGE on all tables containing the user; use Delta/Iceberg (support row-level delete); verify via lineage + retention policies","Ignore","Never store"],a:1,e:"Row-level delete on modern table formats (Delta, Iceberg, Hudi) makes GDPR/CCPA feasible on a lake. Lineage tracks propagation; retention policies bound recovery window; audit logs prove compliance."}
+];
+
+// ---------------- App logic ----------------
+let pool = [];
+let idx = 0;
+let answered = [];
+let okCount = 0, badCount = 0;
+
+const $ = id => document.getElementById(id);
+
+function categories(){
+  const m = {};
+  QUESTIONS.forEach(q => m[q.c] = (m[q.c]||0)+1);
+  return m;
+}
+
+function buildStart(){
+  const grid = $("catgrid");
+  grid.innerHTML = "";
+  const cats = categories();
+  Object.keys(cats).forEach(c => {
+    const b = document.createElement("button");
+    b.className = "catbtn";
+    b.innerHTML = "<b>"+c+"</b><span>"+cats[c]+" questions &middot; practice this topic</span>";
+    b.onclick = () => startQuiz(QUESTIONS.filter(q => q.c === c));
+    grid.appendChild(b);
+  });
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length-1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(qs){
+  pool = qs.slice();
+  idx = 0; okCount = 0; badCount = 0;
+  answered = new Array(pool.length).fill(null);
+  $("start").classList.add("hidden");
+  $("result").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  buildPipe();
+  render();
+  window.scrollTo({top:0});
+}
+
+function buildPipe(){
+  const pipe = $("pipe");
+  pipe.innerHTML = "";
+  pool.forEach(() => pipe.appendChild(document.createElement("span")));
+}
+
+function updatePipe(){
+  const spans = $("pipe").children;
+  for(let i = 0; i < pool.length; i++){
+    spans[i].className = "";
+    if(answered[i]) spans[i].className = answered[i].correct ? "ok" : "bad";
+    else if(i === idx) spans[i].className = "cur";
+  }
+}
+
+function updateMeter(){
+  $("mq").textContent = idx+1;
+  $("mt").textContent = pool.length;
+  $("mok").textContent = okCount;
+  $("mbad").textContent = badCount;
+  const done = okCount + badCount;
+  $("macc").textContent = done ? Math.round(okCount/done*100)+"%" : "\u2013";
+}
+
+function render(){
+  const q = pool[idx];
+  $("qcat").textContent = q.c.toUpperCase();
+  $("qnum").textContent = "Q" + String(idx+1).padStart(2,"0");
+  $("qtext").innerHTML = q.q;
+  const opts = $("opts");
+  opts.innerHTML = "";
+  const letters = ["A","B","C","D"];
+  q.o.forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = "<span class='k'>"+letters[i]+"</span>" + opt;
+    b.onclick = () => pick(i, b);
+    opts.appendChild(b);
+  });
+  $("expl").className = "expl";
+  $("expl").innerHTML = "";
+  $("nextBtn").classList.add("hidden");
+  updatePipe();
+  updateMeter();
+}
+
+function pick(i, btn){
+  if(answered[idx]) return;
+  const q = pool[idx];
+  const correct = (i === q.a);
+  answered[idx] = {pick:i, correct:correct};
+  correct ? okCount++ : badCount++;
+
+  const buttons = $("opts").children;
+  for(let j = 0; j < buttons.length; j++){
+    buttons[j].disabled = true;
+    if(j === q.a) buttons[j].classList.add("correct");
+  }
+  if(!correct) btn.classList.add("wrong");
+
+  const ex = $("expl");
+  ex.innerHTML = "<b class='v' style='color:" + (correct ? "var(--green)'>&#10003; CORRECT" : "var(--red)'>&#10007; NOT QUITE") + "</b>" + q.e;
+  ex.classList.add("show");
+
+  $("nextBtn").textContent = (idx === pool.length-1) ? "See my results \u2192" : "Next question \u2192";
+  $("nextBtn").classList.remove("hidden");
+  updatePipe();
+  updateMeter();
+}
+
+$("nextBtn").onclick = () => {
+  if(idx === pool.length-1){ finish(); return; }
+  idx++;
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+};
+
+$("quitBtn").onclick = finish;
+$("startFull").onclick = () => startQuiz(shuffle(QUESTIONS));
+$("retryBtn").onclick = () => { $("result").classList.add("hidden"); $("start").classList.remove("hidden"); buildStart(); };
+
+function verdictFor(pct){
+  if(pct >= 85) return "This is senior-DE territory. You've got the depth interviewers push for at scaled data teams.";
+  if(pct >= 70) return "Very strong on the hardest tier. Polish the weak topics and you're interview-ready anywhere.";
+  if(pct >= 55) return "Real depth showing. This test hits interview edge cases \u2014 every miss here is a great study target.";
+  if(pct >= 40) return "Expected range \u2014 DE-102 is meant to be hard. Come back after DE-100 and DE-101 are consistently 80%+.";
+  return "Save this one for later. Master DE-100 first, then DE-101 \u2014 DE-102 becomes reachable naturally.";
+}
+
+function finish(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
+
+  const attempted = answered.filter(a => a).length;
+  $("finalScore").textContent = okCount;
+  $("finalTotal").textContent = attempted || pool.length;
+  const pct = attempted ? Math.round(okCount/attempted*100) : 0;
+  $("verdict").textContent = pct + "% accuracy \u2014 " + verdictFor(pct);
+
+  const stats = {};
+  pool.forEach((q, i) => {
+    if(!answered[i]) return;
+    stats[q.c] = stats[q.c] || {ok:0, total:0};
+    stats[q.c].total++;
+    if(answered[i].correct) stats[q.c].ok++;
+  });
+  const tbody = $("breakdown").querySelector("tbody");
+  tbody.innerHTML = "";
+  Object.keys(stats).sort((a,b) => (stats[a].ok/stats[a].total) - (stats[b].ok/stats[b].total)).forEach(c => {
+    const s = stats[c];
+    const p = Math.round(s.ok/s.total*100);
+    const cls = p >= 75 ? "" : (p >= 50 ? "mid" : "low");
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td>"+c+"</td><td class='num'>"+s.ok+"/"+s.total+"</td><td><div class='bar'><i class='"+cls+"' style='width:"+p+"%'></i></div></td>";
+    tbody.appendChild(tr);
+  });
+
+  const rev = $("review");
+  rev.innerHTML = "";
+  let missed = [];
+  pool.forEach((q, i) => {
+    if(answered[i] && !answered[i].correct){
+      missed.push(q);
+      const d = document.createElement("div");
+      d.className = "review-item";
+      d.innerHTML = "<div class='rq'>["+q.c+"] "+q.q+"</div>"
+        + "<div class='ra'>Your answer: "+q.o[answered[i].pick]+"</div>"
+        + "<div class='rc'>Correct: "+q.o[q.a]+"</div>"
+        + "<div class='re'>"+q.e+"</div>";
+      rev.appendChild(d);
+    }
+  });
+  if(!missed.length){
+    $("reviewHead").textContent = "No misses \u2014 top 1% on the hardest tier \uD83C\uDFAF";
+    $("retryWrong").classList.add("hidden");
+  } else {
+    $("reviewHead").textContent = "Review your misses ("+missed.length+")";
+    $("retryWrong").classList.remove("hidden");
+    $("retryWrong").onclick = () => startQuiz(missed);
+  }
+  window.scrollTo({top:0});
+}
+
+buildStart();
+</script>
+</body>
+</html>
