@@ -301,6 +301,71 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', next);
 }
 
+/* ============================ Passcode lock ============================= */
+/* A light privacy curtain for a PUBLIC static site. It stores only a one-way
+   hash of the passcode on this device (never the passcode, never in the repo)
+   and re-asks each new browser session. It is NOT strong security: the code is
+   public and local data remains readable via devtools. It just keeps casual
+   eyes out. Real protection would need an edge login gate (Cloudflare Access). */
+
+const LOCK_KEY = 'dashboard_lock';            // { enabled, hash } — device-local, NOT exported
+const UNLOCK_SESSION_KEY = 'dashboard_unlocked';
+const LOCK_SALT = 'ccdash:v1:';
+
+async function sha256Hex(str) {
+  if (window.crypto && crypto.subtle) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.prototype.map.call(new Uint8Array(buf), function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+  }
+  // Fallback for insecure contexts (e.g. file://) where crypto.subtle is absent.
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) { h = ((h << 5) + h) + str.charCodeAt(i); h |= 0; }
+  return 'f' + (h >>> 0).toString(16);
+}
+function getLock() { return Store.get(LOCK_KEY, { enabled: false, hash: '' }); }
+function isLocked() {
+  const l = getLock();
+  return !!(l.enabled && l.hash) && sessionStorage.getItem(UNLOCK_SESSION_KEY) !== '1';
+}
+async function setLockPasscode(pw) {
+  const hash = await sha256Hex(LOCK_SALT + pw);
+  Store.set(LOCK_KEY, { enabled: true, hash: hash });
+}
+function removeLock() {
+  Store.set(LOCK_KEY, { enabled: false, hash: '' });
+  sessionStorage.removeItem(UNLOCK_SESSION_KEY);
+}
+async function verifyPasscode(pw) {
+  const l = getLock();
+  return !!l.hash && (await sha256Hex(LOCK_SALT + pw)) === l.hash;
+}
+function showLockScreen(onUnlock) {
+  const ov = document.createElement('div');
+  ov.className = 'lock-screen';
+  ov.innerHTML =
+    '<div class="lock-box"><div class="lock-mark">DE</div>' +
+    '<h1>Locked</h1><p class="faint">Enter your passcode to open the dashboard.</p>' +
+    '<input id="lock-input" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode">' +
+    '<button class="btn primary" id="lock-go">Unlock</button>' +
+    '<div id="lock-err" class="lock-err" aria-live="polite"></div></div>';
+  document.body.appendChild(ov);
+  const input = ov.querySelector('#lock-input');
+  const err = ov.querySelector('#lock-err');
+  setTimeout(function () { input.focus(); }, 30);
+  async function tryUnlock() {
+    if (await verifyPasscode(input.value)) {
+      sessionStorage.setItem(UNLOCK_SESSION_KEY, '1');
+      ov.remove();
+      onUnlock();
+    } else {
+      err.textContent = 'Wrong passcode.';
+      input.value = ''; input.focus();
+    }
+  }
+  ov.querySelector('#lock-go').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryUnlock(); });
+}
+
 /* ============================ Router ==================================== */
 
 const routes = {
@@ -1730,6 +1795,17 @@ function viewSettings() {
     '<label class="field" style="flex:1"><span>Practice threshold (%)</span><input id="set-threshold" type="number" min="1" max="100" value="' + esc(s.practiceThreshold) + '"></label></div>' +
     '<button class="btn primary" id="set-save">Save preferences</button></div>';
 
+  // Passcode lock
+  const lock = getLock();
+  html += '<div class="card"><h2>&#128274; Passcode lock</h2>' +
+    '<div class="faint" style="margin-bottom:10px">Shows a passcode screen when the site opens, and re-asks each time it’s reopened. This is a light privacy curtain on a public site — it keeps casual visitors out, but is not strong security, and your data stays readable in browser devtools. The passcode is stored only as a one-way hash on this device.</div>' +
+    (lock.enabled
+      ? '<div class="row"><span class="chip green">Lock is ON</span></div>' +
+        '<div class="row" style="margin-top:10px"><input id="lock-new" type="password" placeholder="New passcode (min 4 chars)" style="flex:1"><button class="btn" id="lock-change">Change</button></div>' +
+        '<div class="row" style="margin-top:10px"><button class="btn" id="lock-now">Lock now</button><button class="btn danger" id="lock-remove">Remove lock</button></div>'
+      : '<div class="row"><input id="lock-pw" type="password" placeholder="Set a passcode (min 4)" style="flex:1"><input id="lock-pw2" type="password" placeholder="Confirm" style="flex:1"><button class="btn primary" id="lock-set">Enable lock</button></div>'
+    ) + '</div>';
+
   // Backup
   html += '<div class="card"><h2>Backup</h2>' +
     '<div class="row"><button class="btn primary" id="set-export">Export all data (JSON)</button>' +
@@ -1761,6 +1837,31 @@ function viewSettings() {
     Store.saveSettings({ followUpDays: +$('#set-followup').value || 7, practiceThreshold: +$('#set-threshold').value || 70 });
     toast('Preferences saved');
   });
+  if (lock.enabled) {
+    $('#lock-change').addEventListener('click', async function () {
+      const v = $('#lock-new').value;
+      if (v.length < 4) return toast('Use at least 4 characters');
+      await setLockPasscode(v);
+      sessionStorage.setItem(UNLOCK_SESSION_KEY, '1');
+      toast('Passcode changed'); router();
+    });
+    $('#lock-now').addEventListener('click', function () {
+      sessionStorage.removeItem(UNLOCK_SESSION_KEY); location.reload();
+    });
+    $('#lock-remove').addEventListener('click', function () {
+      if (!confirm('Remove the passcode lock?')) return;
+      removeLock(); toast('Lock removed'); router();
+    });
+  } else {
+    $('#lock-set').addEventListener('click', async function () {
+      const a = $('#lock-pw').value, b = $('#lock-pw2').value;
+      if (a.length < 4) return toast('Use at least 4 characters');
+      if (a !== b) return toast('Passcodes do not match');
+      await setLockPasscode(a);
+      sessionStorage.setItem(UNLOCK_SESSION_KEY, '1');
+      toast('Passcode lock enabled — you’ll be asked for it next time you open the site'); router();
+    });
+  }
   $('#set-export').addEventListener('click', exportAll);
   $('#set-import').addEventListener('change', function (e) { if (e.target.files[0]) importBackup(e.target.files[0]); });
   $('#set-clear').addEventListener('click', function () {
@@ -2261,8 +2362,12 @@ function bindGlobalUI() {
 }
 
 function init() {
+  applyTheme(); // theme first so the lock screen matches
+  if (isLocked()) { showLockScreen(startApp); return; }
+  startApp();
+}
+function startApp() {
   seedIfEmpty();
-  applyTheme();
   loadTimerState();
   if (timerState.running) ensureTimerTick();
   bindGlobalUI();

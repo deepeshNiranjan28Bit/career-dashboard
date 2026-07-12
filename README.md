@@ -111,6 +111,17 @@ The file's shape is validated before anything is written; an invalid file change
 Because it's fully static with no external requests, it also runs by just opening `index.html`
 locally.
 
+## Passcode lock (optional)
+
+**Data & Settings → Passcode lock** adds a passcode screen shown whenever the site is opened, and
+re-asks each new session. Set it per device; it's stored only as a one-way hash on that device
+(never the passcode itself, never in the code) and is deliberately left out of the JSON backup.
+
+It is a **light privacy curtain, not strong security**: because this is a public static site, the
+code is visible and your data remains readable in browser devtools by anyone holding an unlocked
+device. It keeps casual visitors and over-the-shoulder snoopers out — nothing more. For genuine
+protection you'd put the site behind an edge login gate (e.g. Cloudflare Access, free).
+
 ## Privacy & safety
 
 - No network requests, no analytics, no `eval`.
