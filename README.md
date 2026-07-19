@@ -83,11 +83,23 @@ The `.xlsx` parser is native (no SheetJS): it reads the ZIP central directory, i
 the browser's `DecompressionStream('deflate-raw')`, and parses the XML with `DOMParser`. Requires a
 modern browser (Chrome/Edge/Firefox, or Safari 16.4+).
 
-## Adding weekly test files
+## Adding study guides & test files
 
-Drop a new self-contained quiz HTML file into the `tests/` folder, then in **Practice → Test files**
-enter a display name and the filename. It appears as a link card — no code changes. The same
-"register a file" option exists in **Library** for new study guides in `library/`.
+Files in `library/` and `tests/` are bundled with the site, so they show up on **every device**
+automatically — no per-device setup. Three steps whenever you add one:
+
+```
+# 1. drop the .html file into library/ or tests/, then:
+node sync-content.js
+git add . && git commit -m "add new file" && git push
+```
+
+`sync-content.js` scans both folders, reads each file's `<title>` and intro line, and regenerates
+`content-config.js` (which the app reads). Never edit `content-config.js` by hand — it's overwritten.
+Removing a file works the same way: delete it, re-run the script, push.
+
+There's also a small "register a file" box in Library and Practice, but that only adds a card on
+**that one device** — use the script above for anything you want everywhere.
 
 ## Backup & restore
 
